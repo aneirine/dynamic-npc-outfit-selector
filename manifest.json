@@ -1,0 +1,20 @@
+{
+  "Name": "Dynamic NPC Outfit Selector",
+  "Author": "aneirine",
+  "Version": "1.0.1",
+  "Description": "Pick which outfit each NPC wears for Spring/Summer/Fall/Winter, Beach, and festivals, from any installed Content Patcher appearance pack or your own PNGs dropped straight into the mod folder.",
+  "UniqueID": "Aneirine.NpcOutfitSelector",
+  "EntryDll": "NpcOutfitSelector.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:50375" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "Pathoschild.ContentPatcher",
+      "IsRequired": false
+    }
+  ]
+}
