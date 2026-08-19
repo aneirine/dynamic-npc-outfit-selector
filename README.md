@@ -35,8 +35,11 @@ discretion — if something looks off, just switch that slot back to "no overrid
   — then check the outfit you want for it. Leave it on the blank "no override" card to let the
   game (or whatever mod normally handles that NPC) keep deciding on its own.
 - Narrow it further with two more dropdowns: **Weather** (Sunny, Raining, Lightning, Snowing,
-  GreenRain, Windy) and **Location** (Indoor, Outdoor). Both default to "Any". So you can give
-  someone a plain winter look, and a heavier coat that only shows up outdoors while it's snowing.
+  Green Rain, Windy) and **Where** (Indoor, Outdoor, or one exact place like the Beach or the
+  Saloon). Both default to "Any". So you can give someone a plain winter look, and a heavier coat
+  that only shows up outdoors while it's snowing.
+- The Where list is built from the locations actually loaded in your save, so places added by
+  other mods (Stardew Valley Expanded and friends) show up on their own.
 - Applies live: no restart, no reload, just hit Save and NPCs already in the world update
   immediately.
 - Works with any Content Patcher appearance pack automatically, and also with your own loose PNG
@@ -50,8 +53,12 @@ The three dropdowns combine into a single key, which is what you'll see in `conf
 Spring                      just spring
 Spring::Raining             spring, but only when it's raining
 Spring::Indoor              spring, but only indoors
+Spring::@Beach              spring, but only while they're at the beach
 Winter::Snowing::Outdoor    winter, snowing, and outdoors
 ```
+
+An exact place is written with an `@` in front of it, which is what tells it apart from the plain
+`Indoor` / `Outdoor` setting — and from a category that happens to have the same name.
 
 You can set as many of these as you like for the same character, and they can all be true at once.
 **The more specific one wins** — the key with more parts beats the key with fewer.
@@ -65,6 +72,7 @@ Each key gets a score, and the highest score is the outfit you see:
 | A festival — Egg Festival, Flower Dance, ... | 20 |
 | `::Indoor` or `::Outdoor` | +1 |
 | A weather, e.g. `::Snowing` | +2 |
+| An exact place, e.g. `::@Beach` | +4 |
 
 So for one character:
 
@@ -75,12 +83,17 @@ So for one character:
 | `Winter::Outdoor` | 11 | Outdoors in winter, beating plain `Winter` |
 | `Winter::Snowing` | 12 | Snowing in winter, beating both above |
 | `Winter::Snowing::Outdoor` | 13 | Outdoors while it snows, beating everything above |
+| `Winter::@Town` | 14 | In town, beating every plain-weather key above |
 | `Winter Star` | 20 | During the festival, beating every winter key |
 
-Two keys only ever score the same when they can't both be true anyway — you can't be indoors and
-outdoors at once, and there's only one weather at a time. That matters, because when two outfits
-genuinely tie, the game picks between them at random rather than taking the first one. The scoring
-exists specifically so that never happens.
+The three add-on scores are 1, 2 and 4, so every possible combination lands on its own number and
+two keys can never tie. That matters, because when two outfits genuinely tie, the game picks
+between them at random rather than taking the first one. The scoring exists so that never happens.
+
+**`Indoor` and `Outdoor` act as fallbacks for exact places.** They're the same setting, just less
+specific, and you don't have to do anything to make this work: at the beach, a `::@Beach` key wins
+if you set one, otherwise `::Outdoor` applies (the beach *is* outdoors), otherwise the plain
+season, otherwise the game's own choice.
 
 A few notes:
 
@@ -88,10 +101,15 @@ A few notes:
   spring one.
 - Weather counts for more than indoor/outdoor, so `Winter::Snowing` beats `Winter::Indoor`. Both
   have two parts, and something had to break the tie.
+- "Where" means where the **NPC** is, not where you are. `Spring::@Beach` dresses Alex for the
+  beach when *he* goes there.
 - Impossible combinations are allowed and simply never trigger — `Winter::GreenRain` is harmless,
   it just never comes up in vanilla. Nothing is filtered out, in case a weather mod makes it real.
-- `Beach` is separate from all of this. Ginger Island's beach attire is chosen by its own mechanism
-  in the game, so it takes no weather or location parts and never competes with the keys above.
+- The `Beach` **category** (no `@`) is a different thing from the `::@Beach` **place**: the
+  category is Ginger Island's resort attire, which the game picks by its own mechanism, while
+  `::@Beach` is Pelican Town's beach map.
+- If a location isn't in the dropdown, you can still type its name into `config.json` by hand —
+  whatever follows the `@` is passed straight to the game.
 
 ## Requirements
 
@@ -113,8 +131,10 @@ A few notes:
 
 - Only NPCs with proper appearance data show real alternatives. Older mods that just overwrite a
   texture file directly aren't represented as separate options — there's nothing to list.
-- "Beach" currently covers Ginger Island's beach resort. The regular Pelican Town beach look is
-  swapped by a different, filename-based method and isn't force-applied by this mod yet.
+- The "Beach" category covers Ginger Island's beach resort, which the game selects by its own
+  island-attire mechanism. Pelican Town's beach isn't that — the game swaps that look by a
+  filename convention this mod can't hook into. You can still dress someone for it with an exact
+  place, e.g. `Summer::@Beach`.
 - Some assets may be replaced with default ones in case it doesn't have the required animation
   in their assets.
 - Forcing a festival or beach outfit onto a regular season slot (or vice versa) can cause visual

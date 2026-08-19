@@ -24,6 +24,24 @@ namespace NpcOutfitSelector
         private const string IndoorValue = "Indoor";
         private const string OutdoorValue = "Outdoor";
 
+        // Marks a segment as an exact place rather than the coarse Indoor/Outdoor. Both share one
+        // slot in the key, because naming a location already answers indoors-or-outdoors — every
+        // GameLocation is one or the other, so "Beach::Outdoor" would be redundant.
+        //
+        // The prefix is what lets an unlisted name still work: anything after "@" is passed to
+        // LOCATION_NAME as-is, so a modded location typed into config.json by hand parses fine
+        // even though the dropdown never offered it.
+        internal const string ExactPlacePrefix = "@";
+
+        // The places villagers actually go. Not exhaustive on purpose — see ExactPlacePrefix.
+        private static readonly string[] KnownPlaces =
+        {
+            "Farm", "Town", "Beach", "Mountain", "Forest", "Desert", "Railroad", "BusStop", "Woods",
+            "IslandSouth", "IslandNorth", "IslandWest",
+            "Saloon", "SeedShop", "Hospital", "Blacksmith", "AnimalShop", "FishShop", "JojaMart",
+            "ScienceHouse", "ManorHouse", "ArchaeologyHouse", "CommunityCenter", "Mine",
+        };
+
         private static readonly string[] Seasons = { "Spring", "Summer", "Fall", "Winter" };
 
         // Three separate things, deliberately not collapsed into one string:
@@ -66,13 +84,51 @@ namespace NpcOutfitSelector
 
         public static string LocationKeyFor(bool isOutdoors) => isOutdoors ? OutdoorValue : IndoorValue;
 
-        public static readonly string[] LocationChoices = { AnyOption, IndoorValue, OutdoorValue };
+        // One axis at two granularities: coarse first, then the exact places.
+        //
+        // Places found in the loaded save are merged in, so locations added by other mods (Stardew
+        // Valley Expanded and the like) appear on their own. KnownPlaces is the floor, not the
+        // ceiling — it's what's offered on the title screen, where no save is loaded yet.
+        public static string[] BuildWhereChoices(IEnumerable<string> discoveredPlaces)
+        {
+            var places = new SortedSet<string>(KnownPlaces, StringComparer.OrdinalIgnoreCase);
+            if (discoveredPlaces is not null)
+            {
+                places.UnionWith(discoveredPlaces.Where(p => !string.IsNullOrWhiteSpace(p)));
+            }
+
+            return new[] { AnyOption, IndoorValue, OutdoorValue }
+                .Concat(places.Select(p => ExactPlacePrefix + p))
+                .ToArray();
+        }
+
+        // "@BusStop" reads as "Bus Stop" in the dropdown; the stored key keeps the exact location
+        // name, since that's what LOCATION_NAME has to match.
+        public static string FormatWhereChoice(string key)
+        {
+            if (key is null || !key.StartsWith(ExactPlacePrefix, StringComparison.Ordinal))
+            {
+                return key;
+            }
+
+            string place = key.Substring(ExactPlacePrefix.Length);
+            return Regex.Replace(place, "(?<=[a-z])(?=[A-Z])", " ");
+        }
+
+        private static bool IsExactPlace(string where) =>
+            where is not null && where.StartsWith(ExactPlacePrefix, StringComparison.Ordinal);
+
+        private static bool IsCoarseWhere(string where) =>
+            IndoorValue.Equals(where, StringComparison.OrdinalIgnoreCase)
+            || OutdoorValue.Equals(where, StringComparison.OrdinalIgnoreCase);
 
         private static readonly Regex EventIdPattern = new(@"IS_EVENT\s+(\S+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex SeasonKeywordPattern = new(
             $@"\bSEASON\s+({string.Join("|", Seasons)})\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex WeatherPattern = new(
             @"\bWEATHER\s+\S+\s+([A-Za-z]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex LocationNamePattern = new(
+            @"\bLOCATION_NAME\s+\S+\s+([A-Za-z0-9_]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // Label prefix for a non-vanilla IS_EVENT id — no display name data exists for those.
         private const string CustomEventLabelPrefix = "Event: ";
@@ -101,18 +157,17 @@ namespace NpcOutfitSelector
         // Segments are identified by what they are, not where they sit — the weather and location
         // vocabularies share no words, so "Spring::Indoor" parses without a placeholder for the
         // skipped weather.
-        public static (string Base, string Weather, string Location) Decompose(string category)
+        public static (string Base, string Weather, string Where) Decompose(string category)
         {
             string[] parts = (category ?? string.Empty).Split(KeySeparator);
             string weather = null;
-            string location = null;
+            string where = null;
 
             for (int i = 1; i < parts.Length; i++)
             {
-                if (parts[i].Equals(IndoorValue, StringComparison.OrdinalIgnoreCase)
-                    || parts[i].Equals(OutdoorValue, StringComparison.OrdinalIgnoreCase))
+                if (IsCoarseWhere(parts[i]) || IsExactPlace(parts[i]))
                 {
-                    location = parts[i];
+                    where = parts[i];
                 }
                 else if (WeatherConstantsByKey.ContainsKey(parts[i]))
                 {
@@ -120,7 +175,7 @@ namespace NpcOutfitSelector
                 }
             }
 
-            return (parts[0], weather, location);
+            return (parts[0], weather, where);
         }
 
         // How specific a category is. Higher wins, because a longer key describes a narrower
@@ -128,10 +183,12 @@ namespace NpcOutfitSelector
         // without it "Egg Festival" and "Spring" would tie, and a tie is decided by the game's
         // weighted random, not by order.
         //
-        // Weather outranks location so two-segment keys can't tie either.
+        // The segment weights are a bitmask (1/2/4), so every combination scores uniquely and no
+        // two keys can tie by construction. An exact place outranks any mix of coarser conditions
+        // because 4 > 2 + 1 — "at the beach" is more specific than "outdoors in the rain".
         public static int ScoreForCategory(string category)
         {
-            (string baseCategory, string weather, string location) = Decompose(category);
+            (string baseCategory, string weather, string where) = Decompose(category);
 
             int score = Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase) ? 10
                 : IsEventCategory(baseCategory) ? 20
@@ -142,7 +199,11 @@ namespace NpcOutfitSelector
             {
                 score += 2;
             }
-            if (location is not null)
+            if (IsExactPlace(where))
+            {
+                score += 4;
+            }
+            else if (where is not null)
             {
                 score += 1;
             }
@@ -159,7 +220,7 @@ namespace NpcOutfitSelector
         // Multiple queries are comma-joined, which the game ANDs.
         private static string BuildConditionForCategory(string category)
         {
-            (string baseCategory, string weather, _) = Decompose(category);
+            (string baseCategory, string weather, string where) = Decompose(category);
             var queries = new List<string>();
 
             if (Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase))
@@ -187,6 +248,13 @@ namespace NpcOutfitSelector
                 queries.Add($"WEATHER Here {weatherConstant}");
             }
 
+            if (IsExactPlace(where))
+            {
+                // A real query, unlike Indoor/Outdoor — so the entry's own Indoors/Outdoors fields
+                // stay untouched; the place name already constrains both.
+                queries.Add($"LOCATION_NAME Here {where.Substring(ExactPlacePrefix.Length)}");
+            }
+
             return queries.Count > 0 ? string.Join(", ", queries) : null;
         }
 
@@ -196,13 +264,13 @@ namespace NpcOutfitSelector
         // query; ChooseAppearance checks these fields separately.
         private static void ApplyLocationRestriction(CharacterAppearanceData entry, string category)
         {
-            (_, _, string location) = Decompose(category);
+            (_, _, string where) = Decompose(category);
 
-            if (IndoorValue.Equals(location, StringComparison.OrdinalIgnoreCase))
+            if (IndoorValue.Equals(where, StringComparison.OrdinalIgnoreCase))
             {
                 entry.Outdoors = false;
             }
-            else if (OutdoorValue.Equals(location, StringComparison.OrdinalIgnoreCase))
+            else if (OutdoorValue.Equals(where, StringComparison.OrdinalIgnoreCase))
             {
                 entry.Indoors = false;
             }
@@ -267,7 +335,13 @@ namespace NpcOutfitSelector
 
                 string weather = extras
                     .FirstOrDefault(e => WeatherConstantsByKey.ContainsKey(e));
-                string location = extras.Any(e => e.StartsWith(IndoorValue, StringComparison.OrdinalIgnoreCase)) ? IndoorValue
+
+                // A named place beats Indoor/Outdoor for the same reason it does elsewhere: it's
+                // the more specific of the two, and they share one slot.
+                string place = KnownPlaces.FirstOrDefault(
+                    p => extras.Any(e => e.Equals(p, StringComparison.OrdinalIgnoreCase)));
+                string location = place is not null ? ExactPlacePrefix + place
+                    : extras.Any(e => e.StartsWith(IndoorValue, StringComparison.OrdinalIgnoreCase)) ? IndoorValue
                     : extras.Any(e => e.StartsWith(OutdoorValue, StringComparison.OrdinalIgnoreCase)) ? OutdoorValue
                     : null;
 
@@ -372,6 +446,14 @@ namespace NpcOutfitSelector
 
         private static string ClassifyLocation(CharacterAppearanceData app)
         {
+            // An exact place wins the slot: it's the more specific of the two, and a pack that
+            // names one has already decided indoors-or-outdoors by naming it.
+            Match placeMatch = LocationNamePattern.Match(app.Condition ?? string.Empty);
+            if (placeMatch.Success)
+            {
+                return ExactPlacePrefix + placeMatch.Groups[1].Value.Trim(',', '"', '\'', ' ');
+            }
+
             if (!app.Indoors && app.Outdoors)
             {
                 return OutdoorValue;

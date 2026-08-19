@@ -7,6 +7,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Characters;
+using StardewValley.Locations;
 using StardewValley.Menus;
 
 namespace NpcOutfitSelector
@@ -341,6 +342,31 @@ namespace NpcOutfitSelector
             gmcm.OpenModMenu(this.ModManifest);
         }
 
+        // Real place names from the loaded save, so locations added by other mods show up in the
+        // Where dropdown without this mod knowing anything about them. Skips the ones that would
+        // bury the list without ever being useful for an outfit: one entry per mine level, and
+        // every player-built cabin, shed and barn.
+        private IEnumerable<string> DiscoverPlaces()
+        {
+            if (!Context.IsWorldReady)
+            {
+                yield break;
+            }
+
+            foreach (GameLocation location in Game1.locations)
+            {
+                if (string.IsNullOrWhiteSpace(location?.Name)
+                    || location is MineShaft
+                    || location.ParentBuilding is not null
+                    || location.Name.StartsWith("UndergroundMine", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                yield return location.Name;
+            }
+        }
+
         // Which weather/location the two narrowing dropdowns should open on: the segments of the
         // most specific saved override that actually applies to this NPC right now. Opening on
         // Any/Any instead would show the plain-season pick as checked while the character in the
@@ -358,15 +384,18 @@ namespace NpcOutfitSelector
             }
 
             string currentWeather = AppearanceCategory.WeatherKeyForConstant(location.GetWeather()?.Weather);
-            string currentLocation = AppearanceCategory.LocationKeyFor(location.IsOutdoors);
+            // Both granularities of the same axis are true at once — the Beach *is* outdoors — so
+            // a key naming either one applies, and the score decides which the menu opens on.
+            string currentCoarse = AppearanceCategory.LocationKeyFor(location.IsOutdoors);
+            string currentPlace = AppearanceCategory.ExactPlacePrefix + location.Name;
 
             string bestWeather = any;
-            string bestLocation = any;
+            string bestWhere = any;
             int bestScore = -1;
 
             foreach (string key in byCategory.Keys)
             {
-                (string keyBase, string keyWeather, string keyLocation) = AppearanceCategory.Decompose(key);
+                (string keyBase, string keyWeather, string keyWhere) = AppearanceCategory.Decompose(key);
 
                 if (!keyBase.Equals(baseCategory, StringComparison.OrdinalIgnoreCase))
                 {
@@ -377,7 +406,9 @@ namespace NpcOutfitSelector
                 {
                     continue;
                 }
-                if (keyLocation is not null && !keyLocation.Equals(currentLocation, StringComparison.OrdinalIgnoreCase))
+                if (keyWhere is not null
+                    && !keyWhere.Equals(currentCoarse, StringComparison.OrdinalIgnoreCase)
+                    && !keyWhere.Equals(currentPlace, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -387,11 +418,11 @@ namespace NpcOutfitSelector
                 {
                     bestScore = score;
                     bestWeather = keyWeather ?? any;
-                    bestLocation = keyLocation ?? any;
+                    bestWhere = keyWhere ?? any;
                 }
             }
 
-            return (bestWeather, bestLocation);
+            return (bestWeather, bestWhere);
         }
 
         private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
@@ -690,6 +721,8 @@ namespace NpcOutfitSelector
                 });
             }
 
+            string[] whereChoices = AppearanceCategory.BuildWhereChoices(this.DiscoverPlaces());
+
             var displayAppearancesByNpc = new Dictionary<string, List<CharacterAppearanceData>>(StringComparer.OrdinalIgnoreCase);
             foreach (var pair in characters)
             {
@@ -761,11 +794,14 @@ namespace NpcOutfitSelector
 
                 gmcm.AddTextOption(
                     mod: this.ModManifest,
-                    name: () => "Location",
-                    tooltip: () => "Narrow the choice above to indoors or outdoors. Leave on Any to cover both.",
+                    name: () => "Where",
+                    tooltip: () => "Narrow the choice above to indoors, outdoors, or one exact place. "
+                        + "This is where the NPC is, not where you are. A named place wins over plain "
+                        + "Indoor/Outdoor, which stays as the fallback when no exact place is set.",
                     getValue: () => this.selectedLocationByNpc[npcName],
                     setValue: value => this.selectedLocationByNpc[npcName] = value,
-                    choices: AppearanceCategory.LocationChoices,
+                    choices: whereChoices,
+                    formatChoice: AppearanceCategory.FormatWhereChoice,
                     fieldId: $"{LocationFieldIdPrefix}{npcName}"
                 );
 

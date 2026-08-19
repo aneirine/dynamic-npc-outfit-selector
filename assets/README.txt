@@ -20,14 +20,15 @@ Examples:
 festival names (Egg Festival, Flower Dance, Luau, etc. — abbreviations like "FlowerDance" or
 "EggFest" are recognized too). Anything else becomes its own custom category in the mod's menu.
 
-After a season you can also add a weather and/or a location, in any order, separated by underscores:
+After a season you can also add a weather and/or a place, in any order, separated by underscores:
 
-    weather:  Sunny, Raining, Lightning, Snowing, GreenRain, Windy
-    location: Indoor, Outdoor
+    weather: Sunny, Raining, Lightning, Snowing, GreenRain, Windy
+    where:   Indoor, Outdoor, or a location name such as Beach, Town, Saloon, Mountain
 
 So Haley_Winter_Snowing_Outdoor.png lands in the "Winter::Snowing::Outdoor" slot, which beats plain
-"Winter" whenever it's actually snowing and she's outside. You don't have to name files this way —
-every sprite here can be assigned to any slot from the menu's dropdowns regardless of its name.
+"Winter" whenever it's actually snowing and she's outside. Haley_Summer_Beach.png lands in
+"Summer::@Beach" and beats both. You don't have to name files this way — every sprite here can be
+assigned to any slot from the menu's dropdowns regardless of its name.
 
 These show up as extra pickable outfits in the NPC Outfit Selector menu (GMCM) alongside anything
 provided by installed Content Patcher packs.
