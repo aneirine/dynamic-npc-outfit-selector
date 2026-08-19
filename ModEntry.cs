@@ -14,13 +14,16 @@ namespace NpcOutfitSelector
     {
         private const string CategoryFieldIdPrefix = "SelectedCategory_";
 
-        // Prefix for entries OnAssetRequested injects to force a choice; filtered back out when
-        // building the grid so a forced entry doesn't show up as a duplicate of its source.
+        // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
+        // forced entry doesn't show up as a duplicate of its source.
         private const string ForcedEntryIdPrefix = "NpcOutfitSelector.Force.";
 
-        // Asset name prefix under which local PNGs (see LocalAssetScanner) are exposed to the
-        // game's content pipeline, so a forced entry can reference them like any other texture.
+        // Asset namespace local PNGs (see LocalAssetScanner) are exposed under, so a forced entry
+        // can reference them like any other texture.
         private const string LocalAssetPrefix = "Mods/NpcOutfitSelector/LocalAssets/";
+
+        // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
+        private const string UnrevealedNpcKey = "???";
 
         private readonly Dictionary<string, string> selectedCategoryByNpc = new();
         private readonly List<AppearancePreviewGrid> activeGrids = new();
@@ -172,7 +175,7 @@ namespace NpcOutfitSelector
 
                         string sprite;
                         string portrait;
-                        if (outfitId == "Default")
+                        if (outfitId == AppearanceCategory.DefaultAppearanceId)
                         {
                             sprite = $"Characters/{npcName}";
                             portrait = $"Portraits/{npcName}";
@@ -252,7 +255,7 @@ namespace NpcOutfitSelector
                 }
             }
 
-            return best?.Id ?? "Default";
+            return best?.Id ?? AppearanceCategory.DefaultAppearanceId;
         }
 
         private void SetSelectedOutfitId(string npcName, string category, string outfitId)
@@ -306,7 +309,7 @@ namespace NpcOutfitSelector
                 portraitAssetByKey.TryGetValue($"{spriteFile.NpcName}::{spriteFile.RawCondition}", out string portraitAsset);
 
                 CharacterAppearanceData entry = AppearanceCategory.BuildLocalEntry(
-                    id: $"LocalAsset::{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
+                    id: $"{AppearanceCategory.LocalAssetIdPrefix}{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
                     category: category,
                     sprite: spriteAsset,
                     portrait: portraitAsset);
@@ -331,7 +334,7 @@ namespace NpcOutfitSelector
             {
                 new CharacterAppearanceData
                 {
-                    Id = "Default",
+                    Id = AppearanceCategory.DefaultAppearanceId,
                     Sprite = $"Characters/{npcName}",
                     Portrait = $"Portraits/{npcName}",
                 },
@@ -410,7 +413,6 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            // Previous grids stay subscribed to Input.ButtonPressed until disposed.
             foreach (AppearancePreviewGrid grid in this.activeGrids)
             {
                 grid.Dispose();
@@ -471,7 +473,7 @@ namespace NpcOutfitSelector
             var displayAppearancesByNpc = new Dictionary<string, List<CharacterAppearanceData>>(StringComparer.OrdinalIgnoreCase);
             foreach (var pair in characters)
             {
-                if (pair.Key == "???")
+                if (pair.Key == UnrevealedNpcKey)
                 {
                     continue;
                 }
@@ -486,9 +488,8 @@ namespace NpcOutfitSelector
             foreach (var pair in characters.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
             {
                 string npcName = pair.Key;
-                if (npcName == "???")
+                if (npcName == UnrevealedNpcKey)
                 {
-                    // Vanilla placeholder for an as-yet-unrevealed NPC — not a real character.
                     continue;
                 }
                 npcCount++;
@@ -498,9 +499,8 @@ namespace NpcOutfitSelector
                 List<CharacterAppearanceData> displayAppearances = displayAppearancesByNpc[npcName];
                 appearanceCount += displayAppearances.Count;
 
-                // Reset to the game's actual current season on every menu (re)open — otherwise the
-                // dropdown silently keeps whatever category was picked last time (or the "Spring"
-                // default), and it's easy to change an outfit for the wrong season without noticing.
+                // Reset to the actual current season on every menu (re)open — otherwise the dropdown
+                // keeps whatever was picked last time, and it's easy to edit the wrong season by accident.
                 string currentSeasonCategory = Context.IsWorldReady
                     ? char.ToUpperInvariant(Game1.currentSeason[0]) + Game1.currentSeason.Substring(1)
                     : null;
