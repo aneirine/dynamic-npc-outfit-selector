@@ -15,6 +15,7 @@ namespace NpcOutfitSelector
     {
         private const string CategoryFieldIdPrefix = "SelectedCategory_";
         private const string SearchQueryFieldId = "Search_Query";
+        private const string MenuHotkeyFieldId = "Menu_Hotkey";
 
         // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
         // forced entry doesn't show up as a duplicate of its source.
@@ -182,26 +183,31 @@ namespace NpcOutfitSelector
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button != SButton.Enter)
+            if (GetActiveGmcmMenu() is not null)
             {
+                // Deferred a tick so the reopen doesn't run while the game is still mid-handling
+                // this same keypress — doing it inline caused a reentrant
+                // MenuChanged -> BuildMenu -> OpenModMenu loop that crashed the game.
+                if (e.Button == SButton.Enter)
+                {
+                    this.Helper.Events.GameLoop.UpdateTicked += this.OnSearchApplyTicked;
+                }
                 return;
             }
 
-            if (GetActiveGmcmMenu() is null)
+            // Free-roam only, so the shortcut can't fire mid-cutscene or while another menu has
+            // the keyboard — and can't collide with Enter above, which needs our page already open.
+            if (Context.IsPlayerFree && this.config?.MenuHotkey?.JustPressed() == true)
             {
-                return;
+                this.searchQuery = "";
+                this.RebuildAndShowMenu();
             }
-
-            // Deferred a tick so this doesn't reopen the menu while the game is still mid-handling
-            // this same keypress — calling OpenModMenu synchronously here caused a reentrant
-            // MenuChanged -> BuildMenu -> OpenModMenu loop that crashed the game.
-            this.Helper.Events.GameLoop.UpdateTicked += this.OnSearchApplyTicked;
         }
 
         private void OnSearchApplyTicked(object sender, UpdateTickedEventArgs e)
         {
             this.Helper.Events.GameLoop.UpdateTicked -= this.OnSearchApplyTicked;
-            this.ApplySearchFilter();
+            this.RebuildAndShowMenu();
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -294,21 +300,21 @@ namespace NpcOutfitSelector
             }
         }
 
-        // Rebuilds the (now-filtered) option list, then asks GMCM to replace the already-open menu
-        // with a fresh one reading it — GMCM's own Table is built once and can't be swapped in place,
-        // so this is the only way to make the filter visible without the player leaving the page.
-        // Only ever called from OnSearchApplyTicked, a tick after the Enter keypress that requested
-        // it, so this is never on GMCM's own call stack when it reopens the menu.
-        private void ApplySearchFilter()
+        // Rebuilds the option list, then has GMCM build a menu around it — GMCM's own Table is
+        // constructed once per menu and can't be swapped in place, so replacing the whole menu is
+        // the only way to show a changed option list. Never call this from a GMCM callback: the
+        // reopen re-enters our own MenuChanged handler.
+        private void RebuildAndShowMenu()
         {
-            this.BuildMenu();
-
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm is not null)
+            if (gmcm is null)
             {
-                this.suppressNextMenuChangedRebuild = true;
-                gmcm.OpenModMenu(this.ModManifest);
+                return;
             }
+
+            this.BuildMenu();
+            this.suppressNextMenuChangedRebuild = true;
+            gmcm.OpenModMenu(this.ModManifest);
         }
 
         private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
@@ -563,6 +569,15 @@ namespace NpcOutfitSelector
             }
 
             this.localAssetsByNpc = this.BuildLocalAssetOptions(characters.Keys.ToList());
+
+            gmcm.AddKeybindList(
+                mod: this.ModManifest,
+                name: () => "Open this menu",
+                tooltip: () => "Opens this page directly while playing. Clear it to disable the shortcut.",
+                getValue: () => this.config.MenuHotkey,
+                setValue: value => this.config.MenuHotkey = value,
+                fieldId: MenuHotkeyFieldId
+            );
 
             gmcm.AddTextOption(
                 mod: this.ModManifest,
