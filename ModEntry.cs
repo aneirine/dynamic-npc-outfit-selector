@@ -18,6 +18,7 @@ namespace NpcOutfitSelector
         private const string WeatherFieldIdPrefix = "SelectedWeather_";
         private const string LocationFieldIdPrefix = "SelectedLocation_";
         private const string SearchQueryFieldId = "Search_Query";
+        private const string SearchClearFieldId = "Search_Clear";
         private const string MenuHotkeyFieldId = "Menu_Hotkey";
 
         // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
@@ -38,6 +39,7 @@ namespace NpcOutfitSelector
         private readonly Dictionary<string, string> selectedLocationByNpc = new();
 
         private readonly List<AppearancePreviewGrid> activeGrids = new();
+        private SearchClearButton searchClearButton;
 
         // Every NPC this session has ever had an override for, kept because a save that *removes*
         // overrides still has to repaint the characters those overrides used to apply to. Reloading
@@ -46,13 +48,16 @@ namespace NpcOutfitSelector
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
-        // Typed live via OnFieldChanged; only actually applied to the visible list when Enter is
-        // pressed (see ApplySearchFilter) — not on every keystroke, since GMCM's own Textbox only
-        // takes keyboard focus back via a mouse click, so rebuilding the menu (which replaces it
-        // with a fresh Textbox) on every character would force a re-click after each letter.
+        // Typed live via OnFieldChanged, but only applied to the visible list on Enter — not on
+        // every keystroke, since GMCM's own Textbox only takes keyboard focus back via a mouse
+        // click, so rebuilding the menu (which replaces it with a fresh Textbox) on every character
+        // would force a re-click after each letter.
+        //
+        // Deliberately survives closing the menu: the Clear search button is the way out, so a
+        // filter can't strand the player with no visible means of undoing it.
         private string searchQuery = "";
 
-        // Set right before our own ApplySearchFilter() calls OpenModMenu(), so the MenuChanged
+        // Set right before our own RebuildAndShowMenu() calls OpenModMenu(), so the MenuChanged
         // event that reopen fires doesn't trigger a second BuildMenu() — a second build would
         // create a fresh set of AppearancePreviewGrid instances subscribed to click events, while
         // the menu already on screen (built by OpenModMenu() from the first, now-orphaned set)
@@ -169,9 +174,6 @@ namespace NpcOutfitSelector
                     return;
                 }
 
-                // A genuinely fresh open starts unfiltered — otherwise the list silently stays
-                // narrowed to whatever was searched for the last time the menu was open.
-                this.searchQuery = "";
                 this.BuildMenu();
             }
         }
@@ -198,12 +200,9 @@ namespace NpcOutfitSelector
         {
             if (GetActiveGmcmMenu() is not null)
             {
-                // Deferred a tick so the reopen doesn't run while the game is still mid-handling
-                // this same keypress — doing it inline caused a reentrant
-                // MenuChanged -> BuildMenu -> OpenModMenu loop that crashed the game.
                 if (e.Button == SButton.Enter)
                 {
-                    this.Helper.Events.GameLoop.UpdateTicked += this.OnSearchApplyTicked;
+                    this.ScheduleSearchApply();
                 }
                 return;
             }
@@ -215,6 +214,15 @@ namespace NpcOutfitSelector
                 this.searchQuery = "";
                 this.RebuildAndShowMenu();
             }
+        }
+
+        // Deferred a tick so the reopen never runs while the game is still handling the click or
+        // keypress that asked for it — doing it inline caused a reentrant
+        // MenuChanged -> BuildMenu -> OpenModMenu loop that crashed the game.
+        private void ScheduleSearchApply()
+        {
+            this.Helper.Events.GameLoop.UpdateTicked -= this.OnSearchApplyTicked;
+            this.Helper.Events.GameLoop.UpdateTicked += this.OnSearchApplyTicked;
         }
 
         private void OnSearchApplyTicked(object sender, UpdateTickedEventArgs e)
@@ -634,6 +642,9 @@ namespace NpcOutfitSelector
             }
             this.activeGrids.Clear();
 
+            this.searchClearButton?.Dispose();
+            this.searchClearButton = null;
+
             // Reload from disk on every rebuild so a Cancel from a previous visit is discarded here
             // instead of lingering as an unsaved in-memory choice.
             this.config = this.LoadConfig();
@@ -700,10 +711,28 @@ namespace NpcOutfitSelector
             gmcm.AddTextOption(
                 mod: this.ModManifest,
                 name: () => "Search NPCs",
-                tooltip: () => "Type a name, then press Enter to filter the list. Clear the box and press Enter again to show everyone.",
+                tooltip: () => "Type a name and press Enter to filter the list. The filter is kept when "
+                    + "you leave the menu — use Clear search below to drop it.",
                 getValue: () => this.searchQuery,
                 setValue: value => this.searchQuery = value,
                 fieldId: SearchQueryFieldId
+            );
+
+            this.searchClearButton = new SearchClearButton(
+                this.Helper,
+                getQuery: () => this.searchQuery,
+                clear: () =>
+                {
+                    this.searchQuery = "";
+                    this.ScheduleSearchApply();
+                });
+
+            gmcm.AddComplexOption(
+                mod: this.ModManifest,
+                name: () => "",
+                draw: this.searchClearButton.Draw,
+                height: () => this.searchClearButton.Height,
+                fieldId: SearchClearFieldId
             );
 
             int npcCount = 0;
