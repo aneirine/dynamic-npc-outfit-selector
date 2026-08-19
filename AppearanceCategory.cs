@@ -72,6 +72,24 @@ namespace NpcOutfitSelector
         // Anything in the Where slot that isn't the closed Indoor/Outdoor pair names a real map.
         private static bool IsExactPlace(string where) => where is not null && !IsCoarseWhere(where);
 
+        // Both spellings mean island attire; only the canonical one is ever written.
+        public static bool IsIslandCategory(string baseCategory) =>
+            AppearanceConstants.IslandCategory.Equals(baseCategory, StringComparison.OrdinalIgnoreCase)
+            || AppearanceConstants.LegacyIslandCategory.Equals(baseCategory, StringComparison.OrdinalIgnoreCase);
+
+        private static string CanonicalBase(string baseCategory) =>
+            IsIslandCategory(baseCategory) ? AppearanceConstants.IslandCategory : baseCategory;
+
+        // Rewrites a key onto the canonical spelling of its base, leaving everything else alone.
+        // Used to migrate a config once rather than carrying two equivalent keys, which would tie
+        // and be resolved by the game's weighted random.
+        public static string CanonicalizeKey(string key)
+        {
+            (string baseCategory, string weather, string where) = Decompose(key);
+            return Compose(CanonicalBase(baseCategory), weather ?? AppearanceConstants.AnyOption,
+                where ?? AppearanceConstants.AnyOption);
+        }
+
         private static bool IsAny(string value) =>
             string.IsNullOrWhiteSpace(value)
             || value.Equals(AppearanceConstants.AnyOption, StringComparison.OrdinalIgnoreCase);
@@ -140,7 +158,7 @@ namespace NpcOutfitSelector
                 : AppearanceConstants.Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase)
                     ? AppearanceConstants.SeasonBaseScore
                 : IsEventCategory(baseCategory) ? AppearanceConstants.FestivalBaseScore
-                : baseCategory.Equals("Beach", StringComparison.OrdinalIgnoreCase)
+                : IsIslandCategory(baseCategory)
                     ? AppearanceConstants.SeasonBaseScore
                 : AppearanceConstants.CustomBaseScore;
 
@@ -243,7 +261,7 @@ namespace NpcOutfitSelector
                 Condition = BuildConditionForCategory(category),
             };
 
-            if (Decompose(category).Base.Equals("Beach", StringComparison.OrdinalIgnoreCase))
+            if (IsIslandCategory(Decompose(category).Base))
             {
                 // Ginger Island's beach resort only — the mainland Beach map swaps textures by
                 // filename convention, not through this Condition system.
@@ -340,7 +358,7 @@ namespace NpcOutfitSelector
 
             if (app.IsIslandAttire)
             {
-                return "Beach";
+                return AppearanceConstants.IslandCategory;
             }
 
             // The mainland beach look isn't flagged by any structured field — the game swaps to it
@@ -348,7 +366,7 @@ namespace NpcOutfitSelector
             if ((app.Id?.Contains("Beach", StringComparison.OrdinalIgnoreCase) ?? false)
                 || (app.Sprite?.Contains("_Beach", StringComparison.OrdinalIgnoreCase) ?? false))
             {
-                return "Beach";
+                return AppearanceConstants.IslandCategory;
             }
 
             return Compose(ClassifyBase(app), ClassifyWeather(app), ClassifyLocation(app));
@@ -391,7 +409,7 @@ namespace NpcOutfitSelector
                 string[] parts = app.Id.Split(AppearanceConstants.KeySeparator);
                 if (parts.Length >= 4)
                 {
-                    return string.Join(AppearanceConstants.KeySeparator, parts[2..^1]);
+                    return CanonicalBase(string.Join(AppearanceConstants.KeySeparator, parts[2..^1]));
                 }
             }
 
@@ -440,7 +458,7 @@ namespace NpcOutfitSelector
                 "Summer" => 1,
                 "Fall" => 2,
                 "Winter" => 3,
-                "Beach" => 4,
+                "Island" => 4,
                 _ => 5,
             };
 
@@ -454,7 +472,7 @@ namespace NpcOutfitSelector
         {
             var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "Spring", "Summer", "Fall", "Winter", "Beach",
+                "Spring", "Summer", "Fall", "Winter", AppearanceConstants.IslandCategory,
             };
             found.UnionWith(AppearanceConstants.FestivalNamesByEventId.Values);
 
@@ -463,7 +481,7 @@ namespace NpcOutfitSelector
                 string category = Classify(app);
                 if (category != AppearanceConstants.DefaultAppearanceId)
                 {
-                    found.Add(Decompose(category).Base);
+                    found.Add(CanonicalBase(Decompose(category).Base));
                 }
             }
 

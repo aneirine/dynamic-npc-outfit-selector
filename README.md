@@ -31,7 +31,7 @@ discretion — if something looks off, just switch that slot back to "no overrid
 
 - Lists every NPC and every outfit variant currently loaded in your game as a clickable picture,
   no matter which mod (or mods) it came from.
-- Pick a condition from a dropdown — Spring, Summer, Fall, Winter, Beach, or a specific festival
+- Pick a condition from a dropdown — Spring, Summer, Fall, Winter, Island, or a specific festival
   — then check the outfit you want for it. Leave it on the blank "no override" card to let the
   game (or whatever mod normally handles that NPC) keep deciding on its own.
 - Narrow it further with two more dropdowns: **Weather** (Sunny, Raining, Lightning, Snowing,
@@ -128,9 +128,10 @@ A few notes:
 - Anything the dropdowns don't offer can be typed into `config.json` by hand and still works:
   `Spring::Weather_RedRain` for a weather mod's own weather, or `Spring::Where_SomeModdedMap` for
   a location this mod hasn't heard of. The value after the underscore goes to the game unchanged.
-- The `Beach` **category** is a different thing from the `Where_Beach` **place**: the category is
+- The `Island` **category** and the `Where_Beach` **place** are different things: the category is
   Ginger Island's resort attire, which the game picks by its own mechanism, while `Where_Beach` is
-  Pelican Town's beach map.
+  Pelican Town's beach map. (Version 1.0.1 called the category `Beach`, which made that easy to
+  mix up. Old configs are read and updated automatically — nothing to do.)
 
 ## Requirements
 
@@ -152,7 +153,7 @@ A few notes:
 
 - Only NPCs with proper appearance data show real alternatives. Older mods that just overwrite a
   texture file directly aren't represented as separate options — there's nothing to list.
-- The "Beach" category covers Ginger Island's beach resort, which the game selects by its own
+- The "Island" category covers Ginger Island's beach resort, which the game selects by its own
   island-attire mechanism. Pelican Town's beach isn't that — the game swaps that look by a
   filename convention this mod can't hook into. You can still dress someone for it with an exact
   place, e.g. `Summer::Where_Beach`.

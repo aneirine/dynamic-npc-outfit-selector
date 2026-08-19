@@ -53,6 +53,14 @@ namespace NpcOutfitSelector
         public const string DefaultAppearanceId = "Default";
         public const string LocalAssetIdPrefix = "LocalAsset::";
 
+        // Ginger Island's resort attire, which the game selects through its own IsIslandAttire flag
+        // rather than a condition. 1.0.1 called this "Beach", which collided with the Where_Beach
+        // place — Pelican Town's map, a different beach entirely — so a key reading
+        // "Beach::Where_Beach" looked sensible while being self-contradictory. Renamed, with the
+        // old spelling kept readable forever: it is a shipped 1.0.1 key.
+        public const string IslandCategory = "Island";
+        public const string LegacyIslandCategory = "Beach";
+
         // Label prefix for a non-vanilla IS_EVENT id — no display name data exists for those.
         public const string CustomEventLabelPrefix = "Event: ";
 

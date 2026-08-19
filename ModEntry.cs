@@ -502,7 +502,35 @@ namespace NpcOutfitSelector
             }
 
             this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
+            MigrateLegacyKeys(loaded);
             return loaded;
+        }
+
+        // Rewrites keys onto the canonical spelling of their base — currently only Beach -> Island.
+        // Done on load rather than left as an alias so a player who re-saves doesn't end up with
+        // both spellings for the same thing: they'd score identically, and the game breaks an exact
+        // Precedence tie with weighted random rather than by order.
+        private static void MigrateLegacyKeys(ModConfig config)
+        {
+            foreach (Dictionary<string, string> byCategory in config.SelectedOutfits.Values)
+            {
+                List<string> stale = byCategory.Keys
+                    .Where(key => AppearanceCategory.CanonicalizeKey(key) != key)
+                    .ToList();
+
+                foreach (string key in stale)
+                {
+                    string canonical = AppearanceCategory.CanonicalizeKey(key);
+                    string outfitId = byCategory[key];
+                    byCategory.Remove(key);
+
+                    // An already-canonical key wins if somehow both are present.
+                    if (!byCategory.ContainsKey(canonical))
+                    {
+                        byCategory[canonical] = outfitId;
+                    }
+                }
+            }
         }
 
         private Dictionary<string, CharacterData> LoadCharacters()
