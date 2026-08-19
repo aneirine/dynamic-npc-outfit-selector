@@ -10,9 +10,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The test project lives under this one's folder, so the SDK's default glob would otherwise
+         compile it into the mod itself. -->
+    <Compile Remove="tests\**" />
+    <None Remove="tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Auto-references the game DLLs and copies the built mod into your Mods folder.
          Update the version if a newer one is out: https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig -->
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The category-key logic is internal; the test project reads it directly rather than
+         through reflection, which keeps the tests readable and refactor-safe. -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>NpcOutfitSelector.Tests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

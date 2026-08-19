@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>NpcOutfitSelector.Tests</AssemblyName>
+    <RootNamespace>NpcOutfitSelector.Tests</RootNamespace>
+    <!-- No test framework on purpose: `dotnet run` here needs nothing but the SDK and the game,
+         which the mod itself already requires. Failures come back as a non-zero exit code. -->
+
+    <!-- This is a test runner, not a mod: don't copy it into Mods or zip it for release. -->
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+  </PropertyGroup>
+
+  <!-- Do NOT use `dotnet run` on this project. ModBuildConfig repoints the run command at SMAPI so
+       that F5 launches the game, and it imports after this file, so that cannot be overridden from
+       here. Build and execute the assembly instead — see tests/README.md. -->
+
+
+  <ItemGroup>
+    <!-- Only here for the game assembly references; the deploy steps are off above. -->
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+    <ProjectReference Include="..\..\NpcOutfitSelector.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Game assemblies are referenced but never copied beside a mod, since a mod runs inside the
+         game. Baking the resolved path in lets the runner load them at startup (see Program.cs). -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>GamePath</_Parameter1>
+      <_Parameter2>$(GamePath)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

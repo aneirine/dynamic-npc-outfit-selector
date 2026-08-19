@@ -510,7 +510,7 @@ namespace NpcOutfitSelector
         // Done on load rather than left as an alias so a player who re-saves doesn't end up with
         // both spellings for the same thing: they'd score identically, and the game breaks an exact
         // Precedence tie with weighted random rather than by order.
-        private static void MigrateLegacyKeys(ModConfig config)
+        internal static void MigrateLegacyKeys(ModConfig config)
         {
             foreach (Dictionary<string, string> byCategory in config.SelectedOutfits.Values)
             {
