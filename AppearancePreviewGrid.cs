@@ -44,8 +44,9 @@ namespace NpcOutfitSelector
         private float lastDrawX;
         private float lastDrawY;
 
-        // GMCM only calls Draw() for rows scrolled into view; without this, a scrolled-away grid
-        // keeps stale lastDrawX/Y and could catch a click meant for a different NPC.
+        // GMCM only calls Draw() for rows currently scrolled into view. Without this flag, a grid
+        // scrolled away keeps stale lastDrawX/Y forever, and a click elsewhere in the menu could
+        // land inside its old checkbox area and silently change an NPC the player never touched.
         private bool isVisibleThisFrame;
 
         private readonly Func<string> getCurrentCategory;
@@ -126,8 +127,10 @@ namespace NpcOutfitSelector
         {
             this.isVisibleThisFrame = true;
 
-            // GMCM passes pos.X as the row's horizontal midpoint, which is also the centered panel's
-            // center — rebuild its left edge so the grid hugs that instead of drawing from the midpoint.
+            // GMCM passes pos.X as the row's horizontal midpoint (every control sits at
+            // Table.Size.X / 2). Since the menu panel is centered on screen, that midpoint is also
+            // the panel's center, so we can rebuild its left edge and hug the grid against it
+            // instead of drawing outward from the midpoint.
             int panelWidth = Math.Min(1200, Game1.uiViewport.Width - 200);
             float anchorX = pos.X - (panelWidth / 2f);
 

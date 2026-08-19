@@ -6,25 +6,36 @@ using StardewValley.GameData.Characters;
 
 namespace NpcOutfitSelector
 {
-    // Buckets an appearance entry by what makes it apply (season/beach/festival), read off its own data.
+    // Buckets an appearance entry by what actually makes it apply — season, beach, or a
+    // festival/event — read straight off the entry's own data instead of a hardcoded calendar.
     internal static class AppearanceCategory
     {
-        // Shared with ModEntry — both must agree on these exact values since they're
-        // embedded in synthetic appearance Ids and in players' saved config.json.
-        internal const string DefaultAppearanceId = "Default";
-        internal const string LocalAssetIdPrefix = "LocalAsset::";
-
         private static readonly string[] Seasons = { "Spring", "Summer", "Fall", "Winter" };
 
         private static readonly Regex EventIdPattern = new(@"IS_EVENT\s+(\S+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex SeasonKeywordPattern = new(
             $@"\bSEASON\s+({string.Join("|", Seasons)})\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        // Label prefix for a non-vanilla IS_EVENT id — no display name data exists for those.
-        private const string CustomEventLabelPrefix = "Event: ";
+        // The 8 vanilla calendar festivals use this stable "festival_<season><day>" key — safe to
+        // prettify, unlike arbitrary IS_EVENT numbers, which are one-off scene IDs with no name data.
+        private static readonly Dictionary<string, string> VanillaFestivalNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["festival_spring13"] = "Egg Festival",
+            ["festival_spring24"] = "Flower Dance",
+            ["festival_summer11"] = "Luau",
+            ["festival_summer28"] = "Dance of the Moonlight Jellies",
+            ["festival_fall16"] = "Stardew Valley Fair",
+            ["festival_fall27"] = "Spirit's Eve",
+            ["festival_winter8"] = "Festival of Ice",
+            ["festival_winter25"] = "Feast of the Winter Star",
+        };
 
-        // Turns a category name back into a game Condition (SEASON/IS_EVENT), or null if there's
-        // no real equivalent — Beach is handled separately by each caller, custom categories stay unconditional.
+        private static readonly Dictionary<string, string> VanillaFestivalKeysByName =
+            VanillaFestivalNames.ToDictionary(pair => pair.Value, pair => pair.Key, StringComparer.OrdinalIgnoreCase);
+
+        // Shared by BuildForcedEntry and BuildLocalEntry: turns a category name into the game
+        // Condition that reconstructs it (SEASON/IS_EVENT), or null if there's no real equivalent
+        // (Beach is handled separately by each caller; a fully custom category also returns null).
         private static string BuildConditionForCategory(string category)
         {
             if (Seasons.Contains(category, StringComparer.OrdinalIgnoreCase))
@@ -32,11 +43,9 @@ namespace NpcOutfitSelector
                 return $"SEASON {category}";
             }
 
-            string eventKey = VanillaFestivals.EventIdsByName.TryGetValue(category, out string key)
+            string eventKey = VanillaFestivalKeysByName.TryGetValue(category, out string key)
                 ? key
-                : category.StartsWith(CustomEventLabelPrefix, StringComparison.Ordinal)
-                    ? category.Substring(CustomEventLabelPrefix.Length)
-                    : null;
+                : category.StartsWith("Event: ", StringComparison.Ordinal) ? category.Substring("Event: ".Length) : null;
 
             return eventKey is not null ? $"IS_EVENT {eventKey}" : null;
         }
@@ -65,8 +74,10 @@ namespace NpcOutfitSelector
             return entry;
         }
 
-        // Same as BuildForcedEntry but at neutral Precedence — a normal pickable option for a
-        // local PNG drop, not an automatic override.
+        // Same Condition reconstruction as BuildForcedEntry, but at neutral Precedence — a normal
+        // pickable option for a local PNG drop, not an automatic override. Beach is left for
+        // Classify() to detect from this entry's Id; a fully custom category (e.g. "Wedding") is
+        // left unconditional, so forcing it later means "always".
         public static CharacterAppearanceData BuildLocalEntry(string id, string category, string sprite, string portrait)
         {
             return new CharacterAppearanceData
@@ -101,7 +112,7 @@ namespace NpcOutfitSelector
             }
 
             string normalizedToken = StripToLetters(token);
-            foreach (string festivalName in VanillaFestivals.NamesByEventId.Values)
+            foreach (string festivalName in VanillaFestivalNames.Values)
             {
                 string normalizedFestival = StripToLetters(festivalName);
                 if (normalizedFestival.Contains(normalizedToken, StringComparison.OrdinalIgnoreCase)
@@ -118,9 +129,9 @@ namespace NpcOutfitSelector
 
         public static string Classify(CharacterAppearanceData app)
         {
-            if (app.Id == DefaultAppearanceId)
+            if (app.Id == "Default")
             {
-                return DefaultAppearanceId;
+                return "Default";
             }
 
             if (app.IsIslandAttire)
@@ -150,9 +161,9 @@ namespace NpcOutfitSelector
             {
                 // Conditions inside an ANY(...) query come quoted ("IS_EVENT 58"), hence the trim.
                 string eventId = eventMatch.Groups[1].Value.Trim(',', '"', '\'', ' ');
-                return VanillaFestivals.NamesByEventId.TryGetValue(eventId, out string festivalName)
+                return VanillaFestivalNames.TryGetValue(eventId, out string festivalName)
                     ? festivalName
-                    : $"{CustomEventLabelPrefix}{eventId}";
+                    : $"Event: {eventId}";
             }
 
             Match seasonMatch = SeasonKeywordPattern.Match(condition);
@@ -164,7 +175,7 @@ namespace NpcOutfitSelector
 
             // Local entries (see BuildLocalEntry) with a custom category embed it in their Id as
             // "LocalAsset::{npc}::{category}" — recover it instead of dumping into "Other".
-            if (app.Id?.StartsWith(LocalAssetIdPrefix) == true)
+            if (app.Id?.StartsWith("LocalAsset::") == true)
             {
                 string[] parts = app.Id.Split("::");
                 if (parts.Length >= 3)
@@ -186,21 +197,23 @@ namespace NpcOutfitSelector
             _ => 5,
         };
 
-        // Every category a player can assign an outfit to, regardless of NPC: seasons + Beach +
-        // vanilla festivals always, plus whatever custom categories are actually found — so you can
-        // force e.g. a summer look onto winter even if no NPC has ever defined one for winter.
+        // The full set of conditions a player can assign an outfit to, regardless of NPC: the four
+        // seasons, Beach, and the 8 vanilla festivals always, unioned with every custom event/category
+        // actually found — not just what one NPC already has, since the point is forcing e.g. a summer
+        // look onto winter, or a look you made for the Luau onto the Egg Festival even if nothing has
+        // ever defined an Egg Festival appearance for that NPC.
         public static string[] CollectGlobalCategories(IEnumerable<CharacterAppearanceData> allAppearances)
         {
             var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Spring", "Summer", "Fall", "Winter", "Beach",
             };
-            found.UnionWith(VanillaFestivals.NamesByEventId.Values);
+            found.UnionWith(VanillaFestivalNames.Values);
 
             foreach (CharacterAppearanceData app in allAppearances)
             {
                 string category = Classify(app);
-                if (category != DefaultAppearanceId)
+                if (category != "Default")
                 {
                     found.Add(category);
                 }
