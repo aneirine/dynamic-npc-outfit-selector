@@ -23,22 +23,58 @@ namespace NpcOutfitSelector
         // Label prefix for a non-vanilla IS_EVENT id — no display name data exists for those.
         private const string CustomEventLabelPrefix = "Event: ";
 
+        // Appended to a base category (e.g. "Winter") when an entry is restricted to one context
+        // via the Indoors/Outdoors fields — the real mechanism some packs use for e.g. a coat worn
+        // outside in winter vs. regular clothes inside, independent of Condition/Season.
+        private const string IndoorSuffix = " (Indoor)";
+        private const string OutdoorSuffix = " (Outdoor)";
+
+        private static string StripIndoorOutdoorSuffix(string category)
+        {
+            if (category.EndsWith(IndoorSuffix, StringComparison.Ordinal))
+            {
+                return category.Substring(0, category.Length - IndoorSuffix.Length);
+            }
+            if (category.EndsWith(OutdoorSuffix, StringComparison.Ordinal))
+            {
+                return category.Substring(0, category.Length - OutdoorSuffix.Length);
+            }
+            return category;
+        }
+
         // Turns a category name back into a game Condition (SEASON/IS_EVENT), or null if there's
         // no real equivalent — Beach is handled separately by each caller, custom categories stay unconditional.
         private static string BuildConditionForCategory(string category)
         {
-            if (Seasons.Contains(category, StringComparer.OrdinalIgnoreCase))
+            string baseCategory = StripIndoorOutdoorSuffix(category);
+
+            if (Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase))
             {
-                return $"SEASON {category}";
+                return $"SEASON {baseCategory}";
             }
 
-            string eventKey = VanillaFestivals.EventIdsByName.TryGetValue(category, out string key)
+            string eventKey = VanillaFestivals.EventIdsByName.TryGetValue(baseCategory, out string key)
                 ? key
-                : category.StartsWith(CustomEventLabelPrefix, StringComparison.Ordinal)
-                    ? category.Substring(CustomEventLabelPrefix.Length)
+                : baseCategory.StartsWith(CustomEventLabelPrefix, StringComparison.Ordinal)
+                    ? baseCategory.Substring(CustomEventLabelPrefix.Length)
                     : null;
 
             return eventKey is not null ? $"IS_EVENT {eventKey}" : null;
+        }
+
+        // Mirrors a "<category> (Indoor)"/"(Outdoor)" choice onto the synthetic entry's actual
+        // Indoors/Outdoors fields — both default to true on CharacterAppearanceData, so without this
+        // the restriction the category name promises would silently never take effect in-game.
+        private static void ApplyIndoorOutdoorRestriction(CharacterAppearanceData entry, string category)
+        {
+            if (category.EndsWith(IndoorSuffix, StringComparison.Ordinal))
+            {
+                entry.Outdoors = false;
+            }
+            else if (category.EndsWith(OutdoorSuffix, StringComparison.Ordinal))
+            {
+                entry.Indoors = false;
+            }
         }
 
         // Builds the synthetic entry used to force a specific outfit for a category, with a
@@ -62,6 +98,8 @@ namespace NpcOutfitSelector
                 entry.IsIslandAttire = true;
             }
 
+            ApplyIndoorOutdoorRestriction(entry, category);
+
             return entry;
         }
 
@@ -69,13 +107,17 @@ namespace NpcOutfitSelector
         // local PNG drop, not an automatic override.
         public static CharacterAppearanceData BuildLocalEntry(string id, string category, string sprite, string portrait)
         {
-            return new CharacterAppearanceData
+            var entry = new CharacterAppearanceData
             {
                 Id = id,
                 Sprite = sprite,
                 Portrait = portrait,
                 Condition = BuildConditionForCategory(category),
             };
+
+            ApplyIndoorOutdoorRestriction(entry, category);
+
+            return entry;
         }
 
         // Turns a raw filename condition token (e.g. "FlowerDance", "Winter_Indoor") into one of
@@ -87,10 +129,21 @@ namespace NpcOutfitSelector
 
             foreach (string season in Seasons)
             {
-                if (token.StartsWith(season, StringComparison.OrdinalIgnoreCase))
+                if (!token.StartsWith(season, StringComparison.OrdinalIgnoreCase))
                 {
-                    return season;
+                    continue;
                 }
+
+                string remainder = token.Substring(season.Length);
+                if (remainder.Contains("Indoor", StringComparison.OrdinalIgnoreCase))
+                {
+                    return season + IndoorSuffix;
+                }
+                if (remainder.Contains("Outdoor", StringComparison.OrdinalIgnoreCase))
+                {
+                    return season + OutdoorSuffix;
+                }
+                return season;
             }
 
             // StartsWith (not Equals): lets "Beach_v1.png", "Beach_v2.png" etc. group under one
@@ -136,6 +189,11 @@ namespace NpcOutfitSelector
                 return "Beach";
             }
 
+            return ApplyIndoorOutdoorSuffix(ClassifyBase(app), app);
+        }
+
+        private static string ClassifyBase(CharacterAppearanceData app)
+        {
             if (app.Season.HasValue)
             {
                 return app.Season.Value.ToString();
@@ -176,15 +234,35 @@ namespace NpcOutfitSelector
             return "Other";
         }
 
-        public static int SortRank(string category) => category switch
+        // Appends the Indoor/Outdoor suffix when an entry is restricted to one context (see
+        // ApplyIndoorOutdoorRestriction) — e.g. a Winter_Indoor/Winter_Outdoor pair shows up as two
+        // separate pickable categories instead of merging into one "Winter".
+        private static string ApplyIndoorOutdoorSuffix(string category, CharacterAppearanceData app)
         {
-            "Spring" => 0,
-            "Summer" => 1,
-            "Fall" => 2,
-            "Winter" => 3,
-            "Beach" => 4,
-            _ => 5,
-        };
+            if (!app.Indoors && app.Outdoors)
+            {
+                return category + OutdoorSuffix;
+            }
+            if (app.Indoors && !app.Outdoors)
+            {
+                return category + IndoorSuffix;
+            }
+            return category;
+        }
+
+        public static int SortRank(string category)
+        {
+            string baseCategory = StripIndoorOutdoorSuffix(category);
+            return baseCategory switch
+            {
+                "Spring" => 0,
+                "Summer" => 1,
+                "Fall" => 2,
+                "Winter" => 3,
+                "Beach" => 4,
+                _ => 5,
+            };
+        }
 
         // Every category a player can assign an outfit to, regardless of NPC: seasons + Beach +
         // vanilla festivals always, plus whatever custom categories are actually found — so you can
@@ -194,6 +272,7 @@ namespace NpcOutfitSelector
             var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Spring", "Summer", "Fall", "Winter", "Beach",
+                "Winter" + IndoorSuffix, "Winter" + OutdoorSuffix,
             };
             found.UnionWith(VanillaFestivals.NamesByEventId.Values);
 
