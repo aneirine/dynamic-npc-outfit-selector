@@ -72,13 +72,18 @@ out entirely — `Weather_Sunny` on its own applies in every season.
 You can set as many of these as you like for the same character, and they can all be true at once.
 **The more specific one wins** — the key with more parts beats the key with fewer.
 
-Each key gets a score, and the highest score is the outfit you see:
+Each key gets a score, and the highest score is the outfit you see. The category sets the tier; the
+parts after it move you up **within** that tier:
 
-| Part of the key | Points |
+| Category (the tier) | Points |
 |---|---|
-| No category at all, or a custom one of your own | 0 |
-| A season — Spring, Summer, Fall, Winter | 10 |
-| A festival — Egg Festival, Flower Dance, ... | 20 |
+| No category at all | 0 |
+| A custom one of your own, e.g. `Casual` | 8 |
+| A season — Spring, Summer, Fall, Winter | 16 |
+| A festival — Egg Festival, Flower Dance, ... | 32 |
+
+| Added on top | Points |
+|---|---|
 | `Where_Indoor` or `Where_Outdoor` | +1 |
 | A weather, e.g. `Weather_Snowing` | +2 |
 | An exact place, e.g. `Where_Beach` | +4 |
@@ -87,17 +92,23 @@ So for one character:
 
 | Key | Score | When it wins |
 |---|---|---|
-| `Casual` | 0 | Whenever nothing below applies — a baseline look |
-| `Winter` | 10 | Any winter day |
-| `Winter::Where_Outdoor` | 11 | Outdoors in winter, beating plain `Winter` |
-| `Winter::Weather_Snowing` | 12 | Snowing in winter, beating both above |
-| `Winter::Weather_Snowing::Where_Outdoor` | 13 | Outdoors while it snows, beating everything above |
-| `Winter::Where_Town` | 14 | In town, beating every plain-weather key above |
-| `Winter Star` | 20 | During the festival, beating every winter key |
+| `Casual` | 8 | Whenever nothing below applies — a baseline look |
+| `Winter` | 16 | Any winter day |
+| `Winter::Where_Outdoor` | 17 | Outdoors in winter, beating plain `Winter` |
+| `Winter::Weather_Snowing` | 18 | Snowing in winter, beating both above |
+| `Winter::Weather_Snowing::Where_Outdoor` | 19 | Outdoors while it snows, beating everything above |
+| `Winter::Where_Town` | 20 | In town, beating every plain-weather key above |
+| `Winter Star` | 32 | During the festival, beating every winter key |
 
-The three add-on scores are 1, 2 and 4, so every possible combination lands on its own number and
-two keys can never tie. That matters, because when two outfits genuinely tie, the game picks
-between them at random rather than taking the first one. The scoring exists so that never happens.
+The add-ons are 1, 2 and 4, so they sum to at most 7 — less than the gap between tiers. Every
+possible key therefore lands on its own number, and **no two keys can ever tie**. That matters:
+when two outfits genuinely tie, the game picks between them at random rather than taking the first
+one. The scoring exists so that never happens.
+
+It also means **a category always beats a rule without one**, no matter how many conditions that
+rule piles on. `Weather_Sunny::Where_Beach` (6) loses to a plain `Winter` (16). That's deliberate:
+a category names a wardrobe slot you set up, while a category-less rule is a background default —
+the same role `Casual` plays.
 
 **`Indoor` and `Outdoor` act as fallbacks for exact places.** They're the same setting, just less
 specific, and you don't have to do anything to make this work: at the beach, a `::Where_Beach` key wins

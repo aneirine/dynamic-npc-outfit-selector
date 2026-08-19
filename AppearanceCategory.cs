@@ -136,10 +136,12 @@ namespace NpcOutfitSelector
         {
             (string baseCategory, string weather, string where) = Decompose(category);
 
-            int score = AppearanceConstants.Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase)
+            int score = string.IsNullOrWhiteSpace(baseCategory) ? AppearanceConstants.NoBaseScore
+                : AppearanceConstants.Seasons.Contains(baseCategory, StringComparer.OrdinalIgnoreCase)
                     ? AppearanceConstants.SeasonBaseScore
                 : IsEventCategory(baseCategory) ? AppearanceConstants.FestivalBaseScore
-                : baseCategory.Equals("Beach", StringComparison.OrdinalIgnoreCase) ? AppearanceConstants.SeasonBaseScore
+                : baseCategory.Equals("Beach", StringComparison.OrdinalIgnoreCase)
+                    ? AppearanceConstants.SeasonBaseScore
                 : AppearanceConstants.CustomBaseScore;
 
             if (weather is not null)

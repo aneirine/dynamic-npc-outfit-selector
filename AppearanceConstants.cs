@@ -121,18 +121,25 @@ namespace NpcOutfitSelector
         // The base sits far below the lowest any real content pack uses (-10000, island attire).
         public const int ForcedPrecedenceBase = -5_000_000;
 
-        // Starting score by what the base segment is. A festival outranks a season no matter how
-        // many segments either carries: without this they'd tie, and a tie is resolved by the
-        // game's weighted random rather than by order.
-        public const int CustomBaseScore = 0;
-        public const int SeasonBaseScore = 10;
-        public const int FestivalBaseScore = 20;
-
         // Added per narrowing segment. Powers of two, so every combination sums to a distinct
-        // score and no two keys can ever tie. 4 > 2 + 1 also makes an exact place beat any mix of
-        // coarser conditions — "at the beach" is more specific than "outdoors in the rain".
+        // score. 4 > 2 + 1 also makes an exact place beat any mix of coarser conditions — "at the
+        // beach" is more specific than "outdoors in the rain". Their maximum sum is 7.
         public const int CoarseWhereScore = 1;
         public const int WeatherScore = 2;
         public const int ExactPlaceScore = 4;
+
+        // Starting score by what the base segment is. The base is a tier, not another narrowing
+        // condition: it answers "which wardrobe slot is this", while the segments above answer
+        // "when, within that slot". So each tier is spaced above the largest possible sum of
+        // segments, and a key can never climb out of its tier by adding conditions.
+        //
+        // The tiers are ordered by how much of the game they claim. No base and a custom base both
+        // match unconditionally, but they still need separate values — otherwise "Where_Indoor" and
+        // "Casual::Where_Indoor" tie at the same score while both being true at once, and the game
+        // resolves that with a coin flip rather than by order.
+        public const int NoBaseScore = 0;
+        public const int CustomBaseScore = 8;
+        public const int SeasonBaseScore = 16;
+        public const int FestivalBaseScore = 32;
     }
 }
