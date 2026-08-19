@@ -37,6 +37,10 @@ namespace NpcOutfitSelector
         // GMCM only invokes once on Save.
         void OnFieldChanged(IManifest mod, Action<string, object> onChange);
 
+        // Replaces the currently-open menu with a freshly built one reading the mod's current
+        // option list — GMCM's own menu Table is otherwise immutable once constructed.
+        void OpenModMenu(IManifest mod);
+
         void AddComplexOption(
             IManifest mod,
             Func<string> name,

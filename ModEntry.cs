@@ -13,6 +13,8 @@ namespace NpcOutfitSelector
     public class ModEntry : Mod
     {
         private const string CategoryFieldIdPrefix = "SelectedCategory_";
+        private const string SearchQueryFieldId = "Search_Query";
+        private const string SearchTriggerFieldId = "Search_Trigger";
 
         // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
         // forced entry doesn't show up as a duplicate of its source.
@@ -29,6 +31,13 @@ namespace NpcOutfitSelector
         private readonly List<AppearancePreviewGrid> activeGrids = new();
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
+
+        // Typed live via OnFieldChanged; only actually applied to the visible list when the
+        // adjacent Search toggle fires (see ApplySearchFilter) — not on every keystroke, since GMCM's
+        // own Textbox only takes keyboard focus back via a mouse click, so rebuilding the menu (which
+        // replaces it with a fresh Textbox) on every character would force a re-click after each letter.
+        private string searchQuery = "";
+        private bool searchTrigger;
 
         public override void Entry(IModHelper helper)
         {
@@ -207,11 +216,42 @@ namespace NpcOutfitSelector
 
         private void OnGmcmFieldChanged(string fieldId, object value)
         {
-            if (fieldId is not null && fieldId.StartsWith(CategoryFieldIdPrefix) && value is string category)
+            if (fieldId is null)
+            {
+                return;
+            }
+
+            if (fieldId == SearchQueryFieldId && value is string query)
+            {
+                // Tracked live so the box's own text persists across a rebuild, but this alone
+                // doesn't touch the visible NPC list — see ApplySearchFilter.
+                this.searchQuery = query;
+                return;
+            }
+
+            if (fieldId == SearchTriggerFieldId && value is bool triggered)
+            {
+                this.searchTrigger = triggered;
+                this.ApplySearchFilter();
+                return;
+            }
+
+            if (fieldId.StartsWith(CategoryFieldIdPrefix) && value is string category)
             {
                 string npcName = fieldId.Substring(CategoryFieldIdPrefix.Length);
                 this.selectedCategoryByNpc[npcName] = category;
             }
+        }
+
+        // Rebuilds the (now-filtered) option list, then asks GMCM to replace the already-open menu
+        // with a fresh one reading it — GMCM's own Table is built once and can't be swapped in place,
+        // so this is the only way to make the filter visible without the player leaving the page.
+        private void ApplySearchFilter()
+        {
+            this.BuildMenu();
+
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            gmcm?.OpenModMenu(this.ModManifest);
         }
 
         private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
@@ -467,6 +507,23 @@ namespace NpcOutfitSelector
 
             this.localAssetsByNpc = this.BuildLocalAssetOptions(characters.Keys.ToList());
 
+            gmcm.AddTextOption(
+                mod: this.ModManifest,
+                name: () => "Search NPCs",
+                tooltip: () => "Type a name, then toggle Search below to filter the list.",
+                getValue: () => this.searchQuery,
+                setValue: value => this.searchQuery = value,
+                fieldId: SearchQueryFieldId
+            );
+            gmcm.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Search",
+                tooltip: () => "Apply the name filter above. Leave the search box empty and toggle to show everyone again.",
+                getValue: () => this.searchTrigger,
+                setValue: value => this.searchTrigger = value,
+                fieldId: SearchTriggerFieldId
+            );
+
             int npcCount = 0;
             int appearanceCount = 0;
 
@@ -489,6 +546,11 @@ namespace NpcOutfitSelector
             {
                 string npcName = pair.Key;
                 if (npcName == UnrevealedNpcKey)
+                {
+                    continue;
+                }
+                if (!string.IsNullOrWhiteSpace(this.searchQuery)
+                    && npcName.IndexOf(this.searchQuery, StringComparison.OrdinalIgnoreCase) < 0)
                 {
                     continue;
                 }
