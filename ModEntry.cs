@@ -30,6 +30,11 @@ namespace NpcOutfitSelector
 
         private readonly Dictionary<string, string> selectedCategoryByNpc = new();
         private readonly List<AppearancePreviewGrid> activeGrids = new();
+
+        // Every NPC this session has ever had an override for, kept because a save that *removes*
+        // overrides still has to repaint the characters those overrides used to apply to. Reloading
+        // one that didn't actually change is harmless — it just re-picks the same appearance.
+        private readonly HashSet<string> npcsTouchedByConfig = new(StringComparer.OrdinalIgnoreCase);
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
@@ -374,15 +379,19 @@ namespace NpcOutfitSelector
 
         private ModConfig LoadConfig()
         {
+            ModConfig loaded;
             try
             {
-                return this.Helper.ReadConfig<ModConfig>();
+                loaded = this.Helper.ReadConfig<ModConfig>();
             }
             catch (Exception ex)
             {
                 this.Monitor.Log($"Could not read config.json, starting fresh: {ex.Message}", LogLevel.Warn);
-                return new ModConfig();
+                loaded = new ModConfig();
             }
+
+            this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
+            return loaded;
         }
 
         private Dictionary<string, CharacterData> LoadCharacters()
@@ -540,12 +549,18 @@ namespace NpcOutfitSelector
 
                     // The game only re-picks an NPC's appearance when it warps between locations —
                     // reload explicitly so a save-in-progress updates immediately.
-                    if (Context.IsWorldReady)
+                    if (!Context.IsWorldReady)
                     {
-                        foreach (string npcName in this.config.SelectedOutfits.Keys)
-                        {
-                            Game1.getCharacterFromName(npcName)?.reloadSprite();
-                        }
+                        return;
+                    }
+
+                    // Deliberately not just the current keys: "Default" empties the whole config
+                    // before this runs, so the characters that need repainting are exactly the ones
+                    // no longer listed here.
+                    this.npcsTouchedByConfig.UnionWith(this.config.SelectedOutfits.Keys);
+                    foreach (string npcName in this.npcsTouchedByConfig)
+                    {
+                        Game1.getCharacterFromName(npcName)?.reloadSprite();
                     }
                 },
                 titleScreenOnly: false
