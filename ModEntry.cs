@@ -341,6 +341,59 @@ namespace NpcOutfitSelector
             gmcm.OpenModMenu(this.ModManifest);
         }
 
+        // Which weather/location the two narrowing dropdowns should open on: the segments of the
+        // most specific saved override that actually applies to this NPC right now. Opening on
+        // Any/Any instead would show the plain-season pick as checked while the character in the
+        // world is visibly wearing a narrower one.
+        private (string Weather, string Location) ResolveActiveAxes(
+            string npcName, string baseCategory, IReadOnlyDictionary<string, GameLocation> npcLocations)
+        {
+            string any = AppearanceCategory.AnyOption;
+
+            if (!this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
+                || !npcLocations.TryGetValue(npcName, out GameLocation location)
+                || location is null)
+            {
+                return (any, any);
+            }
+
+            string currentWeather = AppearanceCategory.WeatherKeyForConstant(location.GetWeather()?.Weather);
+            string currentLocation = AppearanceCategory.LocationKeyFor(location.IsOutdoors);
+
+            string bestWeather = any;
+            string bestLocation = any;
+            int bestScore = -1;
+
+            foreach (string key in byCategory.Keys)
+            {
+                (string keyBase, string keyWeather, string keyLocation) = AppearanceCategory.Decompose(key);
+
+                if (!keyBase.Equals(baseCategory, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                // A null segment means "any", which always applies; a set one has to match reality.
+                if (keyWeather is not null && !keyWeather.Equals(currentWeather, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                if (keyLocation is not null && !keyLocation.Equals(currentLocation, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                int score = AppearanceCategory.ScoreForCategory(key);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestWeather = keyWeather ?? any;
+                    bestLocation = keyLocation ?? any;
+                }
+            }
+
+            return (bestWeather, bestLocation);
+        }
+
         private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
         {
             if (this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
@@ -625,6 +678,18 @@ namespace NpcOutfitSelector
             int npcCount = 0;
             int appearanceCount = 0;
 
+            // Gathered once rather than per NPC: getCharacterFromName searches every loaded
+            // location, and this menu is built for the whole cast at a time.
+            var npcLocations = new Dictionary<string, GameLocation>(StringComparer.OrdinalIgnoreCase);
+            if (Context.IsWorldReady)
+            {
+                Utility.ForEachVillager(npc =>
+                {
+                    npcLocations[npc.Name] = npc.currentLocation;
+                    return true;
+                });
+            }
+
             var displayAppearancesByNpc = new Dictionary<string, List<CharacterAppearanceData>>(StringComparer.OrdinalIgnoreCase);
             foreach (var pair in characters)
             {
@@ -668,10 +733,10 @@ namespace NpcOutfitSelector
                     ? currentSeasonCategory
                     : categories[0];
 
-                // Both narrowing axes start at "Any" for the same reason — a leftover Snowing from
-                // the previous visit would quietly send the next pick to a different key.
-                this.selectedWeatherByNpc[npcName] = AppearanceCategory.AnyOption;
-                this.selectedLocationByNpc[npcName] = AppearanceCategory.AnyOption;
+                (string activeWeather, string activeLocation) = this.ResolveActiveAxes(
+                    npcName, this.selectedCategoryByNpc[npcName], npcLocations);
+                this.selectedWeatherByNpc[npcName] = activeWeather;
+                this.selectedLocationByNpc[npcName] = activeLocation;
 
                 gmcm.AddTextOption(
                     mod: this.ModManifest,
@@ -690,6 +755,7 @@ namespace NpcOutfitSelector
                     getValue: () => this.selectedWeatherByNpc[npcName],
                     setValue: value => this.selectedWeatherByNpc[npcName] = value,
                     choices: AppearanceCategory.WeatherChoices,
+                    formatChoice: AppearanceCategory.FormatWeatherChoice,
                     fieldId: $"{WeatherFieldIdPrefix}{npcName}"
                 );
 

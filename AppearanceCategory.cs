@@ -26,9 +26,15 @@ namespace NpcOutfitSelector
 
         private static readonly string[] Seasons = { "Spring", "Summer", "Fall", "Winter" };
 
-        // Player-facing weather names (what the dropdown shows and what lands in config.json)
-        // mapped to the game's own weather constants used inside a WEATHER query.
-        private static readonly Dictionary<string, string> WeatherConstantsByLabel = new(StringComparer.OrdinalIgnoreCase)
+        // Three separate things, deliberately not collapsed into one string:
+        //
+        //   key       what a category key and a local-asset filename contain — kept space-free so
+        //             both stay easy to type and to split
+        //   constant  what the game's own WEATHER query compares against
+        //   label     what the dropdown displays, via GMCM's formatChoice
+        //
+        // Only the key is permanent: it goes into players' config.json.
+        private static readonly Dictionary<string, string> WeatherConstantsByKey = new(StringComparer.OrdinalIgnoreCase)
         {
             ["Sunny"] = "Sun",
             ["Raining"] = "Rain",
@@ -38,11 +44,27 @@ namespace NpcOutfitSelector
             ["Windy"] = "Wind",
         };
 
-        private static readonly Dictionary<string, string> WeatherLabelsByConstant =
-            WeatherConstantsByLabel.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
+        // Only the keys that don't already read well; everything else displays as-is.
+        private static readonly Dictionary<string, string> WeatherLabelsByKey = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["GreenRain"] = "Green Rain",
+        };
+
+        private static readonly Dictionary<string, string> WeatherKeysByConstant =
+            WeatherConstantsByKey.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
 
         public static readonly string[] WeatherChoices =
-            new[] { AnyOption }.Concat(WeatherConstantsByLabel.Keys).ToArray();
+            new[] { AnyOption }.Concat(WeatherConstantsByKey.Keys).ToArray();
+
+        public static string FormatWeatherChoice(string key) =>
+            WeatherLabelsByKey.TryGetValue(key ?? string.Empty, out string label) ? label : key;
+
+        // Null for weathers with no key of their own (Festival, Wedding) — the game sets those
+        // itself and they aren't offered as choices.
+        public static string WeatherKeyForConstant(string weatherConstant) =>
+            WeatherKeysByConstant.TryGetValue(weatherConstant ?? string.Empty, out string key) ? key : null;
+
+        public static string LocationKeyFor(bool isOutdoors) => isOutdoors ? OutdoorValue : IndoorValue;
 
         public static readonly string[] LocationChoices = { AnyOption, IndoorValue, OutdoorValue };
 
@@ -92,7 +114,7 @@ namespace NpcOutfitSelector
                 {
                     location = parts[i];
                 }
-                else if (WeatherConstantsByLabel.ContainsKey(parts[i]))
+                else if (WeatherConstantsByKey.ContainsKey(parts[i]))
                 {
                     weather = parts[i];
                 }
@@ -158,7 +180,7 @@ namespace NpcOutfitSelector
                 }
             }
 
-            if (weather is not null && WeatherConstantsByLabel.TryGetValue(weather, out string weatherConstant))
+            if (weather is not null && WeatherConstantsByKey.TryGetValue(weather, out string weatherConstant))
             {
                 // "Here" resolves to the NPC's own current location, which is what
                 // NPC.ChooseAppearance passes as the query context.
@@ -244,7 +266,7 @@ namespace NpcOutfitSelector
                 string[] extras = token.Substring(season.Length).Split('_', StringSplitOptions.RemoveEmptyEntries);
 
                 string weather = extras
-                    .FirstOrDefault(e => WeatherConstantsByLabel.ContainsKey(e));
+                    .FirstOrDefault(e => WeatherConstantsByKey.ContainsKey(e));
                 string location = extras.Any(e => e.StartsWith(IndoorValue, StringComparison.OrdinalIgnoreCase)) ? IndoorValue
                     : extras.Any(e => e.StartsWith(OutdoorValue, StringComparison.OrdinalIgnoreCase)) ? OutdoorValue
                     : null;
@@ -252,7 +274,7 @@ namespace NpcOutfitSelector
                 // Normalize casing so "winter_snowing" and "Winter_Snowing" are one category.
                 if (weather is not null)
                 {
-                    weather = WeatherConstantsByLabel.Keys.First(k => k.Equals(weather, StringComparison.OrdinalIgnoreCase));
+                    weather = WeatherConstantsByKey.Keys.First(k => k.Equals(weather, StringComparison.OrdinalIgnoreCase));
                 }
 
                 return Compose(season, weather, location);
@@ -370,7 +392,7 @@ namespace NpcOutfitSelector
             }
 
             string weatherConstant = match.Groups[1].Value.Trim(',', '"', '\'', ' ');
-            return WeatherLabelsByConstant.TryGetValue(weatherConstant, out string label) ? label : null;
+            return WeatherKeysByConstant.TryGetValue(weatherConstant, out string label) ? label : null;
         }
 
         public static int SortRank(string category) =>
