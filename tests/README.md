@@ -31,5 +31,6 @@ them at startup from the path baked in at build time — see `Program.cs`.
 | `CategoryKeyTests.cs` | The tests themselves, one method per area. |
 | `Assert.cs` | Small harness — prints expected next to actual and collects failures. |
 
-`CategoryKeyTests` also reads `planning/test-config-1.0.1.json`, a real config in the 1.0.1
-shape, and checks every key in it individually rather than trusting a hardcoded list.
+`CategoryKeyTests` also reads `fixtures/config-1.0.1.json`, a real config in the 1.0.1
+shape, and checks every key in it individually rather than trusting a hardcoded list. It is
+copied to the output folder on build.

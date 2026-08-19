@@ -210,11 +210,11 @@ namespace NpcOutfitSelector.Tests
             Assert.Equal("a key inside the Id",
                 Classify(id: "LocalAsset::Alex::Winter::Weather_Snowing::Winter_Snowing"), "Winter::Weather_Snowing");
 
-            Assert.Section("The real 1.0.1 config on disk");
-            string fixture = FindRepoFile(Path.Combine("planning", "test-config-1.0.1.json"));
-            if (fixture is null)
+            Assert.Section("A real config in the 1.0.1 shape");
+            string fixture = Path.Combine(AppContext.BaseDirectory, "fixtures", "config-1.0.1.json");
+            if (!File.Exists(fixture))
             {
-                Assert.Equal("fixture found", "missing", "planning/test-config-1.0.1.json");
+                Assert.Equal("fixture found", "missing", fixture);
                 return;
             }
 
@@ -256,18 +256,5 @@ namespace NpcOutfitSelector.Tests
                 Sprite = "Characters/X",
             });
 
-        // Walks up from the test binary so the fixture is found however the project is run.
-        private static string FindRepoFile(string relativePath)
-        {
-            for (DirectoryInfo dir = new(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
-            {
-                string candidate = Path.Combine(dir.FullName, relativePath);
-                if (File.Exists(candidate))
-                {
-                    return candidate;
-                }
-            }
-            return null;
-        }
     }
 }

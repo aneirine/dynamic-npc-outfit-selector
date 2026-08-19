@@ -2,4 +2,7 @@ bin/
 obj/
 .vs/
 *.user
+
+# Working notes, kept on disk only.
 CLAUDE.md
+planning/
