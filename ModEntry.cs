@@ -7,6 +7,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Characters;
+using StardewValley.Menus;
 
 namespace NpcOutfitSelector
 {
@@ -14,7 +15,6 @@ namespace NpcOutfitSelector
     {
         private const string CategoryFieldIdPrefix = "SelectedCategory_";
         private const string SearchQueryFieldId = "Search_Query";
-        private const string SearchTriggerFieldId = "Search_Trigger";
 
         // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
         // forced entry doesn't show up as a duplicate of its source.
@@ -32,12 +32,18 @@ namespace NpcOutfitSelector
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
-        // Typed live via OnFieldChanged; only actually applied to the visible list when the
-        // adjacent Search toggle fires (see ApplySearchFilter) — not on every keystroke, since GMCM's
-        // own Textbox only takes keyboard focus back via a mouse click, so rebuilding the menu (which
-        // replaces it with a fresh Textbox) on every character would force a re-click after each letter.
+        // Typed live via OnFieldChanged; only actually applied to the visible list when Enter is
+        // pressed (see ApplySearchFilter) — not on every keystroke, since GMCM's own Textbox only
+        // takes keyboard focus back via a mouse click, so rebuilding the menu (which replaces it
+        // with a fresh Textbox) on every character would force a re-click after each letter.
         private string searchQuery = "";
-        private bool searchTrigger;
+
+        // Set right before our own ApplySearchFilter() calls OpenModMenu(), so the MenuChanged
+        // event that reopen fires doesn't trigger a second BuildMenu() — a second build would
+        // create a fresh set of AppearancePreviewGrid instances subscribed to click events, while
+        // the menu already on screen (built by OpenModMenu() from the first, now-orphaned set)
+        // keeps drawing them but can never route clicks to them again.
+        private bool suppressNextMenuChangedRebuild;
 
         public override void Entry(IModHelper helper)
         {
@@ -46,6 +52,7 @@ namespace NpcOutfitSelector
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
             helper.ConsoleCommands.Add(
                 "outfit_dump",
@@ -142,8 +149,59 @@ namespace NpcOutfitSelector
             // latest Data/Characters instead of whatever was loaded at GameLaunched/SaveLoaded.
             if (e.NewMenu is not null && e.NewMenu.GetType().Name.Contains("ModConfigMenu"))
             {
+                if (this.suppressNextMenuChangedRebuild)
+                {
+                    this.suppressNextMenuChangedRebuild = false;
+                    return;
+                }
+
+                // A genuinely fresh open starts unfiltered — otherwise the list silently stays
+                // narrowed to whatever was searched for the last time the menu was open.
+                this.searchQuery = "";
                 this.BuildMenu();
             }
+        }
+
+        // Mirrors GMCM's own internal "ActiveConfigMenu" lookup: on the title screen it nests its
+        // menu under TitleMenu.subMenu instead of replacing Game1.activeClickableMenu, and in-game
+        // it's chained as a child menu of the pause menu via SetChildMenu rather than becoming
+        // Game1.activeClickableMenu directly — so both have to be walked, not just read once.
+        private static IClickableMenu GetActiveGmcmMenu()
+        {
+            IClickableMenu menu = Game1.activeClickableMenu is TitleMenu
+                ? TitleMenu.subMenu
+                : Game1.activeClickableMenu;
+
+            while (menu?.GetChildMenu() is not null)
+            {
+                menu = menu.GetChildMenu();
+            }
+
+            return menu is not null && menu.GetType().Name.Contains("ModConfigMenu") ? menu : null;
+        }
+
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (e.Button != SButton.Enter)
+            {
+                return;
+            }
+
+            if (GetActiveGmcmMenu() is null)
+            {
+                return;
+            }
+
+            // Deferred a tick so this doesn't reopen the menu while the game is still mid-handling
+            // this same keypress — calling OpenModMenu synchronously here caused a reentrant
+            // MenuChanged -> BuildMenu -> OpenModMenu loop that crashed the game.
+            this.Helper.Events.GameLoop.UpdateTicked += this.OnSearchApplyTicked;
+        }
+
+        private void OnSearchApplyTicked(object sender, UpdateTickedEventArgs e)
+        {
+            this.Helper.Events.GameLoop.UpdateTicked -= this.OnSearchApplyTicked;
+            this.ApplySearchFilter();
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -229,13 +287,6 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            if (fieldId == SearchTriggerFieldId && value is bool triggered)
-            {
-                this.searchTrigger = triggered;
-                this.ApplySearchFilter();
-                return;
-            }
-
             if (fieldId.StartsWith(CategoryFieldIdPrefix) && value is string category)
             {
                 string npcName = fieldId.Substring(CategoryFieldIdPrefix.Length);
@@ -246,12 +297,18 @@ namespace NpcOutfitSelector
         // Rebuilds the (now-filtered) option list, then asks GMCM to replace the already-open menu
         // with a fresh one reading it — GMCM's own Table is built once and can't be swapped in place,
         // so this is the only way to make the filter visible without the player leaving the page.
+        // Only ever called from OnSearchApplyTicked, a tick after the Enter keypress that requested
+        // it, so this is never on GMCM's own call stack when it reopens the menu.
         private void ApplySearchFilter()
         {
             this.BuildMenu();
 
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            gmcm?.OpenModMenu(this.ModManifest);
+            if (gmcm is not null)
+            {
+                this.suppressNextMenuChangedRebuild = true;
+                gmcm.OpenModMenu(this.ModManifest);
+            }
         }
 
         private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
@@ -510,18 +567,10 @@ namespace NpcOutfitSelector
             gmcm.AddTextOption(
                 mod: this.ModManifest,
                 name: () => "Search NPCs",
-                tooltip: () => "Type a name, then toggle Search below to filter the list.",
+                tooltip: () => "Type a name, then press Enter to filter the list. Clear the box and press Enter again to show everyone.",
                 getValue: () => this.searchQuery,
                 setValue: value => this.searchQuery = value,
                 fieldId: SearchQueryFieldId
-            );
-            gmcm.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "Search",
-                tooltip: () => "Apply the name filter above. Leave the search box empty and toggle to show everyone again.",
-                getValue: () => this.searchTrigger,
-                setValue: value => this.searchTrigger = value,
-                fieldId: SearchTriggerFieldId
             );
 
             int npcCount = 0;
