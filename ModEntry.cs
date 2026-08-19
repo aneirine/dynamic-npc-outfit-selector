@@ -261,7 +261,7 @@ namespace NpcOutfitSelector
 
                         string sprite;
                         string portrait;
-                        if (outfitId == AppearanceCategory.DefaultAppearanceId)
+                        if (outfitId == AppearanceConstants.DefaultAppearanceId)
                         {
                             sprite = $"Characters/{npcName}";
                             portrait = $"Portraits/{npcName}";
@@ -374,7 +374,7 @@ namespace NpcOutfitSelector
         private (string Weather, string Location) ResolveActiveAxes(
             string npcName, string baseCategory, IReadOnlyDictionary<string, GameLocation> npcLocations)
         {
-            string any = AppearanceCategory.AnyOption;
+            string any = AppearanceConstants.AnyOption;
 
             if (!this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
                 || !npcLocations.TryGetValue(npcName, out GameLocation location)
@@ -387,7 +387,7 @@ namespace NpcOutfitSelector
             // Both granularities of the same axis are true at once — the Beach *is* outdoors — so
             // a key naming either one applies, and the score decides which the menu opens on.
             string currentCoarse = AppearanceCategory.LocationKeyFor(location.IsOutdoors);
-            string currentPlace = AppearanceCategory.ExactPlacePrefix + location.Name;
+            string currentPlace = location.Name;
 
             string bestWeather = any;
             string bestWhere = any;
@@ -466,7 +466,7 @@ namespace NpcOutfitSelector
                 }
             }
 
-            return best?.Id ?? AppearanceCategory.DefaultAppearanceId;
+            return best?.Id ?? AppearanceConstants.DefaultAppearanceId;
         }
 
         private void SetSelectedOutfitId(string npcName, string category, string outfitId)
@@ -524,7 +524,7 @@ namespace NpcOutfitSelector
                 portraitAssetByKey.TryGetValue($"{spriteFile.NpcName}::{spriteFile.RawCondition}", out string portraitAsset);
 
                 CharacterAppearanceData entry = AppearanceCategory.BuildLocalEntry(
-                    id: $"{AppearanceCategory.LocalAssetIdPrefix}{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
+                    id: $"{AppearanceConstants.LocalAssetIdPrefix}{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
                     category: category,
                     sprite: spriteAsset,
                     portrait: portraitAsset);
@@ -549,7 +549,7 @@ namespace NpcOutfitSelector
             {
                 new CharacterAppearanceData
                 {
-                    Id = AppearanceCategory.DefaultAppearanceId,
+                    Id = AppearanceConstants.DefaultAppearanceId,
                     Sprite = $"Characters/{npcName}",
                     Portrait = $"Portraits/{npcName}",
                 },

@@ -25,9 +25,13 @@ After a season you can also add a weather and/or a place, in any order, separate
     weather: Sunny, Raining, Lightning, Snowing, GreenRain, Windy
     where:   Indoor, Outdoor, or a location name such as Beach, Town, Saloon, Mountain
 
-So Haley_Winter_Snowing_Outdoor.png lands in the "Winter::Snowing::Outdoor" slot, which beats plain
+A weather or place is stored in the key as Weather_X / Where_X, but you do not type those prefixes
+in the file name - Haley_Summer_Beach.png is enough. File names can only use locations this mod
+already knows; for one added by another mod, set it from the menu or edit config.json instead.
+
+So Haley_Winter_Snowing_Outdoor.png lands in the "Winter::Weather_Snowing::Where_Outdoor" slot, which beats plain
 "Winter" whenever it's actually snowing and she's outside. Haley_Summer_Beach.png lands in
-"Summer::@Beach" and beats both. You don't have to name files this way — every sprite here can be
+"Summer::Where_Beach" and beats both. You don't have to name files this way — every sprite here can be
 assigned to any slot from the menu's dropdowns regardless of its name.
 
 These show up as extra pickable outfits in the NPC Outfit Selector menu (GMCM) alongside anything

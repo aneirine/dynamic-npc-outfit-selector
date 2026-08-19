@@ -50,15 +50,24 @@ discretion — if something looks off, just switch that slot back to "no overrid
 The three dropdowns combine into a single key, which is what you'll see in `config.json`:
 
 ```
-Spring                      just spring
-Spring::Raining             spring, but only when it's raining
-Spring::Indoor              spring, but only indoors
-Spring::@Beach              spring, but only while they're at the beach
-Winter::Snowing::Outdoor    winter, snowing, and outdoors
+Spring                                  just spring
+Spring::Weather_Raining                 spring, but only when it's raining
+Spring::Where_Indoor                    spring, but only indoors
+Spring::Where_Beach                     spring, but only while they're at the beach
+Winter::Weather_Snowing::Where_Outdoor  winter, snowing, and outdoors
+Weather_Sunny                           any season, as long as it's sunny
 ```
 
-An exact place is written with an `@` in front of it, which is what tells it apart from the plain
-`Indoor` / `Outdoor` setting — and from a category that happens to have the same name.
+The first part is the category. Every part after it says which setting it belongs to, written
+`Setting_Value`, and narrows when the category applies. Order doesn't matter when you read them,
+and the mod always saves them as category, weather, place.
+
+Naming the setting is what lets a value the mod has never seen still work. Other mods can add both
+new locations *and* new weather types; because the part already says which it is, an unfamiliar
+value is handed to the game untouched instead of being guessed at.
+
+The category itself is the one part with no name in front, so it's also the one part you can leave
+out entirely — `Weather_Sunny` on its own applies in every season.
 
 You can set as many of these as you like for the same character, and they can all be true at once.
 **The more specific one wins** — the key with more parts beats the key with fewer.
@@ -67,12 +76,12 @@ Each key gets a score, and the highest score is the outfit you see:
 
 | Part of the key | Points |
 |---|---|
-| A custom category of your own (no game condition attached) | 0 |
+| No category at all, or a custom one of your own | 0 |
 | A season — Spring, Summer, Fall, Winter | 10 |
 | A festival — Egg Festival, Flower Dance, ... | 20 |
-| `::Indoor` or `::Outdoor` | +1 |
-| A weather, e.g. `::Snowing` | +2 |
-| An exact place, e.g. `::@Beach` | +4 |
+| `Where_Indoor` or `Where_Outdoor` | +1 |
+| A weather, e.g. `Weather_Snowing` | +2 |
+| An exact place, e.g. `Where_Beach` | +4 |
 
 So for one character:
 
@@ -80,10 +89,10 @@ So for one character:
 |---|---|---|
 | `Casual` | 0 | Whenever nothing below applies — a baseline look |
 | `Winter` | 10 | Any winter day |
-| `Winter::Outdoor` | 11 | Outdoors in winter, beating plain `Winter` |
-| `Winter::Snowing` | 12 | Snowing in winter, beating both above |
-| `Winter::Snowing::Outdoor` | 13 | Outdoors while it snows, beating everything above |
-| `Winter::@Town` | 14 | In town, beating every plain-weather key above |
+| `Winter::Where_Outdoor` | 11 | Outdoors in winter, beating plain `Winter` |
+| `Winter::Weather_Snowing` | 12 | Snowing in winter, beating both above |
+| `Winter::Weather_Snowing::Where_Outdoor` | 13 | Outdoors while it snows, beating everything above |
+| `Winter::Where_Town` | 14 | In town, beating every plain-weather key above |
 | `Winter Star` | 20 | During the festival, beating every winter key |
 
 The three add-on scores are 1, 2 and 4, so every possible combination lands on its own number and
@@ -91,25 +100,26 @@ two keys can never tie. That matters, because when two outfits genuinely tie, th
 between them at random rather than taking the first one. The scoring exists so that never happens.
 
 **`Indoor` and `Outdoor` act as fallbacks for exact places.** They're the same setting, just less
-specific, and you don't have to do anything to make this work: at the beach, a `::@Beach` key wins
-if you set one, otherwise `::Outdoor` applies (the beach *is* outdoors), otherwise the plain
+specific, and you don't have to do anything to make this work: at the beach, a `::Where_Beach` key wins
+if you set one, otherwise `::Where_Outdoor` applies (the beach *is* outdoors), otherwise the plain
 season, otherwise the game's own choice.
 
 A few notes:
 
 - Festivals outrank seasons on purpose: on Egg Festival day, your festival outfit wins over your
   spring one.
-- Weather counts for more than indoor/outdoor, so `Winter::Snowing` beats `Winter::Indoor`. Both
+- Weather counts for more than indoor/outdoor, so `Winter::Weather_Snowing` beats `Winter::Where_Indoor`. Both
   have two parts, and something had to break the tie.
-- "Where" means where the **NPC** is, not where you are. `Spring::@Beach` dresses Alex for the
+- "Where" means where the **NPC** is, not where you are. `Spring::Where_Beach` dresses Alex for the
   beach when *he* goes there.
-- Impossible combinations are allowed and simply never trigger — `Winter::GreenRain` is harmless,
+- Impossible combinations are allowed and simply never trigger — `Winter::Weather_GreenRain` is harmless,
   it just never comes up in vanilla. Nothing is filtered out, in case a weather mod makes it real.
-- The `Beach` **category** (no `@`) is a different thing from the `::@Beach` **place**: the
-  category is Ginger Island's resort attire, which the game picks by its own mechanism, while
-  `::@Beach` is Pelican Town's beach map.
-- If a location isn't in the dropdown, you can still type its name into `config.json` by hand —
-  whatever follows the `@` is passed straight to the game.
+- Anything the dropdowns don't offer can be typed into `config.json` by hand and still works:
+  `Spring::Weather_RedRain` for a weather mod's own weather, or `Spring::Where_SomeModdedMap` for
+  a location this mod hasn't heard of. The value after the underscore goes to the game unchanged.
+- The `Beach` **category** is a different thing from the `Where_Beach` **place**: the category is
+  Ginger Island's resort attire, which the game picks by its own mechanism, while `Where_Beach` is
+  Pelican Town's beach map.
 
 ## Requirements
 
@@ -134,7 +144,7 @@ A few notes:
 - The "Beach" category covers Ginger Island's beach resort, which the game selects by its own
   island-attire mechanism. Pelican Town's beach isn't that — the game swaps that look by a
   filename convention this mod can't hook into. You can still dress someone for it with an exact
-  place, e.g. `Summer::@Beach`.
+  place, e.g. `Summer::Where_Beach`.
 - Some assets may be replaced with default ones in case it doesn't have the required animation
   in their assets.
 - Forcing a festival or beach outfit onto a regular season slot (or vice versa) can cause visual
