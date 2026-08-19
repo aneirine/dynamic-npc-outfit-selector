@@ -34,10 +34,64 @@ discretion — if something looks off, just switch that slot back to "no overrid
 - Pick a condition from a dropdown — Spring, Summer, Fall, Winter, Beach, or a specific festival
   — then check the outfit you want for it. Leave it on the blank "no override" card to let the
   game (or whatever mod normally handles that NPC) keep deciding on its own.
+- Narrow it further with two more dropdowns: **Weather** (Sunny, Raining, Lightning, Snowing,
+  GreenRain, Windy) and **Location** (Indoor, Outdoor). Both default to "Any". So you can give
+  someone a plain winter look, and a heavier coat that only shows up outdoors while it's snowing.
 - Applies live: no restart, no reload, just hit Save and NPCs already in the world update
   immediately.
 - Works with any Content Patcher appearance pack automatically, and also with your own loose PNG
   files if you don't have (or want to make) a Content Patcher pack of your own.
+
+## How the mod decides which outfit wins
+
+The three dropdowns combine into a single key, which is what you'll see in `config.json`:
+
+```
+Spring                      just spring
+Spring::Raining             spring, but only when it's raining
+Spring::Indoor              spring, but only indoors
+Winter::Snowing::Outdoor    winter, snowing, and outdoors
+```
+
+You can set as many of these as you like for the same character, and they can all be true at once.
+**The more specific one wins** — the key with more parts beats the key with fewer.
+
+Each key gets a score, and the highest score is the outfit you see:
+
+| Part of the key | Points |
+|---|---|
+| A custom category of your own (no game condition attached) | 0 |
+| A season — Spring, Summer, Fall, Winter | 10 |
+| A festival — Egg Festival, Flower Dance, ... | 20 |
+| `::Indoor` or `::Outdoor` | +1 |
+| A weather, e.g. `::Snowing` | +2 |
+
+So for one character:
+
+| Key | Score | When it wins |
+|---|---|---|
+| `Casual` | 0 | Whenever nothing below applies — a baseline look |
+| `Winter` | 10 | Any winter day |
+| `Winter::Outdoor` | 11 | Outdoors in winter, beating plain `Winter` |
+| `Winter::Snowing` | 12 | Snowing in winter, beating both above |
+| `Winter::Snowing::Outdoor` | 13 | Outdoors while it snows, beating everything above |
+| `Winter Star` | 20 | During the festival, beating every winter key |
+
+Two keys only ever score the same when they can't both be true anyway — you can't be indoors and
+outdoors at once, and there's only one weather at a time. That matters, because when two outfits
+genuinely tie, the game picks between them at random rather than taking the first one. The scoring
+exists specifically so that never happens.
+
+A few notes:
+
+- Festivals outrank seasons on purpose: on Egg Festival day, your festival outfit wins over your
+  spring one.
+- Weather counts for more than indoor/outdoor, so `Winter::Snowing` beats `Winter::Indoor`. Both
+  have two parts, and something had to break the tie.
+- Impossible combinations are allowed and simply never trigger — `Winter::GreenRain` is harmless,
+  it just never comes up in vanilla. Nothing is filtered out, in case a weather mod makes it real.
+- `Beach` is separate from all of this. Ginger Island's beach attire is chosen by its own mechanism
+  in the game, so it takes no weather or location parts and never competes with the keys above.
 
 ## Requirements
 
@@ -52,8 +106,8 @@ discretion — if something looks off, just switch that slot back to "no overrid
      way — just install it normally and its outfits show up here automatically), or
   2. Your own PNGs dropped straight into `Mods/Dynamic NPC Outfit Selector/assets/Characters/`
      and `assets/Portraits/`, named `<NpcName>_<Condition>.png` (e.g. `Haley_Spring.png`,
-     `Haley_Beach.png`). Subfolders don't matter; portraits are optional. Full instructions are
-     in `assets/README.txt` once the mod is installed.
+     `Haley_Beach.png`, `Haley_Winter_Snowing_Outdoor.png`). Subfolders don't matter; portraits
+     are optional. Full instructions are in `assets/README.txt` once the mod is installed.
 
 ## Known limitations
 

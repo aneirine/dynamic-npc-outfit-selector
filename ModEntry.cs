@@ -14,6 +14,8 @@ namespace NpcOutfitSelector
     public class ModEntry : Mod
     {
         private const string CategoryFieldIdPrefix = "SelectedCategory_";
+        private const string WeatherFieldIdPrefix = "SelectedWeather_";
+        private const string LocationFieldIdPrefix = "SelectedLocation_";
         private const string SearchQueryFieldId = "Search_Query";
         private const string MenuHotkeyFieldId = "Menu_Hotkey";
 
@@ -28,7 +30,12 @@ namespace NpcOutfitSelector
         // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
         private const string UnrevealedNpcKey = "???";
 
+        // The three axes the player picks per NPC; combined into one category key (see
+        // AppearanceCategory.Compose) at the moment an outfit is checked.
         private readonly Dictionary<string, string> selectedCategoryByNpc = new();
+        private readonly Dictionary<string, string> selectedWeatherByNpc = new();
+        private readonly Dictionary<string, string> selectedLocationByNpc = new();
+
         private readonly List<AppearancePreviewGrid> activeGrids = new();
 
         // Every NPC this session has ever had an override for, kept because a save that *removes*
@@ -298,10 +305,22 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            if (fieldId.StartsWith(CategoryFieldIdPrefix) && value is string category)
+            if (value is not string choice)
             {
-                string npcName = fieldId.Substring(CategoryFieldIdPrefix.Length);
-                this.selectedCategoryByNpc[npcName] = category;
+                return;
+            }
+
+            if (fieldId.StartsWith(CategoryFieldIdPrefix))
+            {
+                this.selectedCategoryByNpc[fieldId.Substring(CategoryFieldIdPrefix.Length)] = choice;
+            }
+            else if (fieldId.StartsWith(WeatherFieldIdPrefix))
+            {
+                this.selectedWeatherByNpc[fieldId.Substring(WeatherFieldIdPrefix.Length)] = choice;
+            }
+            else if (fieldId.StartsWith(LocationFieldIdPrefix))
+            {
+                this.selectedLocationByNpc[fieldId.Substring(LocationFieldIdPrefix.Length)] = choice;
             }
         }
 
@@ -649,6 +668,11 @@ namespace NpcOutfitSelector
                     ? currentSeasonCategory
                     : categories[0];
 
+                // Both narrowing axes start at "Any" for the same reason — a leftover Snowing from
+                // the previous visit would quietly send the next pick to a different key.
+                this.selectedWeatherByNpc[npcName] = AppearanceCategory.AnyOption;
+                this.selectedLocationByNpc[npcName] = AppearanceCategory.AnyOption;
+
                 gmcm.AddTextOption(
                     mod: this.ModManifest,
                     name: () => "Select option",
@@ -659,11 +683,34 @@ namespace NpcOutfitSelector
                     fieldId: $"{CategoryFieldIdPrefix}{npcName}"
                 );
 
+                gmcm.AddTextOption(
+                    mod: this.ModManifest,
+                    name: () => "Weather",
+                    tooltip: () => "Narrow the choice above to one weather. Leave on Any to cover every weather.",
+                    getValue: () => this.selectedWeatherByNpc[npcName],
+                    setValue: value => this.selectedWeatherByNpc[npcName] = value,
+                    choices: AppearanceCategory.WeatherChoices,
+                    fieldId: $"{WeatherFieldIdPrefix}{npcName}"
+                );
+
+                gmcm.AddTextOption(
+                    mod: this.ModManifest,
+                    name: () => "Location",
+                    tooltip: () => "Narrow the choice above to indoors or outdoors. Leave on Any to cover both.",
+                    getValue: () => this.selectedLocationByNpc[npcName],
+                    setValue: value => this.selectedLocationByNpc[npcName] = value,
+                    choices: AppearanceCategory.LocationChoices,
+                    fieldId: $"{LocationFieldIdPrefix}{npcName}"
+                );
+
                 var previewGrid = new AppearancePreviewGrid(
                     this.Helper,
                     npcName,
                     displayAppearances,
-                    getCurrentCategory: () => this.selectedCategoryByNpc[npcName],
+                    getCurrentCategory: () => AppearanceCategory.Compose(
+                        this.selectedCategoryByNpc[npcName],
+                        this.selectedWeatherByNpc[npcName],
+                        this.selectedLocationByNpc[npcName]),
                     getSelectedOutfitId: category => this.GetSelectedOutfitId(
                         npcName, category, GetNaturalOutfitId(displayAppearances, category)),
                     setSelectedOutfitId: (category, outfitId) => this.SetSelectedOutfitId(npcName, category, outfitId),

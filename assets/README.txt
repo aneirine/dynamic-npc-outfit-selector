@@ -11,12 +11,23 @@ Examples:
     Haley_Spring.png
     Haley_Summer.png
     Haley_Winter_Indoor.png
+    Haley_Winter_Snowing.png
+    Haley_Winter_Snowing_Outdoor.png
     Haley_FlowerDance.png
     Haley_Beach.png
 
 <Condition> is matched against known seasons (Spring/Summer/Fall/Winter), "Beach", and the vanilla
 festival names (Egg Festival, Flower Dance, Luau, etc. — abbreviations like "FlowerDance" or
 "EggFest" are recognized too). Anything else becomes its own custom category in the mod's menu.
+
+After a season you can also add a weather and/or a location, in any order, separated by underscores:
+
+    weather:  Sunny, Raining, Lightning, Snowing, GreenRain, Windy
+    location: Indoor, Outdoor
+
+So Haley_Winter_Snowing_Outdoor.png lands in the "Winter::Snowing::Outdoor" slot, which beats plain
+"Winter" whenever it's actually snowing and she's outside. You don't have to name files this way —
+every sprite here can be assigned to any slot from the menu's dropdowns regardless of its name.
 
 These show up as extra pickable outfits in the NPC Outfit Selector menu (GMCM) alongside anything
 provided by installed Content Patcher packs.
