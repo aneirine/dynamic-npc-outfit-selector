@@ -343,15 +343,28 @@ namespace NpcOutfitSelector
                 return AppearanceConstants.IslandCategory;
             }
 
-            // The mainland beach look isn't flagged by any structured field — the game swaps to it
-            // by filename convention, bypassing the Condition system entirely.
-            if ((app.Id?.Contains("Beach", StringComparison.OrdinalIgnoreCase) ?? false)
-                || (app.Sprite?.Contains("_Beach", StringComparison.OrdinalIgnoreCase) ?? false))
+            // No structured field marks the beach look; the game swaps to a "_Beach" texture by
+            // filename convention. Matched as a suffix, not a substring, so an outfit merely named
+            // something like "BeachPartyDress" isn't swept in.
+            if (HasBeachTextureSuffix(app.Sprite) || HasBeachTextureSuffix(app.Portrait))
             {
                 return AppearanceConstants.IslandCategory;
             }
 
             return Compose(ClassifyBase(app), ClassifyWeather(app), ClassifyLocation(app));
+        }
+
+        // True for "Characters/Haley_Beach", false for "Characters/Haley_BeachPartyDress".
+        private static bool HasBeachTextureSuffix(string assetPath)
+        {
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                return false;
+            }
+
+            int lastSeparator = assetPath.LastIndexOfAny(new[] { '/', '\\' });
+            string fileName = assetPath.Substring(lastSeparator + 1);
+            return fileName.EndsWith("_Beach", StringComparison.OrdinalIgnoreCase);
         }
 
         private static string ClassifyBase(CharacterAppearanceData app)

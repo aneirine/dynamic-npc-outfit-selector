@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using StardewModdingAPI;
+using StardewValley.GameData.Characters;
 
 namespace NpcOutfitSelector
 {
@@ -80,5 +81,48 @@ namespace NpcOutfitSelector
 
             return results;
         }
+
+        // Turns the scanned files into pickable appearance entries, pairing each sprite with the
+        // portrait named for the same condition. Portraits are optional, so a missing one is null
+        // rather than a skipped entry.
+        public static Dictionary<string, List<CharacterAppearanceData>> BuildOptions(
+            string modFolderPath, IReadOnlyList<string> knownNpcNames, IMonitor monitor)
+        {
+            List<LocalAssetFile> spriteFiles = ScanFolder(modFolderPath, "Characters", knownNpcNames, monitor);
+            List<LocalAssetFile> portraitFiles = ScanFolder(modFolderPath, "Portraits", knownNpcNames, monitor);
+
+            var portraitAssetByKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (LocalAssetFile portraitFile in portraitFiles)
+            {
+                portraitAssetByKey[$"{portraitFile.NpcName}::{portraitFile.RawCondition}"] =
+                    ToAssetName(portraitFile.RelativePath);
+            }
+
+            var result = new Dictionary<string, List<CharacterAppearanceData>>(StringComparer.OrdinalIgnoreCase);
+            foreach (LocalAssetFile spriteFile in spriteFiles)
+            {
+                string category = AppearanceCategory.NormalizeLocalCondition(spriteFile.RawCondition);
+                portraitAssetByKey.TryGetValue(
+                    $"{spriteFile.NpcName}::{spriteFile.RawCondition}", out string portraitAsset);
+
+                CharacterAppearanceData entry = AppearanceCategory.BuildLocalEntry(
+                    id: $"{AppearanceConstants.LocalAssetIdPrefix}{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
+                    category: category,
+                    sprite: ToAssetName(spriteFile.RelativePath),
+                    portrait: portraitAsset);
+
+                if (!result.TryGetValue(spriteFile.NpcName, out List<CharacterAppearanceData> list))
+                {
+                    list = new List<CharacterAppearanceData>();
+                    result[spriteFile.NpcName] = list;
+                }
+                list.Add(entry);
+            }
+
+            return result;
+        }
+
+        public static string ToAssetName(string relativePath) =>
+            AppearanceConstants.LocalAssetPathPrefix + Path.ChangeExtension(relativePath, null);
     }
 }

@@ -27,7 +27,6 @@ namespace NpcOutfitSelector
 
         // Asset namespace local PNGs (see LocalAssetScanner) are exposed under, so a forced entry
         // can reference them like any other texture.
-        private const string LocalAssetPrefix = "Mods/NpcOutfitSelector/LocalAssets/";
 
         // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
         private const string UnrevealedNpcKey = "???";
@@ -110,7 +109,7 @@ namespace NpcOutfitSelector
             }
 
             this.config ??= this.LoadConfig();
-            this.localAssetsByNpc ??= this.BuildLocalAssetOptions(characters.Keys.ToList());
+            this.localAssetsByNpc ??= LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, characters.Keys.ToList(), this.Monitor);
 
             List<CharacterAppearanceData> displayAppearances = this.BuildDisplayAppearances(npcName, data);
 
@@ -125,7 +124,7 @@ namespace NpcOutfitSelector
                 string natural = GetNaturalOutfitId(displayAppearances, category);
                 string overrideId = null;
                 bool hasOverride = hasOverrides && byCategory.TryGetValue(category, out overrideId);
-                string resolved = this.GetSelectedOutfitId(npcName, category, natural);
+                string resolved = this.config.GetSelectedOutfitId(npcName, category, natural);
 
                 this.Monitor.Log(
                     $"  {category,-20} natural={natural,-55} override={(hasOverride ? overrideId : "(none)"),-55} resolved={resolved}",
@@ -226,9 +225,9 @@ namespace NpcOutfitSelector
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.BaseName.StartsWith(LocalAssetPrefix, StringComparison.OrdinalIgnoreCase))
+            if (e.NameWithoutLocale.BaseName.StartsWith(AppearanceConstants.LocalAssetPathPrefix, StringComparison.OrdinalIgnoreCase))
             {
-                string relativePath = e.NameWithoutLocale.BaseName.Substring(LocalAssetPrefix.Length) + ".png";
+                string relativePath = e.NameWithoutLocale.BaseName.Substring(AppearanceConstants.LocalAssetPathPrefix.Length) + ".png";
                 e.LoadFromModFile<Texture2D>(relativePath, AssetLoadPriority.Medium);
                 return;
             }
@@ -243,7 +242,7 @@ namespace NpcOutfitSelector
                 this.config ??= this.LoadConfig();
 
                 IDictionary<string, CharacterData> data = asset.AsDictionary<string, CharacterData>().Data;
-                this.localAssetsByNpc ??= this.BuildLocalAssetOptions(data.Keys.ToList());
+                this.localAssetsByNpc ??= LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, data.Keys.ToList(), this.Monitor);
 
                 foreach (KeyValuePair<string, Dictionary<string, string>> npcOverrides in this.config.SelectedOutfits)
                 {
@@ -421,30 +420,6 @@ namespace NpcOutfitSelector
             return (bestWeather, bestWhere);
         }
 
-        private string GetSelectedOutfitId(string npcName, string category, string naturalOutfitId)
-        {
-            if (this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
-                && byCategory.TryGetValue(category, out string outfitId))
-            {
-                return outfitId;
-            }
-            return naturalOutfitId;
-        }
-
-        private bool HasOverride(string npcName, string category)
-        {
-            return this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
-                && byCategory.ContainsKey(category);
-        }
-
-        private void ClearOverride(string npcName, string category)
-        {
-            if (this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory))
-            {
-                byCategory.Remove(category);
-            }
-        }
-
         // Falls back to this NPC's own highest-priority (lowest Precedence) entry for the category,
         // instead of a blind "Default", when the player hasn't picked anything yet.
         private static string GetNaturalOutfitId(List<CharacterAppearanceData> displayAppearances, string category)
@@ -465,17 +440,6 @@ namespace NpcOutfitSelector
             return best?.Id ?? AppearanceConstants.DefaultAppearanceId;
         }
 
-        private void SetSelectedOutfitId(string npcName, string category, string outfitId)
-        {
-            // Staged in memory only — BuildMenu()'s save callback writes it to disk on Save.
-            if (!this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory))
-            {
-                byCategory = new Dictionary<string, string>();
-                this.config.SelectedOutfits[npcName] = byCategory;
-            }
-            byCategory[category] = outfitId;
-        }
-
         private ModConfig LoadConfig()
         {
             ModConfig loaded;
@@ -490,34 +454,8 @@ namespace NpcOutfitSelector
             }
 
             this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
-            MigrateLegacyKeys(loaded);
+            loaded.MigrateLegacyKeys();
             return loaded;
-        }
-
-        // Rewrites a key's base onto its canonical spelling (currently only Beach -> Island). Done
-        // on load rather than aliased, so re-saving can't leave both spellings on one NPC — they
-        // would score identically, and an exact tie is broken by weighted random.
-        internal static void MigrateLegacyKeys(ModConfig config)
-        {
-            foreach (Dictionary<string, string> byCategory in config.SelectedOutfits.Values)
-            {
-                List<string> stale = byCategory.Keys
-                    .Where(key => AppearanceCategory.CanonicalizeKey(key) != key)
-                    .ToList();
-
-                foreach (string key in stale)
-                {
-                    string canonical = AppearanceCategory.CanonicalizeKey(key);
-                    string outfitId = byCategory[key];
-                    byCategory.Remove(key);
-
-                    // An already-canonical key wins if somehow both are present.
-                    if (!byCategory.ContainsKey(canonical))
-                    {
-                        byCategory[canonical] = outfitId;
-                    }
-                }
-            }
         }
 
         private Dictionary<string, CharacterData> LoadCharacters()
@@ -526,45 +464,6 @@ namespace NpcOutfitSelector
             this.Helper.GameContent.InvalidateCache("Data/Characters");
             return this.Helper.GameContent.Load<Dictionary<string, CharacterData>>("Data/Characters");
         }
-
-        private Dictionary<string, List<CharacterAppearanceData>> BuildLocalAssetOptions(IReadOnlyList<string> knownNpcNames)
-        {
-            string modFolder = this.Helper.DirectoryPath;
-            List<LocalAssetFile> spriteFiles = LocalAssetScanner.ScanFolder(modFolder, "Characters", knownNpcNames, this.Monitor);
-            List<LocalAssetFile> portraitFiles = LocalAssetScanner.ScanFolder(modFolder, "Portraits", knownNpcNames, this.Monitor);
-
-            var portraitAssetByKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (LocalAssetFile portraitFile in portraitFiles)
-            {
-                portraitAssetByKey[$"{portraitFile.NpcName}::{portraitFile.RawCondition}"] = ToLocalAssetName(portraitFile.RelativePath);
-            }
-
-            var result = new Dictionary<string, List<CharacterAppearanceData>>(StringComparer.OrdinalIgnoreCase);
-            foreach (LocalAssetFile spriteFile in spriteFiles)
-            {
-                string category = AppearanceCategory.NormalizeLocalCondition(spriteFile.RawCondition);
-                string spriteAsset = ToLocalAssetName(spriteFile.RelativePath);
-                portraitAssetByKey.TryGetValue($"{spriteFile.NpcName}::{spriteFile.RawCondition}", out string portraitAsset);
-
-                CharacterAppearanceData entry = AppearanceCategory.BuildLocalEntry(
-                    id: $"{AppearanceConstants.LocalAssetIdPrefix}{spriteFile.NpcName}::{category}::{spriteFile.RawCondition}",
-                    category: category,
-                    sprite: spriteAsset,
-                    portrait: portraitAsset);
-
-                if (!result.TryGetValue(spriteFile.NpcName, out List<CharacterAppearanceData> list))
-                {
-                    list = new List<CharacterAppearanceData>();
-                    result[spriteFile.NpcName] = list;
-                }
-                list.Add(entry);
-            }
-
-            return result;
-        }
-
-        private static string ToLocalAssetName(string relativePath) =>
-            LocalAssetPrefix + Path.ChangeExtension(relativePath, null);
 
         private List<CharacterAppearanceData> BuildDisplayAppearances(string npcName, CharacterData data)
         {
@@ -712,7 +611,7 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            this.localAssetsByNpc = this.BuildLocalAssetOptions(characters.Keys.ToList());
+            this.localAssetsByNpc = LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, characters.Keys.ToList(), this.Monitor);
 
             gmcm.AddKeybindList(
                 mod: this.ModManifest,
@@ -857,11 +756,11 @@ namespace NpcOutfitSelector
                         this.selectedCategoryByNpc[npcName],
                         this.selectedWeatherByNpc[npcName],
                         this.selectedLocationByNpc[npcName]),
-                    getSelectedOutfitId: category => this.GetSelectedOutfitId(
+                    getSelectedOutfitId: category => this.config.GetSelectedOutfitId(
                         npcName, category, GetNaturalOutfitId(displayAppearances, category)),
-                    setSelectedOutfitId: (category, outfitId) => this.SetSelectedOutfitId(npcName, category, outfitId),
-                    hasOverride: category => this.HasOverride(npcName, category),
-                    clearOverride: category => this.ClearOverride(npcName, category));
+                    setSelectedOutfitId: (category, outfitId) => this.config.SetSelectedOutfitId(npcName, category, outfitId),
+                    hasOverride: category => this.config.HasOverride(npcName, category),
+                    clearOverride: category => this.config.ClearOverride(npcName, category));
                 this.activeGrids.Add(previewGrid);
 
                 gmcm.AddComplexOption(

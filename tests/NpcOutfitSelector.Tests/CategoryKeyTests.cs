@@ -144,6 +144,25 @@ namespace NpcOutfitSelector.Tests
             Assert.Equal("a pack naming a location",
                 Classify(condition: "SEASON Summer, LOCATION_NAME Here Town"), "Summer::Where_Town");
 
+            // The beach look is recognised by the game's "_Beach" texture convention. Matching it
+            // as a substring used to sweep in any outfit with "beach" in its name.
+            Assert.Section("The beach texture suffix, not any mention of beach");
+            Assert.Equal("a beach sprite", ClassifySprite("Characters/Haley_Beach"), "Island");
+            Assert.Equal("case insensitive", ClassifySprite("Characters/Haley_beach"), "Island");
+            Assert.Equal("a beach portrait", AppearanceCategory.Classify(new CharacterAppearanceData
+            {
+                Id = "x", Sprite = "Characters/Haley", Portrait = "Portraits/Haley_Beach",
+            }), "Island");
+            Assert.Equal("an outfit merely named after one",
+                ClassifySprite("Characters/Haley_BeachPartyDress", condition: "SEASON Summer"), "Summer");
+            Assert.Equal("a beach in the middle of a name",
+                ClassifySprite("Characters/Haley_BeachFull_remake", condition: "SEASON Summer"), "Summer");
+            Assert.Equal("an Id mentioning beach doesn't count",
+                AppearanceCategory.Classify(new CharacterAppearanceData
+                {
+                    Id = "somepack.BeachDayOutfit", Sprite = "Characters/Haley", Condition = "SEASON Summer",
+                }), "Summer");
+
             Assert.Section("Local asset filenames");
             Assert.Equal("Winter_Indoor", Normalize("Winter_Indoor"), "Winter::Where_Indoor");
             Assert.Equal("Winter_Snowing_Outdoor", Normalize("Winter_Snowing_Outdoor"), "Winter::Weather_Snowing::Where_Outdoor");
@@ -175,7 +194,7 @@ namespace NpcOutfitSelector.Tests
                 ["Island"] = "current",
             };
 
-            ModEntry.MigrateLegacyKeys(config);
+            config.MigrateLegacyKeys();
 
             Assert.Equal("Beach became Island", string.Join(",", config.SelectedOutfits["Haley"].Keys), "Island");
             Assert.Equal("value survived", config.SelectedOutfits["Haley"]["Island"], "outfitA");
@@ -206,6 +225,13 @@ namespace NpcOutfitSelector.Tests
             // Local-asset Ids are stored as *values* in shipped configs, so their spelling is frozen.
             Assert.Section("1.0.1 local-asset Ids still resolve");
             Assert.Equal("beach asset", Classify(id: "LocalAsset::Haley::Beach::Beach"), "Island");
+            // Its sprite has no "_Beach" suffix, so the category has to come from the Id instead.
+            Assert.Equal("beach asset with a longer name",
+                AppearanceCategory.Classify(new CharacterAppearanceData
+                {
+                    Id = "LocalAsset::Alex::Beach::BeachFull_remake",
+                    Sprite = "Mods/NpcOutfitSelector/LocalAssets/Characters/Alex_BeachFull_remake",
+                }), "Island");
             Assert.Equal("custom category asset", Classify(id: "LocalAsset::Abigail::Casual::Casual"), "Casual");
             Assert.Equal("a key inside the Id",
                 Classify(id: "LocalAsset::Alex::Winter::Weather_Snowing::Winter_Snowing"), "Winter::Weather_Snowing");
@@ -245,6 +271,14 @@ namespace NpcOutfitSelector.Tests
             (string baseCategory, string weather, string where) = AppearanceCategory.Decompose(key);
             return AppearanceCategory.Compose(baseCategory, weather ?? "Any", where ?? "Any");
         }
+
+        private static string ClassifySprite(string sprite, string condition = null) =>
+            AppearanceCategory.Classify(new CharacterAppearanceData
+            {
+                Id = "test.id",
+                Condition = condition,
+                Sprite = sprite,
+            });
 
         private static string Classify(string condition = null, bool indoors = true, bool outdoors = true, string id = "test.id") =>
             AppearanceCategory.Classify(new CharacterAppearanceData

@@ -26,6 +26,10 @@ namespace NpcOutfitSelector
         public const string DefaultAppearanceId = "Default";
         public const string LocalAssetIdPrefix = "LocalAsset::";
 
+        // Asset namespace the mod's own PNGs are served under, so a forced entry can point at one
+        // like any other texture.
+        public const string LocalAssetPathPrefix = "Mods/NpcOutfitSelector/LocalAssets/";
+
         // Ginger Island resort attire. 1.0.1 spelled it "Beach", which must stay readable forever.
         public const string IslandCategory = "Island";
         public const string LegacyIslandCategory = "Beach";
