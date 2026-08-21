@@ -6,12 +6,8 @@ using StardewValley.GameData.Characters;
 
 namespace NpcOutfitSelector
 {
-    // Buckets an appearance entry by what makes it apply, read off its own data, and turns a
-    // player's picked category back into the game data that enforces it.
-    //
-    // A category is a "::"-joined key: Base[::Weather][::Where], e.g. "Winter::Snowing::Outdoor".
-    // A bare base is exactly what 1.0.1 wrote, so old configs keep working untouched.
-    // Every fixed value used here lives in AppearanceConstants.
+    // Reads what makes an appearance entry apply, and turns a player's picked category back into
+    // the game data that enforces it. Key syntax and constants live in AppearanceConstants.
     internal static class AppearanceCategory
     {
         private static readonly Regex EventIdPattern = new(@"IS_EVENT\s+(\S+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -42,11 +38,8 @@ namespace NpcOutfitSelector
         public static string LocationKeyFor(bool isOutdoors) =>
             isOutdoors ? AppearanceConstants.OutdoorValue : AppearanceConstants.IndoorValue;
 
-        // One axis at two granularities: coarse first, then the exact places.
-        //
-        // Places found in the loaded save are merged in, so locations added by other mods (Stardew
-        // Valley Expanded and the like) appear on their own. KnownPlaces is the floor, not the
-        // ceiling — it's what's offered on the title screen, where no save is loaded yet.
+        // Coarse values first, then places. Merging what the save actually has is what makes other
+        // mods' locations show up without this mod knowing them.
         public static string[] BuildWhereChoices(IEnumerable<string> discoveredPlaces)
         {
             var places = new SortedSet<string>(AppearanceConstants.KnownPlaces, StringComparer.OrdinalIgnoreCase);
@@ -116,12 +109,8 @@ namespace NpcOutfitSelector
             return string.Join(AppearanceConstants.KeySeparator, segments);
         }
 
-        // Every segment says which axis it belongs to, so nothing is guessed and order doesn't
-        // matter. The one bare segment is the base, which is why it may only be the first — and why
-        // an all-prefixed key simply has no base and applies in every season.
-        //
-        // A value this mod doesn't recognise is kept as-is rather than dropped: its axis is already
-        // known from the prefix, so another mod's weather or map flows straight through.
+        // Order doesn't matter: each segment names its axis. An unrecognised value is kept rather
+        // than dropped, since its axis is known from the prefix even when the value isn't.
         public static (string Base, string Weather, string Where) Decompose(string category)
         {
             string[] parts = (category ?? string.Empty).Split(AppearanceConstants.KeySeparator);
@@ -210,10 +199,7 @@ namespace NpcOutfitSelector
 
             if (weather is not null)
             {
-                // An unrecognised weather is passed through rather than dropped: another mod can
-                // define its own weather ID, and the game compares these as plain strings.
-                // "Here" resolves to the NPC's own current location, which is what
-                // NPC.ChooseAppearance passes as the query context.
+                // "Here" is the NPC's own location — that's the context ChooseAppearance passes.
                 string weatherConstant =
                     AppearanceConstants.WeatherConstantsByKey.TryGetValue(weather, out string known)
                         ? known
@@ -231,10 +217,8 @@ namespace NpcOutfitSelector
             return queries.Count > 0 ? string.Join(", ", queries) : null;
         }
 
-        // Mirrors an "::Indoor"/"::Outdoor" choice onto the entry's actual Indoors/Outdoors fields —
-        // both default to true on CharacterAppearanceData, so without this the restriction the
-        // category promises would silently never take effect in-game. This is not a game state
-        // query; ChooseAppearance checks these fields separately.
+        // Indoor/Outdoor is not a game state query: ChooseAppearance checks these two fields
+        // separately, and both default to true, so the restriction has to be written into them.
         private static void ApplyLocationRestriction(CharacterAppearanceData entry, string category)
         {
             (_, _, string where) = Decompose(category);
@@ -309,10 +293,8 @@ namespace NpcOutfitSelector
                 string weather = AppearanceConstants.WeatherConstantsByKey.Keys.FirstOrDefault(
                     k => extras.Any(e => e.Equals(k, StringComparison.OrdinalIgnoreCase)));
 
-                // A named place beats Indoor/Outdoor for the same reason it does elsewhere: it's
-                // the more specific of the two, and they share one slot. A filename has no axis
-                // prefixes, so unlike a hand-written key it can only name a place we already know
-                // — a bare word here is indistinguishable from any other.
+                // A filename carries no axis prefixes, so unlike a hand-written key it can only
+                // name a place already known — a bare word is otherwise indistinguishable.
                 string place = AppearanceConstants.KnownPlaces.FirstOrDefault(
                     p => extras.Any(e => e.Equals(p, StringComparison.OrdinalIgnoreCase)));
 
@@ -400,10 +382,8 @@ namespace NpcOutfitSelector
                 return char.ToUpperInvariant(season[0]) + season.Substring(1).ToLowerInvariant();
             }
 
-            // Local entries (see BuildLocalEntry) embed their category in their Id as
-            // "LocalAsset::{npc}::{category}::{rawCondition}" — recover it instead of dumping into
-            // "Other". Everything between the npc and the raw condition, since the category can
-            // itself contain the separator.
+            // A local entry's Id is "LocalAsset::{npc}::{category}::{rawCondition}". Everything
+            // between npc and rawCondition, since the category can itself contain the separator.
             if (app.Id?.StartsWith(AppearanceConstants.LocalAssetIdPrefix) == true)
             {
                 string[] parts = app.Id.Split(AppearanceConstants.KeySeparator);
@@ -462,12 +442,9 @@ namespace NpcOutfitSelector
                 _ => 5,
             };
 
-        // Every base category a player can assign an outfit to, regardless of NPC: seasons + Beach +
-        // vanilla festivals always, plus whatever custom ones are actually found — so you can force
-        // e.g. a summer look onto winter even if no NPC has ever defined one for winter.
-        //
-        // Bases only: weather and where are picked from their own dropdowns and combined into the
-        // key at selection time, so listing every combination here would multiply this list.
+        // Seeded with the full set rather than only what each NPC has, so a summer look can be
+        // forced onto winter. Bases only — the other axes have their own dropdowns, and listing
+        // every combination here would multiply this list.
         public static string[] CollectGlobalCategories(IEnumerable<CharacterAppearanceData> allAppearances)
         {
             var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase)

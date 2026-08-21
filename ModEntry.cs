@@ -48,20 +48,14 @@ namespace NpcOutfitSelector
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
-        // Typed live via OnFieldChanged, but only applied to the visible list on Enter — not on
-        // every keystroke, since GMCM's own Textbox only takes keyboard focus back via a mouse
-        // click, so rebuilding the menu (which replaces it with a fresh Textbox) on every character
-        // would force a re-click after each letter.
-        //
-        // Deliberately survives closing the menu: the Clear search button is the way out, so a
-        // filter can't strand the player with no visible means of undoing it.
+        // Applied on Enter, not per keystroke: a rebuild replaces GMCM's Textbox, which only takes
+        // keyboard focus back on a mouse click. Survives closing the menu — Clear search is the
+        // way out, so a filter can't strand the player.
         private string searchQuery = "";
 
-        // Set right before our own RebuildAndShowMenu() calls OpenModMenu(), so the MenuChanged
-        // event that reopen fires doesn't trigger a second BuildMenu() — a second build would
-        // create a fresh set of AppearancePreviewGrid instances subscribed to click events, while
-        // the menu already on screen (built by OpenModMenu() from the first, now-orphaned set)
-        // keeps drawing them but can never route clicks to them again.
+        // Suppresses the BuildMenu that our own OpenModMenu would trigger through MenuChanged. A
+        // second build would orphan the preview grids the on-screen menu still draws, leaving them
+        // visible but unable to receive clicks.
         private bool suppressNextMenuChangedRebuild;
 
         public override void Entry(IModHelper helper)
@@ -178,10 +172,9 @@ namespace NpcOutfitSelector
             }
         }
 
-        // Mirrors GMCM's own internal "ActiveConfigMenu" lookup: on the title screen it nests its
-        // menu under TitleMenu.subMenu instead of replacing Game1.activeClickableMenu, and in-game
-        // it's chained as a child menu of the pause menu via SetChildMenu rather than becoming
-        // Game1.activeClickableMenu directly — so both have to be walked, not just read once.
+        // Mirrors GMCM's own ActiveConfigMenu lookup. Its menu is never simply
+        // Game1.activeClickableMenu: on the title screen it nests under TitleMenu.subMenu, and
+        // in-game it's a child of the pause menu. Both have to be walked.
         private static IClickableMenu GetActiveGmcmMenu()
         {
             IClickableMenu menu = Game1.activeClickableMenu is TitleMenu
@@ -333,10 +326,9 @@ namespace NpcOutfitSelector
             }
         }
 
-        // Rebuilds the option list, then has GMCM build a menu around it — GMCM's own Table is
-        // constructed once per menu and can't be swapped in place, so replacing the whole menu is
-        // the only way to show a changed option list. Never call this from a GMCM callback: the
-        // reopen re-enters our own MenuChanged handler.
+        // GMCM's Table is built once per menu and can't be swapped, so a changed option list means
+        // replacing the whole menu. Never call from a GMCM callback — the reopen re-enters
+        // MenuChanged.
         private void RebuildAndShowMenu()
         {
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -350,10 +342,8 @@ namespace NpcOutfitSelector
             gmcm.OpenModMenu(this.ModManifest);
         }
 
-        // Real place names from the loaded save, so locations added by other mods show up in the
-        // Where dropdown without this mod knowing anything about them. Skips the ones that would
-        // bury the list without ever being useful for an outfit: one entry per mine level, and
-        // every player-built cabin, shed and barn.
+        // Place names from the loaded save, so other mods' locations appear on their own. Skips
+        // what would bury the list without ever dressing anyone: mine levels and farm buildings.
         private IEnumerable<string> DiscoverPlaces()
         {
             if (!Context.IsWorldReady)
@@ -375,10 +365,8 @@ namespace NpcOutfitSelector
             }
         }
 
-        // Which weather/location the two narrowing dropdowns should open on: the segments of the
-        // most specific saved override that actually applies to this NPC right now. Opening on
-        // Any/Any instead would show the plain-season pick as checked while the character in the
-        // world is visibly wearing a narrower one.
+        // Opens the two narrowing dropdowns on the highest-scoring override that applies right now
+        // — otherwise the menu shows the plain-season pick while the character wears a narrower one.
         private (string Weather, string Location) ResolveActiveAxes(
             string npcName, string baseCategory, IReadOnlyDictionary<string, GameLocation> npcLocations)
         {
@@ -506,10 +494,9 @@ namespace NpcOutfitSelector
             return loaded;
         }
 
-        // Rewrites keys onto the canonical spelling of their base — currently only Beach -> Island.
-        // Done on load rather than left as an alias so a player who re-saves doesn't end up with
-        // both spellings for the same thing: they'd score identically, and the game breaks an exact
-        // Precedence tie with weighted random rather than by order.
+        // Rewrites a key's base onto its canonical spelling (currently only Beach -> Island). Done
+        // on load rather than aliased, so re-saving can't leave both spellings on one NPC — they
+        // would score identically, and an exact tie is broken by weighted random.
         internal static void MigrateLegacyKeys(ModConfig config)
         {
             foreach (Dictionary<string, string> byCategory in config.SelectedOutfits.Values)
