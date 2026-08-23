@@ -1,0 +1,59 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Winter": "petite1002.alexremake.Winter",
+
+      "Winter::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Where_Outdoor": "petite1002.alexremake.WinterOutdoor",
+
+      "Winter::Weather_Sunny": "petite1002.alexremake.Winter",
+      "Winter::Weather_Raining": "petite1002.alexremake.WinterCoat",
+      "Winter::Weather_Lightning": "petite1002.alexremake.WinterCoat",
+      "Winter::Weather_Snowing": "petite1002.alexremake.WinterOutdoor",
+      "Winter::Weather_GreenRain": "petite1002.alexremake.Winter",
+      "Winter::Weather_Windy": "petite1002.alexremake.WinterCoat",
+
+      "Winter::Weather_Sunny::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_Sunny::Where_Outdoor": "petite1002.alexremake.Winter",
+      "Winter::Weather_Raining::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_Raining::Where_Outdoor": "petite1002.alexremake.WinterCoat",
+      "Winter::Weather_Lightning::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_Lightning::Where_Outdoor": "petite1002.alexremake.WinterCoat",
+      "Winter::Weather_Snowing::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_Snowing::Where_Outdoor": "petite1002.alexremake.WinterOutdoor",
+      "Winter::Weather_GreenRain::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_GreenRain::Where_Outdoor": "petite1002.alexremake.Winter",
+      "Winter::Weather_Windy::Where_Indoor": "petite1002.alexremake.WinterIndoor",
+      "Winter::Weather_Windy::Where_Outdoor": "petite1002.alexremake.WinterCoat"
+    },
+
+    "Emily": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.EmilyEggFest",
+      "Spring::Weather_Raining": "Poltergeister.SeasonalCuteCharacters.EmilyRaincoat",
+      "Winter": "Poltergeister.SeasonalCuteCharacters.EmilyWinterIndoor",
+      "Winter::Weather_Snowing::Where_Outdoor": "Poltergeister.SeasonalCuteCharacters.EmilyWinterOutdoor"
+    },
+
+    "Maru": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.MaruSpring",
+      "Egg Festival": "Poltergeister.SeasonalCuteCharacters.MaruEggFest",
+      "Egg Festival::Where_Indoor": "Poltergeister.SeasonalCuteCharacters.MaruEggFestIndoor"
+    },
+
+    "Haley": {
+      "Island": "LocalAsset::Haley::Beach::Beach",
+      "Summer::Weather_Sunny": "Poltergeister.SeasonalCuteCharacters.HaleySummer"
+    },
+
+    "Sam": {
+      "Fall": "Default"
+    },
+
+    "Abigail": {
+      "Casual": "LocalAsset::Abigail::Casual::Casual",
+      "Spring": "Poltergeister.SeasonalCuteCharacters.AbigailJellies"
+    }
+  },
+
+  "MenuHotkey": "F9"
+}

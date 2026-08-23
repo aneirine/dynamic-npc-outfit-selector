@@ -237,21 +237,60 @@ namespace NpcOutfitSelector.Tests
                 Classify(id: "LocalAsset::Alex::Winter::Weather_Snowing::Winter_Snowing"), "Winter::Weather_Snowing");
 
             Assert.Section("A real config in the 1.0.1 shape");
-            string fixture = Path.Combine(AppContext.BaseDirectory, "fixtures", "config-1.0.1.json");
-            if (!File.Exists(fixture))
+            CheckConfigFile("config-1.0.1.json");
+
+            // The format this version writes. Nothing in it should need migrating, which is what
+            // separates it from the file above.
+            Assert.Section("A real config in the 1.1.0 shape");
+            CheckConfigFile("config-1.1.0.json", expectAlreadyCanonical: true);
+        }
+
+        private static void CheckConfigFile(string fileName, bool expectAlreadyCanonical = false)
+        {
+            string path = Path.Combine(AppContext.BaseDirectory, "fixtures", fileName);
+            if (!File.Exists(path))
             {
-                Assert.Equal("fixture found", "missing", fixture);
+                Assert.Equal("fixture found", "missing", path);
                 return;
             }
 
-            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(fixture));
+            var config = new ModConfig();
+            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
+
             foreach (JsonProperty npc in document.RootElement.GetProperty("SelectedOutfits").EnumerateObject())
             {
+                var byCategory = new Dictionary<string, string>();
                 foreach (JsonProperty entry in npc.Value.EnumerateObject())
                 {
-                    // A legacy spelling is allowed to migrate; after that it must survive verbatim.
+                    byCategory[entry.Name] = entry.Value.GetString();
+
+                    // A legacy spelling may migrate; after that the key must survive verbatim.
                     string canonical = AppearanceCategory.CanonicalizeKey(entry.Name);
                     Assert.Equal($"{npc.Name}/{entry.Name}", RoundTrip(canonical), canonical);
+
+                    if (expectAlreadyCanonical)
+                    {
+                        Assert.Equal($"{npc.Name}/{entry.Name} needs no migration", canonical, entry.Name);
+                    }
+                }
+                config.SelectedOutfits[npc.Name] = byCategory;
+            }
+
+            // Loading is what a player actually experiences, so run the whole file through it and
+            // check nothing was dropped or collapsed on the way.
+            int keysBefore = config.SelectedOutfits.Sum(npc => npc.Value.Count);
+            config.MigrateLegacyKeys();
+            int keysAfter = config.SelectedOutfits.Sum(npc => npc.Value.Count);
+            Assert.Equal($"{fileName}: no entries lost on load", keysAfter, keysBefore);
+
+            // And every key it now holds must compile to something the game can evaluate.
+            foreach (KeyValuePair<string, Dictionary<string, string>> npc in config.SelectedOutfits)
+            {
+                foreach (string key in npc.Value.Keys)
+                {
+                    CharacterAppearanceData entry = Forced(key);
+                    Assert.True($"{fileName}: {npc.Key}/{key} builds an entry",
+                        entry.Precedence < -1_000_000 && entry.Sprite is not null);
                 }
             }
         }
