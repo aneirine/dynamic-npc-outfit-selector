@@ -25,9 +25,6 @@ namespace NpcOutfitSelector
         // forced entry doesn't show up as a duplicate of its source.
         private const string ForcedEntryIdPrefix = "NpcOutfitSelector.Force.";
 
-        // Asset namespace local PNGs (see LocalAssetScanner) are exposed under, so a forced entry
-        // can reference them like any other texture.
-
         // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
         private const string UnrevealedNpcKey = "???";
 
