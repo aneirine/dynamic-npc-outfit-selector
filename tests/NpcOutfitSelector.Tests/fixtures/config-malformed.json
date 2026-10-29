@@ -1,0 +1,6 @@
+// Malformed: cut off mid-file, as a crash during a non-atomic write would leave it.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Spring": "pack.HaleySpring",
+      "Summer": "pack.Hal

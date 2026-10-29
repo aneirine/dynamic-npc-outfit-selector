@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using StardewValley.GameData.Characters;
 
 namespace NpcOutfitSelector.Tests
@@ -12,17 +9,16 @@ namespace NpcOutfitSelector.Tests
     // everything 1.0.1 could have written still means exactly what it did.
     internal static class CategoryKeyTests
     {
-        public static int Run()
+        public static void Run()
         {
             KeyFormat();
             UnknownValues();
             Priority();
+            CurrentTies();
             CompiledConditions();
             ReadingDataBack();
             IslandRename();
             BackwardCompatibility();
-
-            return Assert.Report();
         }
 
         private static void KeyFormat()
@@ -115,6 +111,36 @@ namespace NpcOutfitSelector.Tests
                 Score("Spring::Where_Beach") > Score("Spring::Weather_Sunny::Where_Indoor"));
             Assert.True("a category always beats one without",
                 Score("Spring") > Score("Weather_Sunny::Where_Beach"));
+        }
+
+        // Pins today's behaviour where keys DO tie or differ only by case (B4, B5), so the tie fix
+        // planned for 1.1.3 shows up here as a deliberate change rather than slipping in.
+        private static void CurrentTies()
+        {
+            Assert.Section("Known ties, pinned until 1.1.3 fixes them");
+            Assert.Equal("two custom categories score alike", $"{Score("Casual")}/{Score("Other")}", "8/8");
+            Assert.Equal("and neither has a condition", $"{Forced("Casual").Condition ?? "(none)"}/{Forced("Other").Condition ?? "(none)"}", "(none)/(none)");
+            Assert.Equal("so their entries tie", Forced("Casual").Precedence == Forced("Other").Precedence, true);
+            Assert.Equal("Island and a season share a tier", $"{Score("Island")}/{Score("Spring")}", "16/16");
+            Assert.Equal("an unrecognised pack entry files under Other",
+                Classify(condition: "PLAYER_HEARTS Current Haley 8"), "Other");
+
+            Assert.Section("Case variants");
+            Assert.Equal("lower-case key scores like the canonical one",
+                $"{Score("winter::weather_snowing")}/{Score("Winter::Weather_Snowing")}", "18/18");
+            Assert.Equal("and keeps its own spelling in the condition",
+                Forced("winter::weather_snowing").Condition, "SEASON winter, WEATHER Here Snow");
+            var config = new ModConfig();
+            config.SetSelectedOutfitId("Haley", "winter::weather_snowing", "x");
+            Assert.Equal("the menu doesn't see it as set", config.HasOverride("Haley", "Winter::Weather_Snowing"), false);
+
+            Assert.Section("Keys with no base");
+            Assert.Equal("weather only", Score("Weather_Sunny"), 2);
+            Assert.Equal("indoor only", Score("Where_Indoor"), 1);
+            Assert.Equal("a place only", Score("Where_Beach"), 4);
+            CharacterAppearanceData empty = Forced("");
+            Assert.Equal("an empty key is unconditional",
+                $"{Score("")} {empty.Condition ?? "(none)"} {empty.Indoors}/{empty.Outdoors} {empty.IsIslandAttire}", "0 (none) True/True False");
         }
 
         private static void CompiledConditions()
@@ -236,63 +262,7 @@ namespace NpcOutfitSelector.Tests
             Assert.Equal("a key inside the Id",
                 Classify(id: "LocalAsset::Alex::Winter::Weather_Snowing::Winter_Snowing"), "Winter::Weather_Snowing");
 
-            Assert.Section("A real config in the 1.0.1 shape");
-            CheckConfigFile("config-1.0.1.json");
-
-            // The format this version writes. Nothing in it should need migrating, which is what
-            // separates it from the file above.
-            Assert.Section("A real config in the 1.1.0 shape");
-            CheckConfigFile("config-1.1.0.json", expectAlreadyCanonical: true);
-        }
-
-        private static void CheckConfigFile(string fileName, bool expectAlreadyCanonical = false)
-        {
-            string path = Path.Combine(AppContext.BaseDirectory, "fixtures", fileName);
-            if (!File.Exists(path))
-            {
-                Assert.Equal("fixture found", "missing", path);
-                return;
-            }
-
-            var config = new ModConfig();
-            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
-
-            foreach (JsonProperty npc in document.RootElement.GetProperty("SelectedOutfits").EnumerateObject())
-            {
-                var byCategory = new Dictionary<string, string>();
-                foreach (JsonProperty entry in npc.Value.EnumerateObject())
-                {
-                    byCategory[entry.Name] = entry.Value.GetString();
-
-                    // A legacy spelling may migrate; after that the key must survive verbatim.
-                    string canonical = AppearanceCategory.CanonicalizeKey(entry.Name);
-                    Assert.Equal($"{npc.Name}/{entry.Name}", RoundTrip(canonical), canonical);
-
-                    if (expectAlreadyCanonical)
-                    {
-                        Assert.Equal($"{npc.Name}/{entry.Name} needs no migration", canonical, entry.Name);
-                    }
-                }
-                config.SelectedOutfits[npc.Name] = byCategory;
-            }
-
-            // Loading is what a player actually experiences, so run the whole file through it and
-            // check nothing was dropped or collapsed on the way.
-            int keysBefore = config.SelectedOutfits.Sum(npc => npc.Value.Count);
-            config.MigrateLegacyKeys();
-            int keysAfter = config.SelectedOutfits.Sum(npc => npc.Value.Count);
-            Assert.Equal($"{fileName}: no entries lost on load", keysAfter, keysBefore);
-
-            // And every key it now holds must compile to something the game can evaluate.
-            foreach (KeyValuePair<string, Dictionary<string, string>> npc in config.SelectedOutfits)
-            {
-                foreach (string key in npc.Value.Keys)
-                {
-                    CharacterAppearanceData entry = Forced(key);
-                    Assert.True($"{fileName}: {npc.Key}/{key} builds an entry",
-                        entry.Precedence < -1_000_000 && entry.Sprite is not null);
-                }
-            }
+            // The fixture files themselves are read through the real load path in ConfigFileTests.
         }
 
         private static string Compose(string baseCategory, string weather, string where) =>

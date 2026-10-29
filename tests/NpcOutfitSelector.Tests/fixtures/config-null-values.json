@@ -1,0 +1,13 @@
+// Hand-edited nulls one level down: an NPC with no table at all, and one key with no outfit.
+// 1.1.1 throws on the first while loading, so the whole menu fails to build.
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Spring": null,
+      "Summer": "pack.EmilySummer"
+    },
+    "Sam": null,
+    "Haley": { "Beach": "pack.HaleyIsland" }
+  },
+  "MenuHotkey": "F9"
+}

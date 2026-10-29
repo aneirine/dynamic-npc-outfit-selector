@@ -1,0 +1,12 @@
+// A stand-in for a future format: a list where 1.1.x expects a single outfit Id, next to an
+// unknown field. No released version writes this; it's what a downgrade could meet.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Spring": [ "pack.HaleySpringA", "pack.HaleySpringB" ],
+      "Summer": "pack.HaleySummer"
+    }
+  },
+  "MenuHotkey": "F9",
+  "OutfitPools": { "Haley": { "Spring": [ "pack.HaleySpringA", "pack.HaleySpringB" ] } }
+}

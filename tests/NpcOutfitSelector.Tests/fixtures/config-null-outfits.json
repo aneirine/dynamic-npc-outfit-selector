@@ -1,0 +1,6 @@
+// Hand-edited: both known fields set to null. 1.1.1 crashes on the first; the second parses as
+// an empty hotkey.
+{
+  "SelectedOutfits": null,
+  "MenuHotkey": null
+}

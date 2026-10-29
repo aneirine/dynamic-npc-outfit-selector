@@ -23,6 +23,10 @@
     <!-- Only here for the game assembly references; the deploy steps are off above. -->
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
     <ProjectReference Include="..\..\NpcOutfitSelector.csproj" />
+
+    <!-- SMAPI's own JSON reader, so config tests parse files exactly the way the game does. -->
+    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)\smapi-internal\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="SMAPI.Toolkit" HintPath="$(GamePath)\smapi-internal\SMAPI.Toolkit.dll" Private="false" />
   </ItemGroup>
 
   <ItemGroup>

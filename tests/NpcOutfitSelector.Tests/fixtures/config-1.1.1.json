@@ -1,0 +1,36 @@
+// What 1.1.1 writes: produced by the 1.1.1 build's own serializer (its ReadConfig write-back,
+// SMAPI JSON settings), from a config using every axis, Island, Default and custom PNG values.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Winter": "petite1002.alexremake.Winter",
+      "Winter::Where_Outdoor": "petite1002.alexremake.WinterOutdoor",
+      "Winter::Weather_Snowing::Where_Outdoor": "petite1002.alexremake.WinterOutdoor",
+      "Summer::Where_Beach": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Haley": {
+      "Island": "LocalAsset::Haley::Beach::Beach",
+      "Summer::Weather_Sunny": "Poltergeister.SeasonalCuteCharacters.HaleySummer",
+      "Winter::Weather_Snowing::Where_Outdoor": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Egg Festival": "LocalAsset::Haley::Egg Festival::EggFest"
+    },
+    "Emily": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.EmilyEggFest",
+      "Spring::Weather_Raining": "Poltergeister.SeasonalCuteCharacters.EmilyRaincoat",
+      "Fall::Where_Saloon": "Poltergeister.SeasonalCuteCharacters.EmilyFall"
+    },
+    "Abigail": {
+      "Casual": "LocalAsset::Abigail::Casual::Casual",
+      "Spring": "Poltergeister.SeasonalCuteCharacters.AbigailJellies"
+    },
+    "Sam": {
+      "Fall": "Default"
+    },
+    "Maru": {
+      "Egg Festival": "Poltergeister.SeasonalCuteCharacters.MaruEggFest",
+      "Egg Festival::Where_Indoor": "Poltergeister.SeasonalCuteCharacters.MaruEggFestIndoor",
+      "Feast of the Winter Star": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

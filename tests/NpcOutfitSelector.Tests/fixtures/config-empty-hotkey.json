@@ -1,0 +1,7 @@
+// Hand-edited, or GMCM with the hotkey cleared: an empty string, which parses as no keybind.
+{
+  "SelectedOutfits": {
+    "Sam": { "Fall": "Default" }
+  },
+  "MenuHotkey": ""
+}

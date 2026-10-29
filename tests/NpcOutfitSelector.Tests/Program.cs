@@ -9,8 +9,8 @@ namespace NpcOutfitSelector.Tests
     {
         // The game's assemblies are referenced but deliberately not copied next to a mod, since a
         // mod runs inside the game. A standalone runner has to find them itself, and the handler
-        // must be in place before any game type is touched — hence the split from CategoryKeyTests,
-        // whose method body is only JITted once it is called.
+        // must be in place before any game type is touched — hence the split from the test classes,
+        // whose method bodies are only JITted once they are called.
         private static int Main()
         {
             string gamePath = Assembly.GetExecutingAssembly()
@@ -37,7 +37,11 @@ namespace NpcOutfitSelector.Tests
                 return file is null ? null : Assembly.LoadFrom(file);
             };
 
-            return CategoryKeyTests.Run();
+            CategoryKeyTests.Run();
+            ConfigFileTests.Run();
+            LocalAssetIdTests.Run();
+            ForcedEntryTests.Run();
+            return Assert.Report();
         }
     }
 }
