@@ -33,7 +33,10 @@ namespace NpcOutfitSelector
                 loaded = new ModConfig();
             }
 
-            loaded.MigrateLegacyKeys();
+            foreach (string warning in loaded.MigrateLegacyKeys())
+            {
+                this.monitor.LogOnce(warning, LogLevel.Warn);
+            }
             return loaded;
         }
 

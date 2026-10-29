@@ -73,14 +73,26 @@ namespace NpcOutfitSelector
         private static string CanonicalBase(string baseCategory) =>
             IsIslandCategory(baseCategory) ? AppearanceConstants.IslandCategory : baseCategory;
 
-        // Rewrites a key onto the canonical spelling of its base, leaving everything else alone.
-        // Used to migrate a config once rather than carrying two equivalent keys, which would tie
-        // and be resolved by the game's weighted random.
-        public static string CanonicalizeKey(string key)
+        // 1.1.0 and 1.1.1 rewrote every key into this form on load and only then used it, so it
+        // is what any key a player has meant in game. Reading through it keeps that meaning
+        // without respelling the file: it drops Any segments and words after the base, keeps
+        // the last of a repeated axis, and turns Beach into Island.
+        public static string EffectiveKey(string key)
         {
             (string baseCategory, string weather, string where) = Decompose(key);
             return Compose(CanonicalBase(baseCategory), weather ?? AppearanceConstants.AnyOption,
                 where ?? AppearanceConstants.AnyOption);
+        }
+
+        // The one rewrite config.json itself still gets: a base spelled the 1.0.1 way. Only that
+        // segment changes; every other character stays as written.
+        public static string RenameLegacyBase(string key)
+        {
+            int end = key.IndexOf(AppearanceConstants.KeySeparator, StringComparison.Ordinal);
+            string first = end < 0 ? key : key.Substring(0, end);
+            return first.Equals(AppearanceConstants.LegacyIslandCategory, StringComparison.OrdinalIgnoreCase)
+                ? AppearanceConstants.IslandCategory + key.Substring(first.Length)
+                : key;
         }
 
         private static bool IsAny(string value) =>

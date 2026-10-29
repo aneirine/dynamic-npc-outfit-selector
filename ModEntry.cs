@@ -112,14 +112,13 @@ namespace NpcOutfitSelector
             string[] categories = AppearanceCategory.CollectGlobalCategories(
                 characters.Values.SelectMany(d => d.Appearance ?? Enumerable.Empty<CharacterAppearanceData>())
                     .Concat(this.localAssetsByNpc.Values.SelectMany(list => list)));
-            bool hasOverrides = this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory);
+            Dictionary<string, string> byCategory = this.config.GetEffectivePicks(npcName);
 
             this.Monitor.Log($"{npcName} — resolved outfit per category:", LogLevel.Info);
             foreach (string category in categories)
             {
                 string natural = GetNaturalOutfitId(displayAppearances, category);
-                string overrideId = null;
-                bool hasOverride = hasOverrides && byCategory.TryGetValue(category, out overrideId);
+                bool hasOverride = byCategory.TryGetValue(category, out string overrideId) && overrideId is not null;
                 string resolved = this.config.GetSelectedOutfitId(npcName, category, natural);
 
                 this.Monitor.Log(
@@ -324,7 +323,8 @@ namespace NpcOutfitSelector
         {
             string any = AppearanceConstants.AnyOption;
 
-            if (!this.config.SelectedOutfits.TryGetValue(npcName, out Dictionary<string, string> byCategory)
+            Dictionary<string, string> byCategory = this.config.GetEffectivePicks(npcName);
+            if (byCategory.Count == 0
                 || !npcLocations.TryGetValue(npcName, out GameLocation location)
                 || location is null)
             {

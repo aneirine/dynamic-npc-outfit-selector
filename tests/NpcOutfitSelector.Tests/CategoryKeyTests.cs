@@ -206,12 +206,15 @@ namespace NpcOutfitSelector.Tests
             Assert.True("a season does not", !AppearanceCategory.IsIslandCategory("Spring"));
             Assert.True("Island sets island attire", Forced("Island").IsIslandAttire);
             Assert.True("legacy Beach still does", Forced("Beach").IsIslandAttire);
-            Assert.Equal("canonicalize Beach", AppearanceCategory.CanonicalizeKey("Beach"), "Island");
-            Assert.Equal("canonicalize a narrowed one",
-                AppearanceCategory.CanonicalizeKey("Beach::Weather_Sunny"), "Island::Weather_Sunny");
-            Assert.Equal("seasons are untouched", AppearanceCategory.CanonicalizeKey("Spring"), "Spring");
+            Assert.Equal("rename Beach", AppearanceCategory.RenameLegacyBase("Beach"), "Island");
+            Assert.Equal("rename a narrowed one", AppearanceCategory.RenameLegacyBase("Beach::Weather_Sunny"), "Island::Weather_Sunny");
+            Assert.Equal("only the base changes", AppearanceCategory.RenameLegacyBase("beach::weather_sunny::Where_x"), "Island::weather_sunny::Where_x");
+            Assert.Equal("seasons are untouched", AppearanceCategory.RenameLegacyBase("Spring"), "Spring");
+            Assert.Equal("a place called Beach is not a base", AppearanceCategory.RenameLegacyBase("Spring::Where_Beach"), "Spring::Where_Beach");
+            Assert.Equal("nor is a word after the base", AppearanceCategory.RenameLegacyBase("Weather_Sunny::Beach"), "Weather_Sunny::Beach");
+            Assert.Equal("nothing else is respelled", AppearanceCategory.RenameLegacyBase("Weather_Sunny::Spring"), "Weather_Sunny::Spring");
 
-            Assert.Section("Legacy keys migrate once, and can't end up duplicated");
+            Assert.Section("Legacy keys migrate once, and a collision keeps both values");
             var config = new ModConfig();
             config.SelectedOutfits["Haley"] = new Dictionary<string, string> { ["Beach"] = "outfitA" };
             config.SelectedOutfits["Alex"] = new Dictionary<string, string>
@@ -220,12 +223,28 @@ namespace NpcOutfitSelector.Tests
                 ["Island"] = "current",
             };
 
-            config.MigrateLegacyKeys();
+            List<string> warnings = config.MigrateLegacyKeys();
 
             Assert.Equal("Beach became Island", string.Join(",", config.SelectedOutfits["Haley"].Keys), "Island");
             Assert.Equal("value survived", config.SelectedOutfits["Haley"]["Island"], "outfitA");
-            Assert.Equal("both spellings collapse to one", string.Join(",", config.SelectedOutfits["Alex"].Keys), "Island");
-            Assert.Equal("the canonical one wins", config.SelectedOutfits["Alex"]["Island"], "current");
+            Assert.Equal("both spellings stay in the file", string.Join(",", config.SelectedOutfits["Alex"].Keys), "Beach,Island");
+            Assert.Equal("the legacy value is kept", config.SelectedOutfits["Alex"]["Beach"], "legacy");
+            Assert.Equal("the canonical one applies, as in 1.1.1", string.Join(",", config.GetEffectivePicks("Alex")), "[Island, current]");
+            Assert.Equal("and the ignored one is reported", warnings.Count, 1);
+            Assert.Equal("migrating again changes nothing", $"{config.MigrateLegacyKeys().Count} {string.Join(",", config.SelectedOutfits["Alex"].Keys)}", "1 Beach,Island");
+
+            Assert.Section("The menu acts on the slot a key fills, however it's spelled");
+            var handEdited = new ModConfig();
+            handEdited.SelectedOutfits["Haley"] = new Dictionary<string, string>
+            {
+                ["Spring::Weather_Any"] = "first",
+                ["Spring::Rainy"] = "second",
+            };
+            Assert.Equal("reads as Spring", handEdited.GetSelectedOutfitId("Haley", "Spring", "natural"), "first");
+            handEdited.SetSelectedOutfitId("Haley", "Spring", "picked");
+            Assert.Equal("a pick keeps the written key", string.Join(",", handEdited.SelectedOutfits["Haley"]), "[Spring::Weather_Any, picked],[Spring::Rainy, second]");
+            handEdited.ClearOverride("Haley", "Spring");
+            Assert.Equal("clearing removes every twin", handEdited.SelectedOutfits["Haley"].Count, 0);
         }
 
         // Everything below is a key or value 1.0.1 could have written. None of it may change meaning.

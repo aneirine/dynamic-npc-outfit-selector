@@ -17,9 +17,8 @@ namespace NpcOutfitSelector
             ModConfig config,
             IReadOnlyDictionary<string, List<CharacterAppearanceData>> localAssetsByNpc)
         {
-            foreach (KeyValuePair<string, Dictionary<string, string>> npcOverrides in config.SelectedOutfits)
+            foreach (string npcName in config.SelectedOutfits.Keys)
             {
-                string npcName = npcOverrides.Key;
                 if (!data.TryGetValue(npcName, out CharacterData charData))
                 {
                     continue;
@@ -27,10 +26,12 @@ namespace NpcOutfitSelector
 
                 charData.Appearance ??= new List<CharacterAppearanceData>();
 
-                foreach (KeyValuePair<string, string> categoryChoice in npcOverrides.Value)
+                foreach ((string category, string outfitId) in config.GetEffectivePicks(npcName))
                 {
-                    string category = categoryChoice.Key;
-                    string outfitId = categoryChoice.Value;
+                    if (outfitId is null)
+                    {
+                        continue;
+                    }
 
                     string sprite;
                     string portrait;
