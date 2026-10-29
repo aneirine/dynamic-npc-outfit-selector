@@ -17,7 +17,41 @@ namespace NpcOutfitSelector.Tests
         public static void Run()
         {
             OnePickOfEachKind();
+            OldAndHandEditedPicks();
             EveryFixture();
+        }
+
+        private static void OldAndHandEditedPicks()
+        {
+            const string snowSprite = "Mods/NpcOutfitSelector/LocalAssets/assets/Characters/Haley_Winter_Snowing_Outdoor";
+            var local = new Dictionary<string, List<CharacterAppearanceData>>
+            {
+                ["Haley"] = new List<CharacterAppearanceData>
+                {
+                    AppearanceCategory.BuildLocalEntry(
+                        "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+                        "Winter::Weather_Snowing::Where_Outdoor", snowSprite, null),
+                },
+            };
+
+            var config = new ModConfig();
+            config.SelectedOutfits["Haley"] = new Dictionary<string, string>
+            {
+                ["Winter"] = "LocalAsset::Haley::Winter::Winter_Snowing_Outdoor",
+                ["Spring"] = null,
+                ["Island"] = "pack.HaleySummer",
+                ["Beach"] = "pack.Legacy",
+            };
+
+            Dictionary<string, CharacterData> data = Characters();
+            ForcedEntries.Apply(data, config, local);
+            List<CharacterAppearanceData> forced = data["Haley"].Appearance.Where(e => e.Id.StartsWith(ForcedEntries.IdPrefix)).ToList();
+
+            Assert.Section("Picks saved by older versions, or by hand");
+            Assert.Equal("a 1.0.1 custom PNG Id finds its file", forced.FirstOrDefault(e => e.Id.EndsWith(".Winter"))?.Sprite, snowSprite);
+            Assert.Equal("a null outfit forces nothing", forced.Any(e => e.Id.EndsWith(".Spring")), false);
+            Assert.Equal("two keys for one slot force one entry", string.Join(", ", forced.Select(e => $"{e.Id}={e.Sprite}")),
+                "NpcOutfitSelector.Force.Haley.Island=Characters/Haley_PackSummer, NpcOutfitSelector.Force.Haley.Winter=" + snowSprite);
         }
 
         private static void OnePickOfEachKind()

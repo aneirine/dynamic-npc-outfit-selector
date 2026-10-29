@@ -122,6 +122,45 @@ namespace NpcOutfitSelector
             return result;
         }
 
+        // A saved pick of one of these files, by exact Id or else by NPC and file name. The Id
+        // also embeds a guess at the condition, which 1.1.0 changed for season files with a
+        // weather or place, so a 1.0.1 pick of such a file only matches the second way. The
+        // file name alone is unique, since the scan skips duplicates.
+        public static CharacterAppearanceData FindSaved(IEnumerable<CharacterAppearanceData> options, string savedId)
+        {
+            List<CharacterAppearanceData> list = options.ToList();
+            CharacterAppearanceData exact = list.FirstOrDefault(a => a.Id == savedId);
+            if (exact is not null || !TryParseId(savedId, out string npcName, out string rawCondition))
+            {
+                return exact;
+            }
+
+            return list.FirstOrDefault(a =>
+                TryParseId(a.Id, out string optionNpc, out string optionRaw)
+                && optionNpc.Equals(npcName, StringComparison.OrdinalIgnoreCase)
+                && optionRaw.Equals(rawCondition, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // "LocalAsset::{npc}::{category}::{rawCondition}"; the category may itself contain "::".
+        private static bool TryParseId(string id, out string npcName, out string rawCondition)
+        {
+            npcName = rawCondition = null;
+            if (id?.StartsWith(AppearanceConstants.LocalAssetIdPrefix, StringComparison.Ordinal) != true)
+            {
+                return false;
+            }
+
+            string[] parts = id.Split(AppearanceConstants.KeySeparator);
+            if (parts.Length < 4)
+            {
+                return false;
+            }
+
+            npcName = parts[1];
+            rawCondition = parts[^1];
+            return true;
+        }
+
         public static string ToAssetName(string relativePath) =>
             AppearanceConstants.LocalAssetPathPrefix + Path.ChangeExtension(relativePath, null);
     }

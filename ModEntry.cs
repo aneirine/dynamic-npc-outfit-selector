@@ -819,8 +819,12 @@ namespace NpcOutfitSelector
                         this.selectedCategoryByNpc[npcName],
                         this.selectedWeatherByNpc[npcName],
                         this.selectedLocationByNpc[npcName]),
-                    getSelectedOutfitId: category => this.draft.GetSelectedOutfitId(
-                        npcName, category, GetNaturalOutfitId(displayAppearances, category)),
+                    // Through FindSaved, so a 1.0.1-era custom PNG Id still ticks its card.
+                    getSelectedOutfitId: category =>
+                    {
+                        string saved = this.draft.GetSelectedOutfitId(npcName, category, GetNaturalOutfitId(displayAppearances, category));
+                        return LocalAssetScanner.FindSaved(displayAppearances, saved)?.Id ?? saved;
+                    },
                     setSelectedOutfitId: (category, outfitId) => this.draft.SetSelectedOutfitId(npcName, category, outfitId),
                     hasOverride: category => this.draft.HasOverride(npcName, category),
                     clearOverride: category => this.draft.ClearOverride(npcName, category));

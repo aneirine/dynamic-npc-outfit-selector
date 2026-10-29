@@ -66,11 +66,24 @@ namespace NpcOutfitSelector.Tests
                 Assert.Equal(file, byFile.TryGetValue(file, out CharacterAppearanceData entry) ? entry.Id : "(not found)", v11x);
             }
 
-            Assert.Section("Ids 1.0.1 stored for season files with extras, orphaned since 1.1.0");
-            foreach ((string file, string v101, string v11x) in Golden.Where(row => row.V101 != row.V11x))
+            // 1.1.0 changed the Id of season files with a weather or place, so 1.0.1 picks of
+            // them matched nothing in 1.1.0 and 1.1.1. They're found again by NPC and file name.
+            Assert.Section("Every Id any release stored finds the same file");
+            foreach ((string file, string v101, string v11x) in Golden)
             {
-                Assert.Equal($"{file} (1.0.1 Id)", Resolve(options, v101)?.Sprite, null);
+                string expected = byFile[file].Sprite;
+                Assert.Equal($"{file} (1.1.x Id)", Resolve(options, v11x)?.Sprite, expected);
+                if (v101 != v11x)
+                {
+                    Assert.Equal($"{file} (1.0.1 Id)", Resolve(options, v101)?.Sprite, expected);
+                }
             }
+
+            Assert.Section("Only the same file matches");
+            Assert.Equal("another NPC's file", Resolve(options, "LocalAsset::Emily::Spring::Spring")?.Id, null);
+            Assert.Equal("a removed file", Resolve(options, "LocalAsset::Haley::Winter::Winter_Gone")?.Id, null);
+            Assert.Equal("a pack outfit", Resolve(options, "pack.Spring")?.Id, null);
+            Assert.Equal("a malformed Id", Resolve(options, "LocalAsset::Haley::Spring")?.Id, null);
 
             Assert.Section("Paths and portrait pairing");
             CharacterAppearanceData spring = byFile["Haley_Spring"];
@@ -81,9 +94,12 @@ namespace NpcOutfitSelector.Tests
             Assert.Equal("no portrait is null, not skipped", byFile["Haley_Summer"].Portrait, null);
         }
 
-        // Same lookup ForcedEntries uses for a saved local-asset pick.
-        private static CharacterAppearanceData Resolve(Dictionary<string, List<CharacterAppearanceData>> options, string savedId) =>
-            options.Values.SelectMany(list => list).FirstOrDefault(entry => entry.Id == savedId);
+        // Per NPC, as ForcedEntries looks a saved pick up.
+        private static CharacterAppearanceData Resolve(Dictionary<string, List<CharacterAppearanceData>> options, string savedId)
+        {
+            string npcName = savedId.StartsWith(AppearanceConstants.LocalAssetIdPrefix) ? savedId.Split("::")[1] : "Haley";
+            return options.TryGetValue(npcName, out List<CharacterAppearanceData> list) ? LocalAssetScanner.FindSaved(list, savedId) : null;
+        }
 
         // The scanner only looks at names, so empty files stand in for real sprite sheets.
         internal static Dictionary<string, List<CharacterAppearanceData>> Scan(string modFolder)

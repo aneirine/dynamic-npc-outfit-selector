@@ -45,7 +45,7 @@ namespace NpcOutfitSelector
                         CharacterAppearanceData match = charData.Appearance.FirstOrDefault(a => a.Id == outfitId);
                         if (match is null && localAssetsByNpc.TryGetValue(npcName, out List<CharacterAppearanceData> localOptions))
                         {
-                            match = localOptions.FirstOrDefault(a => a.Id == outfitId);
+                            match = LocalAssetScanner.FindSaved(localOptions, outfitId);
                         }
                         if (match is null)
                         {
