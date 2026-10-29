@@ -134,8 +134,7 @@ namespace NpcOutfitSelector
             this.lastDrawX = anchorX;
             this.lastDrawY = pos.Y;
 
-            Vector2 cursorPos = this.helper.Input.GetCursorPosition().GetScaledScreenPixels();
-            Point cursor = new((int)cursorPos.X, (int)cursorPos.Y);
+            Point cursor = GetUiCursor();
 
             string currentCategory = this.getCurrentCategory();
             string selectedOutfitId = this.getSelectedOutfitId(currentCategory);
@@ -248,6 +247,13 @@ namespace NpcOutfitSelector
             }
         }
 
+        // GMCM draws in UI space; read the cursor there regardless of whether the caller is
+        // currently in UI mode, so hover and click always agree.
+        internal static Point GetUiCursor()
+        {
+            return new Point(Game1.getMouseX(ui_scale: true), Game1.getMouseY(ui_scale: true));
+        }
+
         private Rectangle GetRadioButtonBounds(Rectangle cellScreenBounds)
         {
             int x = cellScreenBounds.X + (cellScreenBounds.Width / 2) - (RadioButtonSize / 2);
@@ -282,10 +288,9 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            // Same coordinate space Draw() uses — e.Cursor.ScreenPixels is unscaled and misses
-            // whenever the UI scale option isn't 100%.
-            Vector2 mousePos = e.Cursor.GetScaledScreenPixels();
-            Point mouse = new((int)mousePos.X, (int)mousePos.Y);
+            // Not e.Cursor.GetScaledScreenPixels(): ButtonPressed fires outside UI mode, so that
+            // returns zoom-space coords and misses whenever zoom and UI scale differ.
+            Point mouse = GetUiCursor();
 
             string currentCategory = this.getCurrentCategory();
             string selectedOutfitId = this.getSelectedOutfitId(currentCategory);

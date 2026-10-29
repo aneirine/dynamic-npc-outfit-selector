@@ -96,10 +96,9 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            // Same coordinate space Draw() uses — e.Cursor.ScreenPixels is unscaled and misses
-            // whenever the UI scale option isn't 100%.
-            Vector2 cursor = e.Cursor.GetScaledScreenPixels();
-            if (!this.lastBounds.Contains((int)cursor.X, (int)cursor.Y))
+            // Not e.Cursor.GetScaledScreenPixels(): ButtonPressed fires outside UI mode, so that
+            // returns zoom-space coords and misses whenever zoom and UI scale differ.
+            if (!this.lastBounds.Contains(AppearancePreviewGrid.GetUiCursor()))
             {
                 return;
             }
