@@ -64,4 +64,11 @@ namespace NpcOutfitSelector
             Func<int> height = null,
             string fieldId = null);
     }
+
+    // Asked for on its own, so a GMCM without it leaves the rest of the API working. False when
+    // no mod's page is open, including GMCM's mod list and its keybinds page (mod is null there).
+    public interface IGenericModConfigMenuCurrentMenuApi
+    {
+        bool TryGetCurrentMenu(out IManifest mod, out string page);
+    }
 }

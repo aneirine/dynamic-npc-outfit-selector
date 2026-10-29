@@ -29,6 +29,7 @@ namespace NpcOutfitSelector.Tests
             RoundTrip("config-empty-hotkey.json");
             Nulls();
 
+            Drafts();
             ReadingNeverWrites();
             UnknownFieldsSurvive();
             UnreadableFilesAreNeverReplaced();
@@ -66,6 +67,29 @@ namespace NpcOutfitSelector.Tests
             using (folder)
             {
                 Assert.Equal("empty hotkey reads as none bound", Load(data, new FakeMonitor()).MenuHotkey.Keybinds.Length, 0);
+            }
+        }
+
+        // The menu edits a copy and only Save hands it back (A5), so the copy must share nothing
+        // the game reads.
+        private static void Drafts()
+        {
+            Assert.Section("A menu draft is independent of the live config");
+            (FakeDataHelper data, TempFolder folder) = Open("config-1.1.1.json");
+            using (folder)
+            {
+                ModConfig live = Load(data, new FakeMonitor());
+                ModConfig draft = live.Clone();
+                draft.SetSelectedOutfitId("Haley", "Fall", "pack.Draft");
+                draft.SetSelectedOutfitId("Krobus", "Spring", "pack.Draft");
+                draft.ClearOverride("Sam", "Fall");
+
+                Assert.Equal("an edit to an NPC with picks", live.HasOverride("Haley", "Fall"), false);
+                Assert.Equal("an NPC new to the draft", live.SelectedOutfits.ContainsKey("Krobus"), false);
+                Assert.Equal("a cleared pick", live.GetSelectedOutfitId("Sam", "Fall", null), "Default");
+                Assert.Equal("the copy starts out equal", string.Join("|", EffectivePicks(Load(data, new FakeMonitor()).Clone())),
+                    string.Join("|", EffectivePicks(live)));
+                Assert.Equal("and carries the hotkey", live.Clone().MenuHotkey.ToString(), "F9");
             }
         }
 

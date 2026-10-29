@@ -38,8 +38,6 @@ namespace NpcOutfitSelector
         // The last config read successfully. A failed read keeps the previous one in play.
         public ModConfig Config { get; private set; } = new();
 
-        public bool HasLoaded { get; private set; }
-
         // Why the latest read failed, or null if it didn't.
         public string LoadError { get; private set; }
 
@@ -61,7 +59,6 @@ namespace NpcOutfitSelector
             }
 
             this.LoadError = null;
-            this.HasLoaded = true;
             loaded.RepairNulls();
             foreach (string warning in loaded.MigrateLegacyKeys())
             {

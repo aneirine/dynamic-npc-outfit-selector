@@ -39,8 +39,11 @@ namespace NpcOutfitSelector
         // overrides still has to repaint the characters those overrides used to apply to. Reloading
         // one that didn't actually change is harmless — it just re-picks the same appearance.
         private readonly HashSet<string> npcsTouchedByConfig = new(StringComparer.OrdinalIgnoreCase);
+        // configStore.Config is what the game gets. The menu edits a copy, which only save hands
+        // back, so Cancel, a keybinds-page save, or a Data/Characters reload can't apply it.
         private ConfigStore configStore;
-        private ModConfig config;
+        private ModConfig draft = new();
+        private bool configRead;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
         // Applied on Enter, not per keystroke: a rebuild replaces GMCM's Textbox, which only takes
@@ -52,6 +55,10 @@ namespace NpcOutfitSelector
         // second build would orphan the preview grids the on-screen menu still draws, leaving them
         // visible but unable to receive clicks.
         private bool suppressNextMenuChangedRebuild;
+
+        // Set by our own reopen (search, Clear search, the hotkey), which builds the draft itself:
+        // the page-open hook must then keep it rather than start over from the saved config.
+        private bool keepDraftOnNextOpen;
 
         // GMCM's Reset calls reset, then save; this lets that save back the file up first.
         private bool resetPending;
@@ -109,7 +116,8 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            this.config ??= this.LoadConfig();
+            this.EnsureConfigRead();
+            ModConfig config = this.configStore.Config;
             this.localAssetsByNpc ??= LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, characters.Keys.ToList(), this.Monitor);
 
             List<CharacterAppearanceData> displayAppearances = this.BuildDisplayAppearances(npcName, data);
@@ -117,14 +125,14 @@ namespace NpcOutfitSelector
             string[] categories = AppearanceCategory.CollectGlobalCategories(
                 characters.Values.SelectMany(d => d.Appearance ?? Enumerable.Empty<CharacterAppearanceData>())
                     .Concat(this.localAssetsByNpc.Values.SelectMany(list => list)));
-            Dictionary<string, string> byCategory = this.config.GetEffectivePicks(npcName);
+            Dictionary<string, string> byCategory = config.GetEffectivePicks(npcName);
 
             this.Monitor.Log($"{npcName} — resolved outfit per category:", LogLevel.Info);
             foreach (string category in categories)
             {
                 string natural = GetNaturalOutfitId(displayAppearances, category);
                 bool hasOverride = byCategory.TryGetValue(category, out string overrideId) && overrideId is not null;
-                string resolved = this.config.GetSelectedOutfitId(npcName, category, natural);
+                string resolved = config.GetSelectedOutfitId(npcName, category, natural);
 
                 this.Monitor.Log(
                     $"  {category,-20} natural={natural,-55} override={(hasOverride ? overrideId : "(none)"),-55} resolved={resolved}",
@@ -192,7 +200,9 @@ namespace NpcOutfitSelector
         {
             if (GetActiveGmcmMenu() is not null)
             {
-                if (e.Button == SButton.Enter)
+                // Rebuilding replaces whatever page is open, so on another mod's page Enter would
+                // throw away its unsaved changes.
+                if (e.Button == SButton.Enter && this.IsOwnPageOpen() != false)
                 {
                     this.ScheduleSearchApply();
                 }
@@ -201,11 +211,24 @@ namespace NpcOutfitSelector
 
             // Free-roam only, so the shortcut can't fire mid-cutscene or while another menu has
             // the keyboard — and can't collide with Enter above, which needs our page already open.
-            if (Context.IsPlayerFree && this.config?.MenuHotkey?.JustPressed() == true)
+            if (Context.IsPlayerFree && this.configStore.Config.MenuHotkey?.JustPressed() == true)
             {
                 this.searchQuery = "";
-                this.RebuildAndShowMenu();
+                this.RebuildAndShowMenu(keepDraft: false);
             }
+        }
+
+        // Null when this GMCM can't say, in which case callers act as 1.1.1 did.
+        private bool? IsOwnPageOpen()
+        {
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuCurrentMenuApi>("spacechase0.GenericModConfigMenu");
+            if (gmcm is null)
+            {
+                return null;
+            }
+
+            return gmcm.TryGetCurrentMenu(out IManifest mod, out _)
+                && mod?.UniqueID.Equals(this.ModManifest.UniqueID, StringComparison.OrdinalIgnoreCase) == true;
         }
 
         // Deferred a tick so the reopen never runs while the game is still handling the click or
@@ -220,7 +243,7 @@ namespace NpcOutfitSelector
         private void OnSearchApplyTicked(object sender, UpdateTickedEventArgs e)
         {
             this.Helper.Events.GameLoop.UpdateTicked -= this.OnSearchApplyTicked;
-            this.RebuildAndShowMenu();
+            this.RebuildAndShowMenu(keepDraft: true);
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -239,12 +262,12 @@ namespace NpcOutfitSelector
 
             e.Edit(asset =>
             {
-                this.config ??= this.LoadConfig();
+                this.EnsureConfigRead();
 
                 IDictionary<string, CharacterData> data = asset.AsDictionary<string, CharacterData>().Data;
                 this.localAssetsByNpc ??= LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, data.Keys.ToList(), this.Monitor);
 
-                ForcedEntries.Apply(data, this.config, this.localAssetsByNpc);
+                ForcedEntries.Apply(data, this.configStore.Config, this.localAssetsByNpc);
             }, AssetEditPriority.Late);
         }
 
@@ -285,7 +308,7 @@ namespace NpcOutfitSelector
         // GMCM's Table is built once per menu and can't be swapped, so a changed option list means
         // replacing the whole menu. Never call from a GMCM callback — the reopen re-enters
         // MenuChanged.
-        private void RebuildAndShowMenu()
+        private void RebuildAndShowMenu(bool keepDraft)
         {
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm is null)
@@ -293,7 +316,8 @@ namespace NpcOutfitSelector
                 return;
             }
 
-            this.BuildMenu();
+            this.BuildMenu(keepDraft);
+            this.keepDraftOnNextOpen = true;
             this.suppressNextMenuChangedRebuild = true;
             gmcm.OpenModMenu(this.ModManifest);
         }
@@ -328,7 +352,7 @@ namespace NpcOutfitSelector
         {
             string any = AppearanceConstants.AnyOption;
 
-            Dictionary<string, string> byCategory = this.config.GetEffectivePicks(npcName);
+            Dictionary<string, string> byCategory = this.draft.GetEffectivePicks(npcName);
             if (byCategory.Count == 0
                 || !npcLocations.TryGetValue(npcName, out GameLocation location)
                 || location is null)
@@ -400,12 +424,37 @@ namespace NpcOutfitSelector
 
         // Reads without writing, so it's safe to call on every menu open. If the file can't be
         // read, the last good config stays in play and saving is refused (see ConfigStore).
-        private ModConfig LoadConfig()
+        private void ReloadConfig()
         {
             this.configStore.Reload();
-            ModConfig loaded = this.configStore.Config;
-            this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
-            return loaded;
+            this.configRead = true;
+            this.npcsTouchedByConfig.UnionWith(this.configStore.Config.SelectedOutfits.Keys);
+        }
+
+        // Only the first time: after a failed read, asset loads shouldn't retry and re-log it.
+        private void EnsureConfigRead()
+        {
+            if (!this.configRead)
+            {
+                this.ReloadConfig();
+            }
+        }
+
+        // A fresh visit starts from what's saved, so picks from a cancelled one are gone.
+        private void StartDraft()
+        {
+            this.ReloadConfig();
+            this.draft = this.configStore.Config.Clone();
+        }
+
+        private void OnPageOpening()
+        {
+            if (this.keepDraftOnNextOpen)
+            {
+                this.keepDraftOnNextOpen = false;
+                return;
+            }
+            this.StartDraft();
         }
 
         private string ConfigNoticeText() =>
@@ -518,7 +567,7 @@ namespace NpcOutfitSelector
             }
         }
 
-        private void BuildMenu()
+        private void BuildMenu(bool keepDraft = false)
         {
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm is null)
@@ -536,9 +585,11 @@ namespace NpcOutfitSelector
             this.searchClearButton?.Dispose();
             this.searchClearButton = null;
 
-            // Reload from disk on every rebuild so a Cancel from a previous visit is discarded here
-            // instead of lingering as an unsaved in-memory choice.
-            this.config = this.LoadConfig();
+            // Rebuilds for search keep the draft: a rebuild isn't a new visit, so unsaved picks stay.
+            if (!keepDraft)
+            {
+                this.StartDraft();
+            }
 
             try { gmcm.Unregister(this.ModManifest); }
             catch { }
@@ -548,14 +599,29 @@ namespace NpcOutfitSelector
                 // GMCM's "Default" button calls this then automatically calls save() right after.
                 reset: () =>
                 {
-                    this.config = new ModConfig();
+                    this.draft = new ModConfig();
                     this.resetPending = true;
                 },
                 save: () =>
                 {
                     bool isReset = this.resetPending;
                     this.resetPending = false;
-                    if (!this.configStore.Save(this.config, isReset))
+
+                    // GMCM's keybinds page saves every mod with a keybind, with our page closed.
+                    // Only the hotkey is edited there; the draft may hold picks from a visit that
+                    // ended in Cancel.
+                    ModConfig toSave;
+                    if (this.IsOwnPageOpen() != false)
+                    {
+                        toSave = this.draft.Clone();
+                    }
+                    else
+                    {
+                        toSave = this.configStore.Config.Clone();
+                        toSave.MenuHotkey = this.draft.MenuHotkey;
+                    }
+
+                    if (!this.configStore.Save(toSave, isReset))
                     {
                         return;
                     }
@@ -571,7 +637,7 @@ namespace NpcOutfitSelector
                     // Deliberately not just the current keys: "Default" empties the whole config
                     // before this runs, so the characters that need repainting are exactly the ones
                     // no longer listed here.
-                    this.npcsTouchedByConfig.UnionWith(this.config.SelectedOutfits.Keys);
+                    this.npcsTouchedByConfig.UnionWith(toSave.SelectedOutfits.Keys);
                     foreach (string npcName in this.npcsTouchedByConfig)
                     {
                         Game1.getCharacterFromName(npcName)?.reloadSprite();
@@ -606,7 +672,7 @@ namespace NpcOutfitSelector
                 name: () => "",
                 draw: this.DrawConfigNotice,
                 height: this.ConfigNoticeHeight,
-                beforeMenuOpened: () => this.config = this.LoadConfig(),
+                beforeMenuOpened: this.OnPageOpening,
                 fieldId: ConfigNoticeFieldId
             );
 
@@ -614,8 +680,8 @@ namespace NpcOutfitSelector
                 mod: this.ModManifest,
                 name: () => "Open this menu",
                 tooltip: () => "Opens this page directly while playing. Clear it to disable the shortcut.",
-                getValue: () => this.config.MenuHotkey,
-                setValue: value => this.config.MenuHotkey = value,
+                getValue: () => this.draft.MenuHotkey,
+                setValue: value => this.draft.MenuHotkey = value,
                 fieldId: MenuHotkeyFieldId
             );
 
@@ -753,11 +819,11 @@ namespace NpcOutfitSelector
                         this.selectedCategoryByNpc[npcName],
                         this.selectedWeatherByNpc[npcName],
                         this.selectedLocationByNpc[npcName]),
-                    getSelectedOutfitId: category => this.config.GetSelectedOutfitId(
+                    getSelectedOutfitId: category => this.draft.GetSelectedOutfitId(
                         npcName, category, GetNaturalOutfitId(displayAppearances, category)),
-                    setSelectedOutfitId: (category, outfitId) => this.config.SetSelectedOutfitId(npcName, category, outfitId),
-                    hasOverride: category => this.config.HasOverride(npcName, category),
-                    clearOverride: category => this.config.ClearOverride(npcName, category));
+                    setSelectedOutfitId: (category, outfitId) => this.draft.SetSelectedOutfitId(npcName, category, outfitId),
+                    hasOverride: category => this.draft.HasOverride(npcName, category),
+                    clearOverride: category => this.draft.ClearOverride(npcName, category));
                 this.activeGrids.Add(previewGrid);
 
                 gmcm.AddComplexOption(
