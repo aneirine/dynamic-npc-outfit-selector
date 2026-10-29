@@ -20,6 +20,10 @@
     <!-- Auto-references the game DLLs and copies the built mod into your Mods folder.
          Update the version if a newer one is out: https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig -->
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+
+    <!-- SMAPI ships this and loads it for every mod; used to keep config.json fields this
+         version doesn't know. Not copied into the mod folder. -->
+    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)\smapi-internal\Newtonsoft.Json.dll" Private="false" />
   </ItemGroup>
 
   <ItemGroup>

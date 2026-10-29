@@ -67,6 +67,24 @@ namespace NpcOutfitSelector
             byCategory[existing ?? category] = outfitId;
         }
 
+        public ModConfig Clone() => new()
+        {
+            SelectedOutfits = this.SelectedOutfits.ToDictionary(
+                npc => npc.Key,
+                npc => npc.Value is null ? null : new Dictionary<string, string>(npc.Value)),
+            MenuHotkey = this.MenuHotkey,
+        };
+
+        // A hand-edited null crashed 1.1.1 on load. Either one means "nothing picked".
+        public void RepairNulls()
+        {
+            this.SelectedOutfits ??= new();
+            foreach (string npcName in this.SelectedOutfits.Where(npc => npc.Value is null).Select(npc => npc.Key).ToList())
+            {
+                this.SelectedOutfits[npcName] = new Dictionary<string, string>();
+            }
+        }
+
         // Renames a 1.0.1 "Beach" base to "Island", so the menu, which only writes Island, finds
         // it. Skipped when another key already fills that slot: both stay and 1.1.1's winner
         // keeps applying. Returns a warning for every key left doing nothing.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -20,6 +21,7 @@ namespace NpcOutfitSelector
         private const string SearchQueryFieldId = "Search_Query";
         private const string SearchClearFieldId = "Search_Clear";
         private const string MenuHotkeyFieldId = "Menu_Hotkey";
+        private const string ConfigNoticeFieldId = "Config_Notice";
 
         // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
         private const string UnrevealedNpcKey = "???";
@@ -51,9 +53,12 @@ namespace NpcOutfitSelector
         // visible but unable to receive clicks.
         private bool suppressNextMenuChangedRebuild;
 
+        // GMCM's Reset calls reset, then save; this lets that save back the file up first.
+        private bool resetPending;
+
         public override void Entry(IModHelper helper)
         {
-            this.configStore = new ConfigStore(helper.Data, this.Monitor);
+            this.configStore = new ConfigStore(helper.Data, helper.DirectoryPath, this.Monitor);
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
@@ -393,12 +398,42 @@ namespace NpcOutfitSelector
             return best?.Id ?? AppearanceConstants.DefaultAppearanceId;
         }
 
+        // Reads without writing, so it's safe to call on every menu open. If the file can't be
+        // read, the last good config stays in play and saving is refused (see ConfigStore).
         private ModConfig LoadConfig()
         {
-            ModConfig loaded = this.configStore.Load();
+            this.configStore.Reload();
+            ModConfig loaded = this.configStore.Config;
             this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
             return loaded;
         }
+
+        private string ConfigNoticeText() =>
+            this.configStore.LoadError is null
+                ? null
+                : "config.json could not be read, so this page can't save. Your file hasn't been changed. "
+                + "Fix the mistake in it (or move it away to start over), then reopen this menu. "
+                + "The SMAPI log has the details.";
+
+        private int ConfigNoticeHeight()
+        {
+            string text = this.ConfigNoticeText();
+            return text is null ? 0 : (int)Game1.smallFont.MeasureString(WrapToPanel(text)).Y;
+        }
+
+        private void DrawConfigNotice(SpriteBatch spriteBatch, Vector2 pos)
+        {
+            string text = this.ConfigNoticeText();
+            if (text is not null)
+            {
+                // GMCM passes the row's midpoint, which is the panel's center; see AppearancePreviewGrid.Draw.
+                spriteBatch.DrawString(Game1.smallFont, WrapToPanel(text), new Vector2(pos.X - (PanelWidth() / 2f), pos.Y), Color.Red);
+            }
+        }
+
+        private static string WrapToPanel(string text) => Game1.parseText(text, Game1.smallFont, PanelWidth());
+
+        private static int PanelWidth() => Math.Min(1200, Game1.uiViewport.Width - 200);
 
         private Dictionary<string, CharacterData> LoadCharacters()
         {
@@ -511,10 +546,19 @@ namespace NpcOutfitSelector
             gmcm.Register(
                 mod: this.ModManifest,
                 // GMCM's "Default" button calls this then automatically calls save() right after.
-                reset: () => this.config = new ModConfig(),
+                reset: () =>
+                {
+                    this.config = new ModConfig();
+                    this.resetPending = true;
+                },
                 save: () =>
                 {
-                    this.configStore.Save(this.config);
+                    bool isReset = this.resetPending;
+                    this.resetPending = false;
+                    if (!this.configStore.Save(this.config, isReset))
+                    {
+                        return;
+                    }
                     this.Helper.GameContent.InvalidateCache("Data/Characters");
 
                     // The game only re-picks an NPC's appearance when it warps between locations —
@@ -554,6 +598,17 @@ namespace NpcOutfitSelector
             }
 
             this.localAssetsByNpc = LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, characters.Keys.ToList(), this.Monitor);
+
+            // First on the page: GMCM runs beforeMenuOpened in page order, so the file is read
+            // here, once, before any other option asks for a value.
+            gmcm.AddComplexOption(
+                mod: this.ModManifest,
+                name: () => "",
+                draw: this.DrawConfigNotice,
+                height: this.ConfigNoticeHeight,
+                beforeMenuOpened: () => this.config = this.LoadConfig(),
+                fieldId: ConfigNoticeFieldId
+            );
 
             gmcm.AddKeybindList(
                 mod: this.ModManifest,
@@ -710,7 +765,6 @@ namespace NpcOutfitSelector
                     name: () => "",
                     draw: previewGrid.Draw,
                     height: () => previewGrid.Height,
-                    beforeMenuOpened: () => this.config = this.LoadConfig(),
                     fieldId: $"AppearanceGrid_{npcName}"
                 );
             }

@@ -119,7 +119,7 @@ namespace NpcOutfitSelector.Tests
             using var folder = new TempFolder();
             var data = new FakeDataHelper(folder.Path);
             File.Copy(ConfigFileTests.FixturePath(fixture), data.FullPath(ConfigStore.FileName));
-            return new ConfigStore(data, new FakeMonitor()).Load();
+            return ConfigFileTests.Load(data, new FakeMonitor());
         }
 
         private static Dictionary<string, CharacterData> Characters() => new()
