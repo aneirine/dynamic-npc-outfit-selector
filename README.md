@@ -59,8 +59,9 @@ Weather_Sunny                           any season, as long as it's sunny
 ```
 
 The first part is the category. Every part after it says which setting it belongs to, written
-`Setting_Value`, and narrows when the category applies. Order doesn't matter when you read them,
-and the mod always saves them as category, weather, place.
+`Setting_Value`, and narrows when the category applies. Order doesn't matter when you read them.
+Keys the menu creates are saved as category, weather, place; a key you typed by hand is kept
+exactly as you wrote it.
 
 Naming the setting is what lets a value the mod has never seen still work. Other mods can add both
 new locations *and* new weather types; because the part already says which it is, an unfamiliar
