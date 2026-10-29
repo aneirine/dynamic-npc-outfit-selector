@@ -41,6 +41,7 @@ namespace NpcOutfitSelector
         // overrides still has to repaint the characters those overrides used to apply to. Reloading
         // one that didn't actually change is harmless — it just re-picks the same appearance.
         private readonly HashSet<string> npcsTouchedByConfig = new(StringComparer.OrdinalIgnoreCase);
+        private ConfigStore configStore;
         private ModConfig config;
         private Dictionary<string, List<CharacterAppearanceData>> localAssetsByNpc;
 
@@ -56,6 +57,8 @@ namespace NpcOutfitSelector
 
         public override void Entry(IModHelper helper)
         {
+            this.configStore = new ConfigStore(helper.Data, this.Monitor);
+
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
@@ -439,19 +442,8 @@ namespace NpcOutfitSelector
 
         private ModConfig LoadConfig()
         {
-            ModConfig loaded;
-            try
-            {
-                loaded = this.Helper.ReadConfig<ModConfig>();
-            }
-            catch (Exception ex)
-            {
-                this.Monitor.Log($"Could not read config.json, starting fresh: {ex.Message}", LogLevel.Warn);
-                loaded = new ModConfig();
-            }
-
+            ModConfig loaded = this.configStore.Load();
             this.npcsTouchedByConfig.UnionWith(loaded.SelectedOutfits.Keys);
-            loaded.MigrateLegacyKeys();
             return loaded;
         }
 
@@ -569,7 +561,7 @@ namespace NpcOutfitSelector
                 reset: () => this.config = new ModConfig(),
                 save: () =>
                 {
-                    this.Helper.WriteConfig(this.config);
+                    this.configStore.Save(this.config);
                     this.Helper.GameContent.InvalidateCache("Data/Characters");
 
                     // The game only re-picks an NPC's appearance when it warps between locations —
