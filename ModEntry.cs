@@ -21,10 +21,6 @@ namespace NpcOutfitSelector
         private const string SearchClearFieldId = "Search_Clear";
         private const string MenuHotkeyFieldId = "Menu_Hotkey";
 
-        // Marks entries OnAssetRequested injects to force a choice; filtered out of the grid so a
-        // forced entry doesn't show up as a duplicate of its source.
-        private const string ForcedEntryIdPrefix = "NpcOutfitSelector.Force.";
-
         // Vanilla's key for an as-yet-unrevealed NPC slot — not a real character, skip it everywhere.
         private const string UnrevealedNpcKey = "???";
 
@@ -244,50 +240,7 @@ namespace NpcOutfitSelector
                 IDictionary<string, CharacterData> data = asset.AsDictionary<string, CharacterData>().Data;
                 this.localAssetsByNpc ??= LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, data.Keys.ToList(), this.Monitor);
 
-                foreach (KeyValuePair<string, Dictionary<string, string>> npcOverrides in this.config.SelectedOutfits)
-                {
-                    string npcName = npcOverrides.Key;
-                    if (!data.TryGetValue(npcName, out CharacterData charData))
-                    {
-                        continue;
-                    }
-
-                    charData.Appearance ??= new List<CharacterAppearanceData>();
-
-                    foreach (KeyValuePair<string, string> categoryChoice in npcOverrides.Value)
-                    {
-                        string category = categoryChoice.Key;
-                        string outfitId = categoryChoice.Value;
-
-                        string sprite;
-                        string portrait;
-                        if (outfitId == AppearanceConstants.DefaultAppearanceId)
-                        {
-                            sprite = $"Characters/{npcName}";
-                            portrait = $"Portraits/{npcName}";
-                        }
-                        else
-                        {
-                            CharacterAppearanceData match = charData.Appearance.FirstOrDefault(a => a.Id == outfitId);
-                            if (match is null && this.localAssetsByNpc.TryGetValue(npcName, out List<CharacterAppearanceData> localOptions))
-                            {
-                                match = localOptions.FirstOrDefault(a => a.Id == outfitId);
-                            }
-                            if (match is null)
-                            {
-                                continue;
-                            }
-                            sprite = match.Sprite;
-                            portrait = match.Portrait;
-                        }
-
-                        charData.Appearance.Insert(0, AppearanceCategory.BuildForcedEntry(
-                            id: $"{ForcedEntryIdPrefix}{npcName}.{category}",
-                            category: category,
-                            sprite: sprite,
-                            portrait: portrait));
-                    }
-                }
+                ForcedEntries.Apply(data, this.config, this.localAssetsByNpc);
             }, AssetEditPriority.Late);
         }
 
@@ -468,7 +421,7 @@ namespace NpcOutfitSelector
             if (data.Appearance is not null)
             {
                 displayAppearances.AddRange(data.Appearance.Where(
-                    a => a.Id is null || !a.Id.StartsWith(ForcedEntryIdPrefix, StringComparison.Ordinal)));
+                    a => a.Id is null || !a.Id.StartsWith(ForcedEntries.IdPrefix, StringComparison.Ordinal)));
             }
             if (this.localAssetsByNpc.TryGetValue(npcName, out List<CharacterAppearanceData> localOptions))
             {
