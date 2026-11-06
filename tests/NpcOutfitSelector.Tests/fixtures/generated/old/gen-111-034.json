@@ -1,0 +1,37 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Stardew Valley Fair::Weather_GreenRain::Where_Outdoor": "pack.Abigail.B",
+      "Spring::Weather_Raining::Where_Saloon": "pack.Abigail.D",
+      "Island::Where_Indoor": "pack.Abigail.A",
+      "Luau::Weather_GreenRain": "Default",
+      "Summer::Where_Outdoor": "pack.Abigail.A"
+    },
+    "Emily": {
+      "Spring": "pack.Emily.A"
+    },
+    "Alex": {
+      "Casual::Weather_Sunny::Where_IslandSouth": "pack.Alex.C",
+      "Luau::Weather_Raining::Where_Indoor": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Weather_Snowing::Where_MyModPlace": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Nobody": {
+      "Winter::Weather_Raining": "pack.Nobody.B",
+      "Weather_Lightning": "Default",
+      "Where_Beach": "pack.Nobody.A",
+      "Winter::Where_Saloon": "pack.Nobody.Missing"
+    },
+    "Sam": {
+      "Island::Where_Town": "pack.Sam.B",
+      "Winter::Weather_GreenRain::Where_IslandSouth": "pack.Sam.C",
+      "Island": "pack.Sam.C",
+      "Island::Weather_Snowing::Where_Saloon": "pack.Sam.B",
+      "Island::Weather_Lightning::Where_MyModPlace": "pack.Sam.B"
+    },
+    "Haley": {
+      "Spring::Weather_Snowing::Where_IslandSouth": "pack.Haley.Missing"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

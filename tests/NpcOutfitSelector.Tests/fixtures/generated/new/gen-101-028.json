@@ -1,0 +1,17 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {},
+    "Haley": {
+      "Island": "Default",
+      "Spirit's Eve": "LocalAsset::Haley::Casual::Casual",
+      "Flower Dance": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Abigail": {
+      "Wedding": "pack.Abigail.C",
+      "Casual": "pack.Abigail.B",
+      "Spring": "Default",
+      "Island": "pack.Abigail.Missing"
+    }
+  },
+  "MenuHotkey": "F9"
+}

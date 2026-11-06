@@ -1,0 +1,22 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Abigail": {},
+    "Sam": {
+      "Fall::Weather_Windy": "pack.Sam.D",
+      "Weather_Snowing::Any": "pack.Sam.A",
+      "Weather_Snowing::Any::Where_Any": "pack.Sam.D"
+    },
+    "Haley": {
+      "Spirit's Eve::weather_lightning::Where_Indoor::weather_windy": "Default"
+    },
+    "Alex": {
+      "where_outdoor::weather_any": "Default",
+      "Where_Indoor::Island::Weather_Any": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "WHERE_INDOOR::ISLAND::WEATHER_ANY": "pack.Alex.D",
+      "fall": "pack.Alex.D",
+      "beach::weather_sunny::Where_MyModPlace::Weather_Snowing": "pack.Alex.B"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

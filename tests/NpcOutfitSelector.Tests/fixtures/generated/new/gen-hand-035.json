@@ -1,0 +1,39 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Any::Weather_Lightning": "LocalAsset::Abigail::Casual::Casual",
+      "Winter::Weather_Foggy::Where_MyModPlace::Any": "pack.Abigail.D",
+      "Winter::Weather_Foggy::Where_MyModPlace::Any::Where_Any": "pack.Abigail.C",
+      "Stardew Valley Fair::Weather_Windy": "pack.Abigail.A",
+      "Casual::Where_Indoor::Weather_Foggy": "LocalAsset::Abigail::Casual::Casual"
+    },
+    "Alex": {
+      "weather_snowing::Weather_Lightning": "Default",
+      "WEATHER_SNOWING::WEATHER_LIGHTNING": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Egg Festival::Where_Town::Weather_Snowing::Weather_Any": "Default",
+      "Weather_Any::Weather_Snowing::Where_Town::Egg Festival": "pack.Alex.C",
+      "island::weather_sunny": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Emily": {
+      "where_indoor::Dance of the Moonlight Jellies": "pack.Emily.A",
+      "weather_any::Fall": "Default",
+      "Weather_Foggy::Where_Outdoor": "pack.Emily.C",
+      "flower dance::where_islandsouth::Weather_Raining": "pack.Emily.Missing",
+      "Fall::weather_raining::where_saloon::weather_any": "pack.Emily.Missing",
+      "Island::Weather_Windy::Where_Beach": "pack.Emily.D"
+    },
+    "Sam": {
+      "Rainy::Weather_GreenRain::Summer": "pack.Sam.C",
+      "Weather_GreenRain::Where_Town::rainy": "pack.Sam.A",
+      "Winter::Where_IslandSouth::Rainy": "pack.Sam.C",
+      "Rainy::Where_IslandSouth::Winter": "pack.Sam.C",
+      "Spring::Weather_Windy::Where_Outdoor::Rainy": "pack.Sam.D",
+      "Spring::Rainy": "pack.Sam.B"
+    },
+    "Haley": {
+      "Weather_Any::Where_Outdoor::Weather_Raining::summer": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "summer::Weather_Raining::Where_Outdoor::Weather_Any": "pack.Haley.B"
+    }
+  },
+  "MenuHotkey": "None"
+}

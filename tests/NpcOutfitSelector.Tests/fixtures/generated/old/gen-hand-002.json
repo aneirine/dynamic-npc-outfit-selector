@@ -1,0 +1,28 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Where_Beach": "Default",
+      "Island::Rainy": "pack.Nobody.B",
+      "Rainy::Island": "Default",
+      "Flower Dance::Weather_Lightning::Where_Beach::Rainy": "pack.Nobody.A",
+      "Rainy::Where_Beach::Weather_Lightning::Flower Dance": "pack.Nobody.D"
+    },
+    "Abigail": {
+      "Beach::Weather_Sunny::Where_Saloon": "pack.Abigail.B",
+      "Where_MyModPlace::Rainy": "Default",
+      "Weather_Any::casual": "pack.Abigail.D",
+      "fall::Any::weather_snowing": "pack.Abigail.Missing",
+      "Weather_Windy::Where_IslandSouth::Weather_Foggy": "pack.Abigail.C",
+      "Casual::Where_Saloon::Rainy": "pack.Abigail.Missing"
+    },
+    "Emily": {
+      "Where_IslandSouth::Island": "pack.Emily.Missing",
+      "Where_IslandSouth::Island::Where_Any": "pack.Emily.A",
+      "beach::Where_MyModPlace::weather_snowing": "pack.Emily.B",
+      "Spring::Weather_Snowing::Where_Saloon::Weather_Any": "pack.Emily.A",
+      "Spring::Weather_Snowing::Where_Saloon::Weather_Any::Where_Any": "pack.Emily.D"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

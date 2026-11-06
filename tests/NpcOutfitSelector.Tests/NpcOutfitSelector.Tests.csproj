@@ -23,6 +23,8 @@
     <!-- Only here for the game assembly references; the deploy steps are off above. -->
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
     <ProjectReference Include="..\..\NpcOutfitSelector.csproj" />
+    <!-- Shared with tests/Oracle-1.1.1, which builds the released 1.1.1 sources against it. -->
+    <Compile Include="..\Shared\CompatScenario.cs" Link="Shared\CompatScenario.cs" />
 
     <!-- SMAPI's own JSON reader, so config tests parse files exactly the way the game does. -->
     <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)\smapi-internal\Newtonsoft.Json.dll" Private="false" />

@@ -1,0 +1,34 @@
+{
+  "SelectedOutfits": {
+    "Emily": {},
+    "Haley": {
+      "Winter::Weather_Raining::Where_MyModPlace": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Island::Where_Town": "pack.Haley.C",
+      "Fall::Weather_Windy::Where_Saloon": "pack.Haley.D",
+      "Spring": "LocalAsset::Haley::Beach::Beach",
+      "Spirit's Eve::Weather_Sunny::Where_Saloon": "Default"
+    },
+    "Alex": {
+      "Where_Beach": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Weather_Lightning::Where_Indoor": "pack.Alex.D",
+      "Winter": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Dance of the Moonlight Jellies::Weather_Sunny::Where_Indoor": "pack.Alex.Missing",
+      "Egg Festival": "pack.Alex.Missing",
+      "Festival of Ice::Weather_Raining::Where_Town": "pack.Alex.D"
+    },
+    "Abigail": {
+      "Island::Where_Town": "pack.Abigail.C",
+      "Where_Saloon": "LocalAsset::Abigail::Casual::Casual",
+      "Wedding::Weather_Windy": "LocalAsset::Abigail::Casual::Casual",
+      "Winter": "Default"
+    },
+    "Sam": {
+      "Island::Weather_Raining": "Default",
+      "Island::Where_Indoor": "pack.Sam.C",
+      "Spring::Weather_Windy::Where_Indoor": "pack.Sam.Missing",
+      "Dance of the Moonlight Jellies::Weather_Windy::Where_MyModPlace": "pack.Sam.A",
+      "Stardew Valley Fair::Weather_Windy::Where_Outdoor": "pack.Sam.Missing"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

@@ -1,0 +1,20 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Summer": "pack.Abigail.Missing"
+    },
+    "Nobody": {},
+    "Alex": {
+      "Where_IslandSouth": "pack.Alex.D",
+      "Feast of the Winter Star::Where_IslandSouth": "pack.Alex.D"
+    },
+    "Emily": {
+      "Fall::Where_Saloon": "pack.Emily.D",
+      "Island::Where_IslandSouth": "pack.Emily.A",
+      "Spring::Weather_Sunny": "pack.Emily.D",
+      "Island::Weather_Raining::Where_Saloon": "pack.Emily.D"
+    }
+  },
+  "MenuHotkey": ""
+}

@@ -1,0 +1,34 @@
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Weather_Windy::Summer": "pack.Sam.D",
+      "Weather_Windy::Summer::Where_Any": "Default",
+      "Festival of Ice::Weather_Any": "pack.Sam.B",
+      "Weather_Any::Festival of Ice": "pack.Sam.C",
+      "Fall::Weather_GreenRain::Rainy": "pack.Sam.A",
+      "Fall::where_beach": "Default",
+      "Island::Weather_Snowing::where_town::rainy": "pack.Sam.B",
+      "any::beach::weather_raining": "pack.Sam.A"
+    },
+    "Abigail": {},
+    "Haley": {
+      "Fall::Weather_Any": "pack.Haley.B",
+      "Weather_Any::Fall": "LocalAsset::Haley::Beach::Beach",
+      "spring::where_islandsouth": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Weather_Sunny::Rainy": "pack.Haley.A",
+      "winter::Where_MyModPlace::Weather_Raining": "LocalAsset::Haley::Spring::NoSuchFile",
+      "WINTER::WHERE_MYMODPLACE::WEATHER_RAINING": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Alex": {},
+    "Emily": {
+      "Weather_GreenRain::where_islandsouth::spring": "pack.Emily.D"
+    },
+    "Nobody": {
+      "Egg Festival": "pack.Nobody.A"
+    }
+  },
+  "SomeFutureSetting": {
+    "Enabled": true
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,13 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Stardew Valley Fair::Any::Weather_Lightning": "LocalAsset::Abigail::Casual::Casual",
+      "Wedding::Weather_Lightning::Weather_Any": "pack.Abigail.C",
+      "Where_MyModPlace::Summer::Weather_Sunny": "pack.Abigail.B",
+      "Island::Weather_GreenRain": "LocalAsset::Abigail::Casual::Casual",
+      "Island::Any::Where_Outdoor::Weather_Foggy": "pack.Abigail.Missing",
+      "Weather_Any::Summer": "pack.Abigail.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

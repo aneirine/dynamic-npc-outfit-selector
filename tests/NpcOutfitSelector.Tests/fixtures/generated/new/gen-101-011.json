@@ -1,0 +1,32 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Island": "pack.Alex.C",
+      "Wedding": "pack.Alex.C",
+      "Dance of the Moonlight Jellies": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Abigail": {
+      "Wedding": "LocalAsset::Abigail::Casual::Casual",
+      "Island": "Default",
+      "Dance of the Moonlight Jellies": "LocalAsset::Abigail::Casual::Casual",
+      "Stardew Valley Fair": "Default"
+    },
+    "Sam": {
+      "Casual": "pack.Sam.D",
+      "Wedding": "pack.Sam.C",
+      "Winter": "pack.Sam.A",
+      "Island": "pack.Sam.A"
+    },
+    "Haley": {
+      "Casual": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Spring": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Nobody": {},
+    "Emily": {
+      "Spring": "pack.Emily.C",
+      "Casual": "pack.Emily.B",
+      "Island": "pack.Emily.Missing"
+    }
+  },
+  "MenuHotkey": "F9"
+}

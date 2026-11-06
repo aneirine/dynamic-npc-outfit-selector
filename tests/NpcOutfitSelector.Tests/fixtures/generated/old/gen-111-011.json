@@ -1,0 +1,24 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Winter::Weather_Snowing": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Weather_Sunny": "pack.Haley.Missing",
+      "Weather_Raining": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Nobody": {
+      "Wedding::Where_Saloon": "pack.Nobody.B",
+      "Winter": "pack.Nobody.B"
+    },
+    "Abigail": {
+      "Where_Saloon": "pack.Abigail.C",
+      "Luau::Weather_Windy": "Default"
+    },
+    "Emily": {
+      "Weather_GreenRain::Where_Town": "pack.Emily.A",
+      "Spirit's Eve::Where_IslandSouth": "pack.Emily.D",
+      "Flower Dance": "pack.Emily.B"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

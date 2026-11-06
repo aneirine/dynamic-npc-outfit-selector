@@ -1,0 +1,16 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Casual::Weather_Snowing": "Default",
+      "Stardew Valley Fair": "Default",
+      "Weather_Lightning::Where_Beach": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Island": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Abigail": {
+      "Spring": "pack.Abigail.C",
+      "Island::Weather_Windy::Where_Town": "pack.Abigail.A",
+      "Fall::Weather_Snowing": "pack.Abigail.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

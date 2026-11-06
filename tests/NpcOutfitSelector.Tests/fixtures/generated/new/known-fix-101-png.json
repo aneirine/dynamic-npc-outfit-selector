@@ -1,0 +1,9 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Summer": "pack.Haley.A",
+      "Winter": "LocalAsset::Haley::Winter::Winter_Snowing_Outdoor"
+    }
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,16 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Feast of the Winter Star": "pack.Alex.C",
+      "Wedding": "Default",
+      "Festival of Ice": "pack.Alex.B",
+      "Spring": "pack.Alex.C"
+    },
+    "Sam": {
+      "Spring": "Default",
+      "Casual": "pack.Sam.C",
+      "Island": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

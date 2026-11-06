@@ -1,0 +1,23 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Weather_Raining::Where_Saloon": "pack.Abigail.B",
+      "Summer::Where_Saloon": "pack.Abigail.B",
+      "Stardew Valley Fair::Weather_Snowing": "Default"
+    },
+    "Nobody": {
+      "Weather_Foggy": "Default",
+      "Island::Weather_Raining": "pack.Nobody.Missing"
+    },
+    "Sam": {
+      "Weather_Raining::Where_Saloon": "pack.Sam.D",
+      "Spring::Where_Beach": "pack.Sam.Missing",
+      "Flower Dance::Where_Outdoor": "pack.Sam.A"
+    },
+    "Emily": {
+      "Where_IslandSouth": "pack.Emily.A",
+      "Egg Festival::Where_Beach": "pack.Emily.A"
+    }
+  }
+}

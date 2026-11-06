@@ -1,0 +1,14 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Wedding": "Default",
+      "Island": "pack.Alex.Missing",
+      "Spring": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Emily": {
+      "Casual": "pack.Emily.C"
+    },
+    "Nobody": {}
+  },
+  "MenuHotkey": "F9"
+}

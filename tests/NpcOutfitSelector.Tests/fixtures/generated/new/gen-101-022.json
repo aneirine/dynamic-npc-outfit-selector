@@ -1,0 +1,37 @@
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Island": "pack.Sam.A",
+      "Summer": "pack.Sam.B",
+      "Wedding": "pack.Sam.C",
+      "Winter": "pack.Sam.Missing",
+      "Feast of the Winter Star": "pack.Sam.Missing",
+      "Casual": "pack.Sam.A"
+    },
+    "Abigail": {
+      "Island": "pack.Abigail.Missing",
+      "Egg Festival": "pack.Abigail.C",
+      "Spring": "Default",
+      "Stardew Valley Fair": "Default",
+      "Fall": "LocalAsset::Abigail::Casual::Casual"
+    },
+    "Haley": {},
+    "Emily": {
+      "Island": "pack.Emily.C",
+      "Casual": "Default",
+      "Spring": "pack.Emily.A",
+      "Fall": "pack.Emily.D"
+    },
+    "Alex": {
+      "Island": "pack.Alex.B"
+    },
+    "Nobody": {
+      "Summer": "pack.Nobody.D",
+      "Island": "pack.Nobody.Missing",
+      "Luau": "pack.Nobody.C",
+      "Casual": "Default",
+      "Egg Festival": "pack.Nobody.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

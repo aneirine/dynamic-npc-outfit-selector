@@ -1,0 +1,37 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Any::Summer::Where_Saloon": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Any::Summer::Where_Saloon::Where_Any": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Fall": "pack.Alex.D",
+      "Fall::Where_Any": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Haley": {
+      "Wedding::weather_lightning::Where_IslandSouth::Rainy": "pack.Haley.A",
+      "Dance of the Moonlight Jellies::Weather_Lightning::Weather_Any": "pack.Haley.C",
+      "Any::Winter::Weather_Sunny::Where_Outdoor": "pack.Haley.Missing",
+      "Any::Spring::Where_Saloon": "pack.Haley.B",
+      "ANY::SPRING::WHERE_SALOON": "LocalAsset::Haley::Casual::Casual",
+      "Rainy::Summer": "pack.Haley.A",
+      "Weather_Any::Fall": "pack.Haley.C",
+      "Weather_Any::Fall::Where_Any": "pack.Haley.C"
+    },
+    "Sam": {},
+    "Emily": {
+      "Casual::Weather_Lightning::Weather_Sunny": "pack.Emily.B",
+      "spring::weather_snowing::Where_Town::rainy": "pack.Emily.A",
+      "Spring::Weather_Windy::Rainy": "pack.Emily.B",
+      "Winter::Where_Outdoor": "pack.Emily.B",
+      "Weather_Sunny::Weather_Sunny": "pack.Emily.A",
+      "stardew valley fair::Weather_Any": "Default"
+    },
+    "Nobody": {
+      "Any::Festival of Ice": "pack.Nobody.B",
+      "Any::Luau::Weather_Windy::Where_Outdoor": "pack.Nobody.A",
+      "Any::Spirit's Eve": "pack.Nobody.C",
+      "Fall::Weather_Windy::Where_MyModPlace": "pack.Nobody.A",
+      "Wedding::Weather_Snowing::Weather_Any": "Default"
+    }
+  },
+  "MenuHotkey": "None"
+}

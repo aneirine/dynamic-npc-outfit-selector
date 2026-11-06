@@ -1,0 +1,42 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Fall::Weather_Windy": "pack.Alex.B",
+      "beach": "pack.Alex.A"
+    },
+    "Haley": {
+      "Weather_Any::Spring": "pack.Haley.D",
+      "Where_MyModPlace": "pack.Haley.C",
+      "Any::Weather_Foggy": "pack.Haley.D",
+      "Weather_Foggy::Any": "LocalAsset::Haley::Spring::NoSuchFile",
+      "beach::Where_Saloon": "pack.Haley.A",
+      "Island::Weather_Any": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Nobody": {
+      "Flower Dance::Weather_Foggy::Weather_Any": "pack.Nobody.C",
+      "Weather_Any::Weather_Foggy::Flower Dance": "Default",
+      "Weather_Sunny::Where_Saloon": "pack.Nobody.A"
+    },
+    "Emily": {
+      "Fall::Where_Town::Rainy": "pack.Emily.C",
+      "Rainy::Where_Town::Fall": "pack.Emily.B",
+      "Spirit's Eve::weather_raining": "pack.Emily.D",
+      "Weather_Sunny": "pack.Emily.A",
+      "Winter::Rainy": "pack.Emily.D"
+    },
+    "Abigail": {},
+    "Sam": {
+      "Egg Festival::Where_Beach": "pack.Sam.A",
+      "Where_Beach::Rainy": "pack.Sam.C",
+      "Rainy::Where_Beach": "Default",
+      "Beach::weather_raining::weather_raining": "Default",
+      "BEACH::WEATHER_RAINING::WEATHER_RAINING": "pack.Sam.A",
+      "casual::Where_Saloon::Weather_Any": "pack.Sam.Missing"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

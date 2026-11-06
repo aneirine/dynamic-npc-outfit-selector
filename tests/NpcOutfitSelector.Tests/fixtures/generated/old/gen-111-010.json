@@ -1,0 +1,32 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Casual::Weather_Lightning": "Default",
+      "Flower Dance::Weather_Snowing": "pack.Abigail.Missing",
+      "Island": "pack.Abigail.B",
+      "Where_Indoor": "Default",
+      "Luau::Weather_Windy::Where_Town": "pack.Abigail.A"
+    },
+    "Emily": {
+      "Winter": "pack.Emily.B",
+      "Dance of the Moonlight Jellies::Weather_Sunny::Where_Saloon": "pack.Emily.A",
+      "Festival of Ice": "pack.Emily.C",
+      "Casual::Weather_Lightning::Where_IslandSouth": "pack.Emily.A",
+      "Island::Where_MyModPlace": "pack.Emily.A",
+      "Island": "pack.Emily.C"
+    },
+    "Alex": {
+      "Where_MyModPlace": "pack.Alex.C",
+      "Fall": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Nobody": {
+      "Where_Saloon": "pack.Nobody.D",
+      "Summer::Weather_Sunny": "pack.Nobody.Missing",
+      "Winter::Weather_Lightning::Where_Town": "pack.Nobody.B",
+      "Spirit's Eve": "pack.Nobody.A",
+      "Casual": "pack.Nobody.C",
+      "Weather_Lightning": "pack.Nobody.B"
+    }
+  }
+}

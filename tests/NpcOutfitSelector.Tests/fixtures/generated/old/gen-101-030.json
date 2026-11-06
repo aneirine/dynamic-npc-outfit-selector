@@ -1,0 +1,20 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Festival of Ice": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Spring": "Default"
+    },
+    "Alex": {
+      "Fall": "pack.Alex.D",
+      "Casual": "Default",
+      "Beach": "pack.Alex.Missing",
+      "Luau": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Abigail": {
+      "Stardew Valley Fair": "pack.Abigail.C",
+      "Beach": "Default",
+      "Winter": "Default"
+    }
+  }
+}

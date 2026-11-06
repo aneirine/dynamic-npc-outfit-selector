@@ -1,0 +1,21 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Where_Indoor": "pack.Emily.C",
+      "Egg Festival::Rainy": "pack.Emily.D",
+      "EGG FESTIVAL::RAINY": "Default",
+      "Any::Summer::Weather_Sunny::Where_IslandSouth": "pack.Emily.Missing"
+    },
+    "Sam": {
+      "Island::Weather_Raining::Weather_Sunny": "Default",
+      "ISLAND::WEATHER_RAINING::WEATHER_SUNNY": "pack.Sam.Missing",
+      "any::Wedding": "Default",
+      "ANY::WEDDING": "pack.Sam.A",
+      "Spirit's Eve::Weather_Sunny::Rainy": "pack.Sam.A"
+    }
+  },
+  "MenuHotkey": "F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

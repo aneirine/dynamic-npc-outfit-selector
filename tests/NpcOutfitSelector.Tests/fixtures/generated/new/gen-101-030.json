@@ -1,0 +1,20 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Festival of Ice": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Spring": "Default"
+    },
+    "Alex": {
+      "Fall": "pack.Alex.D",
+      "Casual": "Default",
+      "Island": "pack.Alex.Missing",
+      "Luau": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Abigail": {
+      "Stardew Valley Fair": "pack.Abigail.C",
+      "Island": "Default",
+      "Winter": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,20 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Winter::Weather_Foggy::Where_Beach": "pack.Abigail.D",
+      "Where_Beach::Weather_Foggy::Winter": "pack.Abigail.B",
+      "weather_any::Fall::Weather_Lightning": "pack.Abigail.C"
+    },
+    "Emily": {
+      "Weather_Lightning::Spring": "pack.Emily.D",
+      "WEATHER_LIGHTNING::SPRING": "pack.Emily.D",
+      "Casual::rainy": "pack.Emily.B",
+      "Island::Rainy::Weather_Snowing": "pack.Emily.A",
+      "Island::Where_MyModPlace::Weather_Any": "Default",
+      "Island::Weather_GreenRain::Where_Town": "Default",
+      "Where_Town::Weather_GreenRain::Beach": "pack.Emily.D",
+      "Where_Saloon": "Default"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

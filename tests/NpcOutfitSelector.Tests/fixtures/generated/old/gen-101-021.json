@@ -1,0 +1,29 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Festival of Ice": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Beach": "pack.Alex.C"
+    },
+    "Nobody": {
+      "Casual": "Default",
+      "Egg Festival": "pack.Nobody.D"
+    },
+    "Sam": {
+      "Summer": "pack.Sam.C",
+      "Egg Festival": "Default",
+      "Beach": "Default",
+      "Fall": "pack.Sam.B"
+    },
+    "Abigail": {
+      "Fall": "Default",
+      "Beach": "pack.Abigail.C"
+    },
+    "Haley": {
+      "Beach": "pack.Haley.D",
+      "Feast of the Winter Star": "pack.Haley.D",
+      "Summer": "pack.Haley.A",
+      "Spring": "pack.Haley.C"
+    }
+  }
+}

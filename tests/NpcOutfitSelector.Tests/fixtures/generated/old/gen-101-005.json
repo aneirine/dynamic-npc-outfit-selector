@@ -1,0 +1,37 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Wedding": "pack.Emily.B",
+      "Egg Festival": "pack.Emily.A",
+      "Fall": "pack.Emily.Missing",
+      "Beach": "pack.Emily.D"
+    },
+    "Abigail": {
+      "Spring": "Default",
+      "Egg Festival": "pack.Abigail.A",
+      "Summer": "pack.Abigail.B"
+    },
+    "Nobody": {
+      "Casual": "pack.Nobody.B",
+      "Winter": "pack.Nobody.A",
+      "Stardew Valley Fair": "Default",
+      "Beach": "pack.Nobody.A",
+      "Fall": "pack.Nobody.B"
+    },
+    "Haley": {
+      "Fall": "pack.Haley.Missing",
+      "Spring": "pack.Haley.A",
+      "Beach": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Alex": {
+      "Winter": "pack.Alex.A"
+    },
+    "Sam": {
+      "Fall": "pack.Sam.B",
+      "Wedding": "pack.Sam.A",
+      "Spirit's Eve": "pack.Sam.B",
+      "Winter": "pack.Sam.C"
+    }
+  }
+}

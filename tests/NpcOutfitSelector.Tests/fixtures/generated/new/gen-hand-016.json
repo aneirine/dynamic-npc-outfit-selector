@@ -1,0 +1,24 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Weather_Foggy::Weather_Snowing": "Default",
+      "Weather_GreenRain::Weather_Sunny": "pack.Abigail.Missing",
+      "Weather_Raining::Where_Outdoor": "pack.Abigail.Missing",
+      "Any::island::weather_greenrain::Where_Outdoor": "pack.Abigail.D"
+    },
+    "Alex": {
+      "Fall::where_indoor": "LocalAsset::Alex::Fall::NoSuchFile",
+      "luau::where_islandsouth::Weather_Snowing": "pack.Alex.A",
+      "Weather_GreenRain::Where_IslandSouth::Island::Weather_Any": "pack.Alex.C"
+    },
+    "Nobody": {
+      "Rainy::Where_MyModPlace::Flower Dance": "pack.Nobody.Missing",
+      "Winter::Weather_Foggy::Weather_Snowing": "pack.Nobody.A",
+      "WINTER::WEATHER_FOGGY::WEATHER_SNOWING": "Default",
+      "stardew valley fair::Weather_Sunny::where_saloon": "pack.Nobody.Missing",
+      "Festival of Ice::Weather_Windy::Weather_Lightning": "pack.Nobody.Missing",
+      "island::weather_sunny::weather_snowing::where_saloon": "pack.Nobody.C"
+    }
+  },
+  "MenuHotkey": "None"
+}

@@ -1,0 +1,9 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Spring": "pack.Alex.A",
+      "Island": "LocalAsset::Alex::Beach::BeachFull_remake"
+    }
+  },
+  "MenuHotkey": "F9"
+}

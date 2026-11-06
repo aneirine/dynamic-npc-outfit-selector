@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Winter::Weather_Lightning::Where_Saloon": "pack.Haley.A",
+      "Island::Where_MyModPlace": "pack.Haley.C"
+    },
+    "Abigail": {
+      "Winter": "Default",
+      "Egg Festival::Where_Outdoor": "Default",
+      "Egg Festival": "Default",
+      "Where_Town": "pack.Abigail.B",
+      "Wedding::Weather_Lightning": "LocalAsset::Abigail::Casual::Casual",
+      "Island": "pack.Abigail.Missing"
+    },
+    "Emily": {},
+    "Alex": {
+      "Summer::Where_IslandSouth": "Default",
+      "Winter::Weather_Windy": "pack.Alex.A",
+      "Weather_Foggy::Where_IslandSouth": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Dance of the Moonlight Jellies": "pack.Alex.D",
+      "Summer::Weather_Raining": "pack.Alex.Missing"
+    },
+    "Sam": {}
+  },
+  "MenuHotkey": "None"
+}

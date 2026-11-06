@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Fall::Weather_Lightning": "Default",
+      "Fall::Weather_Lightning::Where_Town": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Wedding::Weather_Lightning::Where_Town": "pack.Alex.C"
+    },
+    "Abigail": {},
+    "Haley": {
+      "Stardew Valley Fair::Weather_Lightning::Where_Saloon": "pack.Haley.A",
+      "Island::Weather_Snowing::Where_IslandSouth": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Emily": {
+      "Spirit's Eve::Where_Saloon": "pack.Emily.D",
+      "Dance of the Moonlight Jellies": "pack.Emily.Missing",
+      "Fall::Weather_Sunny::Where_IslandSouth": "pack.Emily.B",
+      "Festival of Ice::Weather_Snowing": "pack.Emily.B"
+    },
+    "Nobody": {
+      "Island": "Default",
+      "Casual": "pack.Nobody.B",
+      "Winter": "Default"
+    }
+  },
+  "MenuHotkey": "None"
+}

@@ -10,15 +10,9 @@ using StardewModdingAPI.Toolkit.Utilities;
 namespace NpcOutfitSelector.Tests
 {
     // Helper.Data as SMAPI implements it, over a temporary folder: the same JsonHelper, with the
-    // same converters SCore adds at startup (one of them is what parses MenuHotkey). Those are
-    // internal to SMAPI, so they're created by name rather than reimplemented.
+    // same converters SCore adds at startup.
     internal sealed class FakeDataHelper : IDataHelper
     {
-        private static readonly string[] ScoreConverters =
-        {
-            "ColorConverter", "KeybindConverter", "PointConverter", "Vector2Converter", "RectangleConverter",
-        };
-
         private readonly JsonHelper json = CreateJsonHelper();
 
         public FakeDataHelper(string folder)
@@ -28,16 +22,7 @@ namespace NpcOutfitSelector.Tests
 
         public string Folder { get; }
 
-        public static JsonHelper CreateJsonHelper()
-        {
-            var helper = new JsonHelper();
-            foreach (string name in ScoreConverters)
-            {
-                Type type = typeof(IMonitor).Assembly.GetType($"StardewModdingAPI.Framework.Serialization.{name}", throwOnError: true);
-                helper.JsonSettings.Converters.Add((JsonConverter)Activator.CreateInstance(type, nonPublic: true));
-            }
-            return helper;
-        }
+        public static JsonHelper CreateJsonHelper() => NpcOutfitSelector.Compat.CompatScenario.CreateSmapiJsonHelper();
 
         public TModel ReadJsonFile<TModel>(string path) where TModel : class =>
             this.json.ReadJsonFileIfExists(this.FullPath(path), out TModel result) ? result : null;

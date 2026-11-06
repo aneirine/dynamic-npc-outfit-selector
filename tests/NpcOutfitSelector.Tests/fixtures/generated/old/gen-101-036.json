@@ -1,0 +1,14 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Wedding": "Default",
+      "Beach": "pack.Alex.Missing",
+      "Spring": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Emily": {
+      "Casual": "pack.Emily.C"
+    },
+    "Nobody": {}
+  }
+}

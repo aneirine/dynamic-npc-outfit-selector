@@ -1,0 +1,41 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Fall": "Default",
+      "Flower Dance::Weather_Lightning::Where_Beach": "pack.Sam.A",
+      "Wedding::Where_Beach": "pack.Sam.Missing",
+      "Fall::Weather_GreenRain": "Default",
+      "Where_MyModPlace": "pack.Sam.A"
+    },
+    "Alex": {
+      "Fall::Weather_Snowing": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Casual": "pack.Alex.D",
+      "Dance of the Moonlight Jellies::Weather_Foggy::Where_Beach": "pack.Alex.C"
+    },
+    "Abigail": {
+      "Where_Indoor": "LocalAsset::Abigail::Casual::Casual",
+      "Island::Weather_Windy": "Default",
+      "Spring::Weather_Raining": "pack.Abigail.B",
+      "Winter::Weather_Snowing::Where_Saloon": "pack.Abigail.C"
+    },
+    "Nobody": {
+      "Island::Weather_Windy::Where_Saloon": "Default"
+    },
+    "Emily": {
+      "Winter::Weather_Sunny": "pack.Emily.Missing",
+      "Stardew Valley Fair": "Default",
+      "Summer::Weather_Lightning::Where_Indoor": "pack.Emily.C",
+      "Where_Town": "Default",
+      "Island::Weather_Lightning::Where_Saloon": "pack.Emily.Missing"
+    },
+    "Haley": {
+      "Summer::Where_Indoor": "pack.Haley.D",
+      "Weather_Raining::Where_IslandSouth": "pack.Haley.C",
+      "Feast of the Winter Star::Weather_Lightning": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Winter": "LocalAsset::Haley::Casual::Casual",
+      "Summer::Where_Beach": "LocalAsset::Haley::Casual::Casual"
+    }
+  },
+  "MenuHotkey": "F9"
+}

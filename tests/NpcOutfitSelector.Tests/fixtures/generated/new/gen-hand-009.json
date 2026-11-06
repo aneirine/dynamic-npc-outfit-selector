@@ -1,0 +1,30 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Island::Any": "LocalAsset::Abigail::Casual::Casual",
+      "Summer::Weather_Lightning::Where_Town::Weather_Sunny": "Default"
+    },
+    "Alex": {
+      "where_indoor::fall": "pack.Alex.D",
+      "WHERE_INDOOR::FALL": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Weather_GreenRain::Weather_Windy": "pack.Alex.Missing",
+      "Weather_GreenRain::Weather_Windy::Where_Any": "pack.Alex.A",
+      "Where_Beach::Weather_Any": "pack.Alex.C",
+      "where_beach::weather_any": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Emily": {
+      "Weather_Snowing::Weather_Any": "pack.Emily.A",
+      "Weather_Any::Weather_Snowing": "pack.Emily.Missing",
+      "Wedding::Where_Beach::Weather_Raining": "pack.Emily.Missing"
+    },
+    "Nobody": {
+      "Fall::weather_raining::where_islandsouth": "pack.Nobody.A",
+      "Fall::weather_raining::where_islandsouth::Where_Any": "pack.Nobody.C"
+    },
+    "Sam": {
+      "any::Festival of Ice::Weather_Windy": "pack.Sam.B",
+      "Where_Indoor::Any": "pack.Sam.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

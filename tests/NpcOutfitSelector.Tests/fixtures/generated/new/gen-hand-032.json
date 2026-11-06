@@ -1,0 +1,23 @@
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Fall": "pack.Sam.Missing",
+      "winter::Weather_Foggy::Where_Town::rainy": "pack.Sam.B",
+      "Summer::Weather_Windy": "pack.Sam.A",
+      "Spring::Where_Outdoor::Weather_Any": "pack.Sam.C"
+    },
+    "Abigail": {
+      "Egg Festival::Rainy": "pack.Abigail.C",
+      "Egg Festival::Rainy::Where_Any": "pack.Abigail.C",
+      "Casual::Weather_Lightning::Where_Outdoor": "pack.Abigail.B",
+      "Where_MyModPlace::Weather_Any": "LocalAsset::Abigail::Casual::Casual",
+      "Spring::weather_any::weather_sunny": "pack.Abigail.Missing",
+      "Spring::Where_IslandSouth": "Default",
+      "festival of ice::weather_greenrain::where_indoor::rainy": "pack.Abigail.Missing"
+    },
+    "Alex": {
+      "Casual": "LocalAsset::Alex::Beach::BeachFull_remake"
+    }
+  },
+  "MenuHotkey": "None"
+}

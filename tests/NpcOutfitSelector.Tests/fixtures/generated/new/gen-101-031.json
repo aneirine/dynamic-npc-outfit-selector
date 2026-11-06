@@ -1,0 +1,22 @@
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Winter": "Default",
+      "Summer": "pack.Sam.D",
+      "Spring": "pack.Sam.Missing",
+      "Flower Dance": "pack.Sam.Missing"
+    },
+    "Nobody": {
+      "Dance of the Moonlight Jellies": "Default",
+      "Island": "pack.Nobody.C",
+      "Casual": "pack.Nobody.A"
+    },
+    "Emily": {
+      "Summer": "Default",
+      "Winter": "Default",
+      "Wedding": "pack.Emily.A",
+      "Dance of the Moonlight Jellies": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

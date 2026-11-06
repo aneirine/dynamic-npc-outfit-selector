@@ -1,0 +1,25 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Island::Weather_Sunny": "Default",
+      "island::weather_foggy::where_town": "pack.Emily.D",
+      "Stardew Valley Fair::Weather_Any": "pack.Emily.C"
+    },
+    "Abigail": {
+      "Where_Saloon::weather_any": "pack.Abigail.A",
+      "any::feast of the winter star::weather_snowing::Where_MyModPlace": "pack.Abigail.Missing"
+    },
+    "Haley": {
+      "Where_Beach::Any": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Nobody": {
+      "Rainy::Weather_Lightning::Luau": "Default",
+      "Weather_Raining": "pack.Nobody.B",
+      "Any::Weather_GreenRain::Where_Town": "pack.Nobody.D",
+      "Where_MyModPlace::Weather_Lightning": "Default",
+      "Spring::Where_Saloon::Rainy": "pack.Nobody.C"
+    },
+    "Sam": {}
+  },
+  "MenuHotkey": "F9"
+}

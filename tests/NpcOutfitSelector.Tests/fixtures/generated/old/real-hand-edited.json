@@ -1,0 +1,27 @@
+// Hand-edited, the way the README invites: not something the mod ever wrote. Covers segment
+// order, case, "Any" segments, a repeated axis, both island spellings on one NPC,
+// an unknown top-level field and a non-default hotkey. Values are made up.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Weather_Sunny::Spring": "pack.HaleySunnySpring",
+      "Where_Beach::Weather_Sunny": "pack.HaleyBeachSun",
+      "Spring::Where_Beach::Weather_Sunny": "pack.HaleySpringBeachSun",
+      "winter::weather_snowing": "pack.HaleyWinterSnow",
+      "Spring::Weather_Any": "pack.HaleyAnyWeather",
+      "Any::Weather_Sunny": "pack.HaleyAnyBase",
+      "Summer::Weather_Sunny::Weather_Raining": "pack.HaleyTwoWeathers",
+      "Spring::Rainy": "pack.HaleyBareWord",
+      "Casual": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Alex": {
+      "Beach": "pack.AlexLegacyIsland",
+      "Island": "pack.AlexIsland",
+      "Beach::Weather_Sunny": "pack.AlexLegacyIslandSun",
+      "beach::Where_Indoor": "pack.AlexLegacyIslandIndoor",
+      "Weather_Sunny::Beach": "pack.AlexNotABase"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9",
+  "SomeFutureSetting": { "Enabled": true, "Names": [ "a", "b" ] }
+}

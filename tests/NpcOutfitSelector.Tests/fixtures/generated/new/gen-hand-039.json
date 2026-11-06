@@ -1,0 +1,24 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Weather_Any::beach": "pack.Emily.B",
+      "WEATHER_ANY::BEACH": "pack.Emily.Missing",
+      "weather_greenrain": "Default",
+      "Summer::Weather_Sunny": "pack.Emily.Missing",
+      "SUMMER::WEATHER_SUNNY": "pack.Emily.B"
+    },
+    "Nobody": {
+      "Island::Weather_Windy::Weather_Sunny": "Default",
+      "where_town::weather_snowing": "pack.Nobody.B",
+      "weather_snowing::where_town": "Default",
+      "Fall::rainy": "pack.Nobody.D",
+      "any::winter::weather_raining::Where_Saloon": "pack.Nobody.D",
+      "Where_Saloon::weather_raining::winter::any": "pack.Nobody.D",
+      "Wedding::Where_Saloon": "pack.Nobody.B"
+    },
+    "Alex": {
+      "Weather_Sunny::Fall": "pack.Alex.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

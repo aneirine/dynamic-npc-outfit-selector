@@ -11,7 +11,7 @@ namespace NpcOutfitSelector.Tests
         // mod runs inside the game. A standalone runner has to find them itself, and the handler
         // must be in place before any game type is touched — hence the split from the test classes,
         // whose method bodies are only JITted once they are called.
-        private static int Main()
+        private static int Main(string[] args)
         {
             string gamePath = Assembly.GetExecutingAssembly()
                 .GetCustomAttributes<AssemblyMetadataAttribute>()
@@ -37,10 +37,17 @@ namespace NpcOutfitSelector.Tests
                 return file is null ? null : Assembly.LoadFrom(file);
             };
 
+            if (args.Length == 2 && args[0] == "--generate")
+            {
+                ConfigGenerator.Generate(args[1]);
+                return 0;
+            }
+
             CategoryKeyTests.Run();
             ConfigFileTests.Run();
             LocalAssetIdTests.Run();
             ForcedEntryTests.Run();
+            CompatTests.Run();
             return Assert.Report();
         }
     }

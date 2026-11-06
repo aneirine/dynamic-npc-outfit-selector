@@ -1,0 +1,11 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Summer::Any": "pack.Emily.C",
+      "Weather_Foggy::Casual": "pack.Emily.C",
+      "Weather_Foggy::Casual::Where_Any": "pack.Emily.Missing",
+      "festival of ice::rainy": "pack.Emily.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

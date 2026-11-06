@@ -1,0 +1,16 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Sam": {},
+    "Abigail": {
+      "Any::Summer::Weather_Snowing": "pack.Abigail.A",
+      "where_mymodplace::Weather_Sunny::rainy": "pack.Abigail.D",
+      "where_town::weather_snowing": "pack.Abigail.Missing",
+      "Where_Town::Wedding::Any": "pack.Abigail.D"
+    }
+  },
+  "MenuHotkey": "",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

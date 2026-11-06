@@ -1,0 +1,15 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Wedding": "pack.Alex.C"
+    },
+    "Sam": {
+      "Winter": "pack.Sam.Missing"
+    },
+    "Nobody": {
+      "Winter": "Default",
+      "Egg Festival": "pack.Nobody.D"
+    }
+  },
+  "MenuHotkey": "F9"
+}

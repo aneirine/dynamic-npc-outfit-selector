@@ -1,0 +1,31 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Sam": {},
+    "Alex": {
+      "Wedding": "pack.Alex.C",
+      "Beach": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Feast of the Winter Star": "pack.Alex.C",
+      "Spring": "pack.Alex.D"
+    },
+    "Emily": {
+      "Beach": "pack.Emily.A",
+      "Fall": "pack.Emily.A",
+      "Spring": "pack.Emily.B",
+      "Summer": "pack.Emily.C",
+      "Dance of the Moonlight Jellies": "pack.Emily.Missing"
+    },
+    "Abigail": {
+      "Casual": "pack.Abigail.B",
+      "Luau": "pack.Abigail.D",
+      "Winter": "LocalAsset::Abigail::Casual::Casual",
+      "Beach": "pack.Abigail.D"
+    },
+    "Haley": {
+      "Summer": "Default",
+      "Feast of the Winter Star": "pack.Haley.B",
+      "Beach": "pack.Haley.A",
+      "Winter": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor"
+    }
+  }
+}

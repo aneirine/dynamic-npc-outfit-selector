@@ -1,0 +1,29 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Spring::Rainy": "Default",
+      "winter::Weather_Foggy": "LocalAsset::Haley::Beach::Beach"
+    },
+    "Alex": {},
+    "Emily": {
+      "Wedding::Weather_Snowing::Rainy": "pack.Emily.C",
+      "Island::Weather_Windy::Rainy": "pack.Emily.D",
+      "Island::Weather_Windy::Rainy::Where_Any": "Default",
+      "Casual::Rainy": "pack.Emily.D",
+      "Where_Outdoor": "pack.Emily.B"
+    },
+    "Sam": {
+      "Weather_Sunny::Where_MyModPlace::Summer::Rainy": "pack.Sam.C",
+      "Rainy::Summer::Where_MyModPlace::Weather_Sunny": "pack.Sam.C",
+      "Weather_Windy::Island::where_saloon": "pack.Sam.C",
+      "Weather_Foggy::Rainy": "pack.Sam.C",
+      "Winter::Weather_Windy": "pack.Sam.A",
+      "beach::Weather_Raining": "pack.Sam.B"
+    },
+    "Abigail": {
+      "island::rainy": "Default"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

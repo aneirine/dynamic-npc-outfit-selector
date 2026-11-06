@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Island::Where_IslandSouth": "pack.Haley.Missing",
+      "Winter": "pack.Haley.A"
+    },
+    "Nobody": {
+      "Wedding::Weather_Raining": "pack.Nobody.D",
+      "Casual": "pack.Nobody.A",
+      "Spring::Weather_Windy": "pack.Nobody.C",
+      "Summer::Weather_Windy::Where_MyModPlace": "pack.Nobody.A",
+      "Luau": "pack.Nobody.A"
+    },
+    "Sam": {
+      "Winter::Weather_GreenRain::Where_Saloon": "pack.Sam.D",
+      "Spring::Weather_Foggy": "pack.Sam.D"
+    },
+    "Alex": {
+      "Stardew Valley Fair::Weather_Snowing": "pack.Alex.C",
+      "Island::Where_IslandSouth": "Default",
+      "Feast of the Winter Star::Weather_Windy::Where_IslandSouth": "pack.Alex.A"
+    },
+    "Abigail": {}
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

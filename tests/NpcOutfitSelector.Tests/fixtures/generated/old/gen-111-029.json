@@ -1,0 +1,12 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Summer::Where_Saloon": "pack.Nobody.A",
+      "Winter::Weather_Snowing::Where_Town": "Default",
+      "Fall::Weather_Lightning::Where_Town": "pack.Nobody.D",
+      "Wedding": "pack.Nobody.C"
+    }
+  },
+  "MenuHotkey": "F9"
+}

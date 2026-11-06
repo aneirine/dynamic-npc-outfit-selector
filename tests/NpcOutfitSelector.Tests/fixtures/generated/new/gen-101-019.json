@@ -1,0 +1,20 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Spirit's Eve": "pack.Abigail.D",
+      "Winter": "pack.Abigail.A",
+      "Spring": "LocalAsset::Abigail::Casual::Casual",
+      "Island": "pack.Abigail.B",
+      "Festival of Ice": "pack.Abigail.D"
+    },
+    "Alex": {
+      "Festival of Ice": "pack.Alex.B"
+    },
+    "Sam": {
+      "Island": "pack.Sam.Missing",
+      "Spring": "pack.Sam.A",
+      "Winter": "pack.Sam.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

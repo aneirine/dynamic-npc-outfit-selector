@@ -1,0 +1,21 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Flower Dance": "pack.Nobody.A",
+      "Luau": "pack.Nobody.D",
+      "Casual": "pack.Nobody.Missing",
+      "Island": "pack.Nobody.D"
+    },
+    "Sam": {
+      "Island": "pack.Sam.D",
+      "Dance of the Moonlight Jellies": "pack.Sam.Missing",
+      "Winter": "Default",
+      "Spring": "pack.Sam.A"
+    },
+    "Alex": {
+      "Spring": "pack.Alex.C",
+      "Island": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

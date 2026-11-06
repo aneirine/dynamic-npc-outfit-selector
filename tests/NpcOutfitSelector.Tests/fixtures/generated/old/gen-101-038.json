@@ -1,0 +1,12 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Winter": "pack.Sam.C",
+      "Casual": "pack.Sam.C"
+    },
+    "Nobody": {
+      "Festival of Ice": "pack.Nobody.D"
+    }
+  }
+}

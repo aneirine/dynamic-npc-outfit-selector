@@ -1,0 +1,22 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Island::Weather_Foggy::Where_MyModPlace": "pack.Emily.D"
+    },
+    "Alex": {
+      "Where_Beach": "pack.Alex.Missing",
+      "Casual::Weather_Lightning": "Default"
+    },
+    "Sam": {},
+    "Abigail": {
+      "Island::Weather_Snowing": "Default",
+      "Feast of the Winter Star::Weather_Snowing": "Default",
+      "Wedding::Where_MyModPlace": "pack.Abigail.Missing",
+      "Island::Where_Town": "pack.Abigail.A",
+      "Spirit's Eve::Weather_Lightning::Where_IslandSouth": "pack.Abigail.C",
+      "Casual::Weather_Lightning": "LocalAsset::Abigail::Casual::Casual"
+    },
+    "Haley": {}
+  },
+  "MenuHotkey": "None"
+}

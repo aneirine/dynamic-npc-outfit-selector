@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Emily": {},
+    "Abigail": {
+      "Winter::Weather_Raining": "pack.Abigail.D"
+    },
+    "Alex": {
+      "Summer::Weather_GreenRain": "pack.Alex.C",
+      "Wedding::Weather_Sunny": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Wedding::Where_MyModPlace": "pack.Alex.D",
+      "Fall::Weather_Lightning::Where_IslandSouth": "pack.Alex.A"
+    },
+    "Sam": {
+      "Weather_Snowing": "Default",
+      "Fall::Weather_Windy::Where_Outdoor": "pack.Sam.A",
+      "Casual::Weather_Foggy": "pack.Sam.C",
+      "Island::Weather_Lightning": "pack.Sam.D",
+      "Casual": "Default"
+    },
+    "Haley": {
+      "Island::Weather_Snowing": "pack.Haley.A",
+      "Spring::Weather_GreenRain::Where_Town": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

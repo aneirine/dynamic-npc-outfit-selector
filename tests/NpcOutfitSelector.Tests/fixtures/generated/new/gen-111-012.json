@@ -1,0 +1,9 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Wedding::Weather_Lightning": "Default",
+      "Casual::Weather_Raining": "pack.Abigail.A"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

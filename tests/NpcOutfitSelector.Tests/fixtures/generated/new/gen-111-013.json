@@ -1,0 +1,16 @@
+{
+  "SelectedOutfits": {
+    "Haley": {},
+    "Emily": {},
+    "Alex": {
+      "Casual::Weather_GreenRain": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Spring": "Default",
+      "Spirit's Eve::Weather_Snowing": "Default",
+      "Casual": "pack.Alex.A"
+    },
+    "Nobody": {
+      "Where_Outdoor": "pack.Nobody.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

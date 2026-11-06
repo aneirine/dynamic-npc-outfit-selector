@@ -1,0 +1,17 @@
+{
+  "SelectedOutfits": {
+    "Emily": {},
+    "Sam": {
+      "Fall": "pack.Sam.A",
+      "Dance of the Moonlight Jellies": "pack.Sam.B",
+      "Where_Beach": "Default",
+      "Spring::Weather_GreenRain::Where_IslandSouth": "pack.Sam.D",
+      "Summer::Where_Outdoor": "pack.Sam.B",
+      "Winter::Weather_Foggy": "pack.Sam.C"
+    },
+    "Abigail": {
+      "Spring::Where_Indoor": "pack.Abigail.A"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

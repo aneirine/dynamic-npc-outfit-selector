@@ -1,0 +1,16 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Feast of the Winter Star": "pack.Alex.C",
+      "Wedding": "Default",
+      "Festival of Ice": "pack.Alex.B",
+      "Spring": "pack.Alex.C"
+    },
+    "Sam": {
+      "Spring": "Default",
+      "Casual": "pack.Sam.C",
+      "Beach": "Default"
+    }
+  }
+}

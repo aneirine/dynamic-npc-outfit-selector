@@ -1,0 +1,15 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Flower Dance::Weather_GreenRain::Where_Town::Weather_Sunny": "pack.Sam.D"
+    },
+    "Haley": {
+      "Any::Summer::Weather_GreenRain::Where_Outdoor": "pack.Haley.D",
+      "Any::Wedding::Where_Outdoor": "LocalAsset::Haley::Casual::Casual",
+      "Wedding::Where_Outdoor": "pack.Haley.B",
+      "Spring::Where_Indoor": "LocalAsset::Haley::Casual::Casual"
+    }
+  },
+  "MenuHotkey": ""
+}

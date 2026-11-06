@@ -1,0 +1,43 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Island::Weather_Sunny": "LocalAsset::Haley::Beach::Beach",
+      "Island::Weather_Raining::Where_Outdoor::Weather_GreenRain": "pack.Haley.C",
+      "Island::Weather_Raining::Where_Outdoor::Weather_GreenRain::Where_Any": "pack.Haley.D",
+      "Fall::Weather_Lightning::Rainy": "pack.Haley.A",
+      "Fall::Weather_Lightning::Rainy::Where_Any": "LocalAsset::Haley::Casual::Casual",
+      "beach::Weather_Sunny::Rainy": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor"
+    },
+    "Emily": {
+      "Where_Indoor::Weather_GreenRain": "pack.Emily.A",
+      "Wedding::Weather_Any": "pack.Emily.B",
+      "Summer::Where_Outdoor::Rainy": "pack.Emily.C",
+      "Weather_GreenRain::Fall::Rainy": "pack.Emily.Missing",
+      "Island::Weather_Lightning::Where_MyModPlace::Rainy": "pack.Emily.D"
+    },
+    "Alex": {
+      "Spring": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Flower Dance::Weather_Snowing::Weather_Any": "Default",
+      "Weather_Raining::Weather_Windy": "Default",
+      "WEATHER_RAINING::WEATHER_WINDY": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Nobody": {
+      "Spring::Where_IslandSouth::Weather_Any": "pack.Nobody.D",
+      "island::Where_IslandSouth": "pack.Nobody.C",
+      "Weather_Any::Spring::Where_MyModPlace": "pack.Nobody.C",
+      "WEATHER_ANY::SPRING::WHERE_MYMODPLACE": "pack.Nobody.A",
+      "Where_Town::Rainy": "pack.Nobody.C",
+      "WHERE_TOWN::RAINY": "pack.Nobody.A",
+      "Feast of the Winter Star::Weather_Sunny::Where_Town": "pack.Nobody.Missing",
+      "Where_Town::Weather_Sunny::Feast of the Winter Star": "pack.Nobody.D"
+    },
+    "Sam": {
+      "Island::Weather_Raining::Weather_GreenRain": "Default",
+      "Casual::Where_MyModPlace": "pack.Sam.A",
+      "Where_IslandSouth::Any::Weather_GreenRain": "pack.Sam.A",
+      "Weather_GreenRain::Weather_Windy": "pack.Sam.B",
+      "Where_Saloon::Weather_Raining::Wedding": "Default"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

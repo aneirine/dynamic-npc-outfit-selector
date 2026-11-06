@@ -1,0 +1,34 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Fall::Weather_Foggy::Where_IslandSouth": "pack.Alex.C",
+      "Winter::Where_Indoor": "pack.Alex.Missing",
+      "Weather_Sunny::Where_IslandSouth": "pack.Alex.C",
+      "Island::Weather_Snowing::Where_Beach": "pack.Alex.B",
+      "Fall::Where_Indoor": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Where_IslandSouth": "pack.Alex.D"
+    },
+    "Haley": {
+      "Casual": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Island::Weather_Windy": "Default",
+      "Casual::Weather_GreenRain": "pack.Haley.A",
+      "Winter::Where_Saloon": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Abigail": {},
+    "Sam": {
+      "Flower Dance::Where_Town": "pack.Sam.D",
+      "Flower Dance::Where_Beach": "pack.Sam.C",
+      "Wedding::Weather_Foggy::Where_IslandSouth": "pack.Sam.B",
+      "Winter::Where_Town": "pack.Sam.B",
+      "Weather_Raining::Where_Indoor": "pack.Sam.B",
+      "Spring": "pack.Sam.Missing"
+    },
+    "Nobody": {
+      "Fall::Weather_Snowing": "pack.Nobody.D",
+      "Casual::Weather_Raining::Where_Beach": "pack.Nobody.D",
+      "Fall::Weather_Windy::Where_Beach": "pack.Nobody.A",
+      "Island::Where_Indoor": "pack.Nobody.B"
+    }
+  },
+  "MenuHotkey": "None"
+}

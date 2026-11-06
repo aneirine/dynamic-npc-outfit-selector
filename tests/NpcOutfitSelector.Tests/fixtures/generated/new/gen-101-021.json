@@ -1,0 +1,29 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Festival of Ice": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Island": "pack.Alex.C"
+    },
+    "Nobody": {
+      "Casual": "Default",
+      "Egg Festival": "pack.Nobody.D"
+    },
+    "Sam": {
+      "Summer": "pack.Sam.C",
+      "Egg Festival": "Default",
+      "Island": "Default",
+      "Fall": "pack.Sam.B"
+    },
+    "Abigail": {
+      "Fall": "Default",
+      "Island": "pack.Abigail.C"
+    },
+    "Haley": {
+      "Island": "pack.Haley.D",
+      "Feast of the Winter Star": "pack.Haley.D",
+      "Summer": "pack.Haley.A",
+      "Spring": "pack.Haley.C"
+    }
+  },
+  "MenuHotkey": "F9"
+}

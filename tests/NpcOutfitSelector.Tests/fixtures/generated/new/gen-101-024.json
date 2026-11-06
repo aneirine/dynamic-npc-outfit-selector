@@ -1,0 +1,18 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Flower Dance": "pack.Abigail.B"
+    },
+    "Nobody": {
+      "Luau": "pack.Nobody.D",
+      "Island": "pack.Nobody.A",
+      "Winter": "Default",
+      "Casual": "pack.Nobody.B"
+    },
+    "Emily": {
+      "Island": "pack.Emily.C",
+      "Spring": "pack.Emily.D"
+    }
+  },
+  "MenuHotkey": "F9"
+}

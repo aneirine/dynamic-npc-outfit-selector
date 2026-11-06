@@ -1,0 +1,36 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Spring::Weather_Snowing": "pack.Alex.D",
+      "Weather_Snowing::Spring": "pack.Alex.Missing",
+      "Where_IslandSouth::Rainy": "pack.Alex.A",
+      "Weather_Raining": "pack.Alex.A"
+    },
+    "Sam": {
+      "Spring::Weather_Any": "pack.Sam.A",
+      "Any::where_beach": "Default",
+      "Casual::Weather_Raining": "pack.Sam.C",
+      "summer::weather_sunny": "pack.Sam.A"
+    },
+    "Emily": {
+      "Where_Outdoor::Beach::Any": "pack.Emily.Missing"
+    },
+    "Nobody": {
+      "Weather_GreenRain::Where_MyModPlace::Weather_Any": "pack.Nobody.D",
+      "Spring::Weather_Lightning": "pack.Nobody.D",
+      "SPRING::WEATHER_LIGHTNING": "pack.Nobody.A",
+      "Weather_Lightning::Weather_Lightning::Spirit's Eve::Where_MyModPlace": "pack.Nobody.D",
+      "WEATHER_LIGHTNING::WEATHER_LIGHTNING::SPIRIT'S EVE::WHERE_MYMODPLACE": "Default",
+      "Rainy::Where_MyModPlace": "pack.Nobody.B",
+      "Any::Island::weather_greenrain::Where_Saloon": "pack.Nobody.A"
+    },
+    "Haley": {
+      "Dance of the Moonlight Jellies::Weather_Snowing::Where_Beach": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Spring::Weather_Raining": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Weather_Lightning::Weather_Any::Where_Town": "pack.Haley.C",
+      "WEATHER_LIGHTNING::WEATHER_ANY::WHERE_TOWN": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Where_Town::Rainy": "pack.Haley.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

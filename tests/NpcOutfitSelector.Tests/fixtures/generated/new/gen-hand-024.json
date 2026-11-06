@@ -1,0 +1,37 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Weather_Sunny": "Default",
+      "WEATHER_SUNNY": "Default",
+      "Where_Outdoor::Wedding": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Sam": {
+      "Island::Weather_Windy::Weather_Any": "pack.Sam.D"
+    },
+    "Alex": {
+      "Casual::Where_MyModPlace": "pack.Alex.A",
+      "CASUAL::WHERE_MYMODPLACE": "Default",
+      "Any::Winter::weather_greenrain::Where_Outdoor": "pack.Alex.A",
+      "ANY::WINTER::WEATHER_GREENRAIN::WHERE_OUTDOOR": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Feast of the Winter Star::Weather_Foggy::Where_Outdoor": "pack.Alex.A",
+      "Any::Spring::Where_Saloon": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Where_IslandSouth::Rainy": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Wedding::Rainy": "LocalAsset::Alex::Fall::NoSuchFile",
+      "WEDDING::RAINY": "LocalAsset::Alex::Beach::BeachFull_remake"
+    },
+    "Nobody": {
+      "weather_raining::island::Rainy": "pack.Nobody.A"
+    },
+    "Abigail": {
+      "Spirit's Eve::rainy::Weather_Raining": "pack.Abigail.C",
+      "Weather_Raining::rainy::Spirit's Eve": "LocalAsset::Abigail::Casual::Casual",
+      "Dance of the Moonlight Jellies::Weather_Any": "pack.Abigail.D",
+      "Dance of the Moonlight Jellies::Weather_Any::Where_Any": "pack.Abigail.B",
+      "Weather_Windy::Where_Town::Rainy": "Default"
+    }
+  },
+  "MenuHotkey": "None",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

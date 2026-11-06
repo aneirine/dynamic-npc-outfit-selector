@@ -1,0 +1,22 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Winter": "Default",
+      "Summer": "pack.Sam.D",
+      "Spring": "pack.Sam.Missing",
+      "Flower Dance": "pack.Sam.Missing"
+    },
+    "Nobody": {
+      "Dance of the Moonlight Jellies": "Default",
+      "Beach": "pack.Nobody.C",
+      "Casual": "pack.Nobody.A"
+    },
+    "Emily": {
+      "Summer": "Default",
+      "Winter": "Default",
+      "Wedding": "pack.Emily.A",
+      "Dance of the Moonlight Jellies": "Default"
+    }
+  }
+}

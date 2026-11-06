@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Wedding::Weather_Sunny::Weather_Snowing": "pack.Haley.A",
+      "Wedding::Where_Saloon::Rainy": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Any::Weather_GreenRain": "pack.Haley.A",
+      "Fall::Where_Saloon": "pack.Haley.B",
+      "FALL::WHERE_SALOON": "pack.Haley.A",
+      "Weather_Foggy::Fall": "pack.Haley.A",
+      "Stardew Valley Fair::Weather_GreenRain": "Default"
+    },
+    "Abigail": {
+      "Casual::Weather_Raining::Where_MyModPlace::Weather_Windy": "pack.Abigail.C"
+    },
+    "Alex": {},
+    "Sam": {},
+    "Nobody": {
+      "Island::Weather_Sunny::Where_Outdoor::Weather_Any": "pack.Nobody.Missing",
+      "Fall::Weather_Any::Weather_Snowing": "pack.Nobody.D",
+      "Wedding::where_mymodplace::weather_any": "pack.Nobody.D",
+      "Island::Where_Beach": "Default",
+      "where_outdoor::Weather_Snowing::Rainy::Island": "pack.Nobody.Missing"
+    }
+  },
+  "MenuHotkey": "F9"
+}

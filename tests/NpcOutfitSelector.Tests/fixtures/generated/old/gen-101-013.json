@@ -1,0 +1,18 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Beach": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Abigail": {
+      "Summer": "LocalAsset::Abigail::Casual::Casual",
+      "Wedding": "Default",
+      "Festival of Ice": "pack.Abigail.C"
+    },
+    "Emily": {
+      "Winter": "pack.Emily.B",
+      "Festival of Ice": "pack.Emily.A",
+      "Flower Dance": "pack.Emily.A"
+    }
+  }
+}

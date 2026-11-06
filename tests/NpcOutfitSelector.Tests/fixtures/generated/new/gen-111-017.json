@@ -1,0 +1,33 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Fall": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Fall::Weather_Raining": "pack.Alex.A",
+      "Summer::Weather_Foggy": "Default",
+      "Weather_Foggy::Where_IslandSouth": "pack.Alex.Missing",
+      "Weather_Lightning::Where_MyModPlace": "Default",
+      "Spring::Where_IslandSouth": "pack.Alex.A"
+    },
+    "Sam": {},
+    "Abigail": {
+      "Fall::Weather_Windy": "pack.Abigail.Missing",
+      "Flower Dance": "Default",
+      "Island": "pack.Abigail.B",
+      "Fall::Where_MyModPlace": "pack.Abigail.Missing"
+    },
+    "Emily": {
+      "Egg Festival::Where_Outdoor": "pack.Emily.Missing",
+      "Fall::Weather_Foggy": "pack.Emily.A",
+      "Weather_Windy::Where_Town": "pack.Emily.B"
+    },
+    "Haley": {},
+    "Nobody": {
+      "Dance of the Moonlight Jellies::Weather_Lightning::Where_Saloon": "Default",
+      "Wedding::Weather_GreenRain::Where_MyModPlace": "pack.Nobody.C",
+      "Summer::Weather_Windy": "pack.Nobody.Missing",
+      "Weather_Snowing::Where_Beach": "pack.Nobody.D",
+      "Wedding::Weather_GreenRain::Where_Outdoor": "Default"
+    }
+  },
+  "MenuHotkey": "None"
+}

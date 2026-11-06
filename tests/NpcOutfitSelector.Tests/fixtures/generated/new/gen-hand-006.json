@@ -1,0 +1,34 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Luau": "pack.Alex.B",
+      "Luau::Weather_Any": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Spring": "pack.Alex.C",
+      "Spring::Where_Any": "Default"
+    },
+    "Nobody": {
+      "Island::Where_Outdoor::Weather_Raining": "Default",
+      "ISLAND::WHERE_OUTDOOR::WEATHER_RAINING": "pack.Nobody.Missing",
+      "Fall::Weather_Any::Where_Town::Weather_Lightning": "pack.Nobody.Missing",
+      "Summer::Where_Saloon": "pack.Nobody.B",
+      "Where_Indoor::Weather_Snowing::beach": "pack.Nobody.Missing"
+    },
+    "Abigail": {
+      "Island::Weather_GreenRain::Where_MyModPlace::Rainy": "pack.Abigail.D",
+      "Island::Weather_GreenRain::Where_MyModPlace::Rainy::Where_Any": "pack.Abigail.Missing",
+      "Where_Indoor::Rainy": "pack.Abigail.Missing",
+      "Fall::Weather_GreenRain::where_outdoor::weather_foggy": "LocalAsset::Abigail::Casual::Casual",
+      "where_islandsouth::spring": "pack.Abigail.B",
+      "Wedding::Weather_Windy::Weather_Any::Where_Indoor": "pack.Abigail.A",
+      "Wedding::Weather_Windy::Weather_Any::Where_Indoor::Where_Any": "LocalAsset::Abigail::Casual::Casual"
+    },
+    "Sam": {
+      "Flower Dance::Weather_Foggy::Where_Saloon": "pack.Sam.B",
+      "Where_Saloon::Weather_Foggy::Flower Dance": "pack.Sam.A"
+    }
+  },
+  "MenuHotkey": "F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Island": "pack.Alex.A",
+      "Wedding": "pack.Alex.B",
+      "Spring": "pack.Alex.C",
+      "Stardew Valley Fair": "Default",
+      "Winter": "pack.Alex.C"
+    },
+    "Haley": {
+      "Spring": "Default",
+      "Island": "pack.Haley.A"
+    },
+    "Abigail": {},
+    "Nobody": {
+      "Wedding": "pack.Nobody.Missing",
+      "Winter": "pack.Nobody.A"
+    },
+    "Emily": {
+      "Egg Festival": "pack.Emily.B",
+      "Stardew Valley Fair": "Default",
+      "Wedding": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

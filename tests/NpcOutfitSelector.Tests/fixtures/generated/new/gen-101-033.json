@@ -1,0 +1,18 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Island": "pack.Emily.A",
+      "Winter": "pack.Emily.Missing",
+      "Spirit's Eve": "pack.Emily.B",
+      "Summer": "pack.Emily.B"
+    },
+    "Sam": {
+      "Island": "pack.Sam.A",
+      "Wedding": "pack.Sam.B",
+      "Winter": "Default",
+      "Egg Festival": "Default"
+    },
+    "Nobody": {}
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,36 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Weather_Raining::Where_Beach": "pack.Abigail.C",
+      "Spring::Where_Town": "pack.Abigail.B",
+      "Weather_Foggy::Where_Saloon": "pack.Abigail.B",
+      "Island::Weather_GreenRain": "pack.Abigail.D",
+      "Summer": "pack.Abigail.D",
+      "Island::Where_MyModPlace": "pack.Abigail.A"
+    },
+    "Sam": {
+      "Island::Weather_Windy": "pack.Sam.D",
+      "Island::Where_MyModPlace": "pack.Sam.Missing"
+    },
+    "Nobody": {
+      "Winter": "Default",
+      "Spring::Where_Town": "Default"
+    },
+    "Emily": {
+      "Winter": "pack.Emily.D",
+      "Egg Festival::Weather_Snowing::Where_Saloon": "pack.Emily.C",
+      "Casual": "pack.Emily.A",
+      "Summer::Weather_GreenRain": "pack.Emily.A"
+    },
+    "Haley": {
+      "Where_Saloon": "Default",
+      "Winter::Weather_GreenRain": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Fall::Where_IslandSouth": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Wedding::Weather_Lightning::Where_MyModPlace": "LocalAsset::Haley::Beach::Beach",
+      "Stardew Valley Fair": "Default",
+      "Wedding::Weather_GreenRain": "LocalAsset::Haley::Spring::NoSuchFile"
+    }
+  },
+  "MenuHotkey": ""
+}

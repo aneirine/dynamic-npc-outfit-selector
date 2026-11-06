@@ -1,0 +1,10 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Spring": "pack.Alex.B",
+      "Beach": "Default",
+      "Dance of the Moonlight Jellies": "pack.Alex.A"
+    }
+  }
+}

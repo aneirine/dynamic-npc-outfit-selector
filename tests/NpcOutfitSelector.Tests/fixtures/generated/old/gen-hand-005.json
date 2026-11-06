@@ -1,0 +1,22 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Winter::Weather_Foggy": "pack.Haley.D",
+      "Fall::Weather_Foggy::Any": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Fall::Weather_Foggy::Any::Where_Any": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "Weather_GreenRain::Weather_Sunny::Where_IslandSouth::Flower Dance": "pack.Haley.Missing",
+      "Spring::Weather_Foggy": "pack.Haley.D",
+      "Wedding::Where_IslandSouth": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Nobody": {
+      "Fall": "pack.Nobody.Missing",
+      "weather_windy::Wedding": "pack.Nobody.A",
+      "Spring::weather_greenrain::weather_foggy": "pack.Nobody.B",
+      "Winter::Weather_Windy": "pack.Nobody.A",
+      "Where_MyModPlace::Summer::Weather_Any": "pack.Nobody.Missing",
+      "Spring::Weather_Lightning": "pack.Nobody.A"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

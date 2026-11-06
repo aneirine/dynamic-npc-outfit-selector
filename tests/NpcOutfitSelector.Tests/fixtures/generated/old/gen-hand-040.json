@@ -1,0 +1,40 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Casual": "pack.Nobody.B",
+      "any::where_islandsouth": "pack.Nobody.Missing",
+      "weather_greenrain::Rainy": "pack.Nobody.A"
+    },
+    "Haley": {
+      "Where_Saloon::Spring::Weather_Any": "pack.Haley.A",
+      "Where_Saloon::Spring::Weather_Any::Where_Any": "pack.Haley.Missing",
+      "Spring::Where_Outdoor::Weather_Any": "pack.Haley.C",
+      "SPRING::WHERE_OUTDOOR::WEATHER_ANY": "pack.Haley.Missing",
+      "Weather_GreenRain": "pack.Haley.B",
+      "Weather_Any::Island": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor",
+      "where_beach::Rainy::Spring::Weather_Sunny": "pack.Haley.B",
+      "where_beach::Rainy::Spring::Weather_Sunny::Where_Any": "LocalAsset::Haley::Beach::Beach"
+    },
+    "Alex": {
+      "Winter::Weather_Raining::Weather_Any": "pack.Alex.Missing",
+      "Any::Stardew Valley Fair": "LocalAsset::Alex::Fall::NoSuchFile",
+      "ANY::STARDEW VALLEY FAIR": "pack.Alex.B"
+    },
+    "Emily": {
+      "Wedding::Weather_Lightning::Where_Town": "pack.Emily.A",
+      "Weather_Windy::Where_Beach::Rainy": "Default",
+      "Weather_Raining::Island": "pack.Emily.C",
+      "WEATHER_RAINING::ISLAND": "pack.Emily.C",
+      "Rainy::Weather_Sunny": "pack.Emily.D",
+      "Weather_GreenRain::Where_Outdoor::Winter::Weather_Any": "Default"
+    },
+    "Abigail": {
+      "Fall": "pack.Abigail.C"
+    },
+    "Sam": {
+      "where_mymodplace::Fall": "pack.Sam.Missing"
+    }
+  },
+  "MenuHotkey": ""
+}

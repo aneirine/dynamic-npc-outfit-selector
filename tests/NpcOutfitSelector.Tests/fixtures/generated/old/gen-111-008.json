@@ -1,0 +1,20 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Where_Indoor": "Default"
+    },
+    "Sam": {
+      "Island::Where_Outdoor": "Default",
+      "Wedding": "pack.Sam.C"
+    },
+    "Abigail": {
+      "Wedding::Where_Beach": "pack.Abigail.Missing",
+      "Where_MyModPlace": "pack.Abigail.C",
+      "Island::Where_Town": "pack.Abigail.A",
+      "Fall::Weather_Snowing": "pack.Abigail.C",
+      "Island": "pack.Abigail.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

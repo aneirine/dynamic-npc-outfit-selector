@@ -1,0 +1,29 @@
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Where_IslandSouth": "LocalAsset::Haley::Beach::Beach",
+      "Spirit's Eve::Weather_Lightning::Where_Beach": "LocalAsset::Haley::Casual::Casual",
+      "Island::Where_Outdoor": "LocalAsset::Haley::Beach::Beach",
+      "Island::Where_IslandSouth": "LocalAsset::Haley::Casual::Casual",
+      "Winter::Weather_Lightning": "LocalAsset::Haley::Casual::Casual",
+      "Where_Indoor": "LocalAsset::Haley::Casual::Casual"
+    },
+    "Nobody": {
+      "Island::Weather_Windy::Where_IslandSouth": "pack.Nobody.D",
+      "Luau::Weather_Snowing::Where_Saloon": "pack.Nobody.D"
+    },
+    "Alex": {
+      "Weather_Sunny::Where_IslandSouth": "pack.Alex.A"
+    },
+    "Emily": {},
+    "Abigail": {
+      "Weather_Lightning::Where_Saloon": "pack.Abigail.A",
+      "Spirit's Eve": "pack.Abigail.A"
+    },
+    "Sam": {
+      "Spring::Weather_Raining": "pack.Sam.B",
+      "Wedding::Weather_GreenRain": "Default"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

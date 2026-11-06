@@ -1,0 +1,13 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Casual::Weather_Lightning::Where_Town": "pack.Alex.C"
+    },
+    "Abigail": {
+      "Summer::Weather_Raining::Where_Saloon": "LocalAsset::Abigail::Casual::Casual",
+      "Where_Indoor": "Default",
+      "Festival of Ice": "pack.Abigail.D"
+    }
+  },
+  "MenuHotkey": "None"
+}

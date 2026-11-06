@@ -1,0 +1,22 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Egg Festival::Weather_Foggy::Where_Saloon": "pack.Emily.A"
+    },
+    "Nobody": {
+      "Where_Indoor": "pack.Nobody.C"
+    },
+    "Sam": {
+      "Winter::Weather_Raining": "pack.Sam.D",
+      "Casual::Weather_Raining": "Default",
+      "Wedding::Weather_Lightning::Where_Saloon": "Default"
+    },
+    "Abigail": {
+      "Flower Dance::Weather_Windy": "pack.Abigail.A",
+      "Weather_Foggy::Where_Indoor": "pack.Abigail.D",
+      "Casual::Where_Indoor": "pack.Abigail.B",
+      "Where_Indoor": "pack.Abigail.Missing"
+    }
+  }
+}

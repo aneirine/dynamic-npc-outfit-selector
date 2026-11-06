@@ -1,0 +1,13 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Weather_Windy": "pack.Abigail.B"
+    },
+    "Haley": {},
+    "Sam": {
+      "Spring": "pack.Sam.D",
+      "Wedding": "pack.Sam.C"
+    }
+  },
+  "MenuHotkey": "F9"
+}

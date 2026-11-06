@@ -1,0 +1,30 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Casual": "Default",
+      "Spring": "pack.Abigail.B",
+      "Egg Festival": "Default"
+    },
+    "Haley": {
+      "Dance of the Moonlight Jellies": "pack.Haley.B",
+      "Beach": "pack.Haley.D"
+    },
+    "Alex": {},
+    "Sam": {
+      "Fall": "pack.Sam.D"
+    },
+    "Emily": {
+      "Fall": "pack.Emily.B",
+      "Beach": "pack.Emily.B"
+    },
+    "Nobody": {
+      "Fall": "Default",
+      "Winter": "pack.Nobody.B",
+      "Casual": "Default",
+      "Egg Festival": "pack.Nobody.D",
+      "Dance of the Moonlight Jellies": "Default",
+      "Stardew Valley Fair": "Default"
+    }
+  }
+}

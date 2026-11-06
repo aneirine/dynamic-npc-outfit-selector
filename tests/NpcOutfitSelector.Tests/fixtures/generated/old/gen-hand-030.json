@@ -1,0 +1,49 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Any::Where_MyModPlace": "pack.Abigail.Missing"
+    },
+    "Emily": {
+      "Any::Dance of the Moonlight Jellies": "pack.Emily.B",
+      "Any::Dance of the Moonlight Jellies::Where_Any": "pack.Emily.Missing",
+      "Island::Weather_Lightning::Where_IslandSouth::Rainy": "pack.Emily.B",
+      "weather_windy::Wedding::Where_Indoor": "pack.Emily.D",
+      "Casual": "pack.Emily.D",
+      "Casual::rainy": "pack.Emily.B"
+    },
+    "Nobody": {
+      "Island::Weather_Sunny::Rainy": "pack.Nobody.B",
+      "Island": "pack.Nobody.Missing",
+      "Stardew Valley Fair::Where_Outdoor::Weather_Sunny": "pack.Nobody.C",
+      "Weather_Sunny::Where_Outdoor::Stardew Valley Fair": "pack.Nobody.C",
+      "Luau::Weather_Windy::Weather_Any": "pack.Nobody.C",
+      "LUAU::WEATHER_WINDY::WEATHER_ANY": "pack.Nobody.B"
+    },
+    "Alex": {
+      "Any::Spring::Weather_GreenRain::Where_Indoor": "pack.Alex.B",
+      "wedding::weather_any": "pack.Alex.A",
+      "Weather_Foggy::Summer::Weather_Lightning": "pack.Alex.D"
+    },
+    "Haley": {
+      "Weather_Sunny::Spring::Rainy": "pack.Haley.Missing",
+      "Egg Festival::Where_Saloon::Rainy": "LocalAsset::Haley::Casual::Casual",
+      "Feast of the Winter Star": "pack.Haley.A",
+      "Feast of the Winter Star::Where_Any": "LocalAsset::Haley::Beach::Beach"
+    },
+    "Sam": {
+      "Spring::Where_MyModPlace::Weather_Any": "pack.Sam.D",
+      "Spring::Where_MyModPlace::Weather_Any::Where_Any": "pack.Sam.C",
+      "Any::Casual::Weather_Sunny::Where_IslandSouth": "pack.Sam.A",
+      "Winter::Where_Saloon::Rainy": "pack.Sam.D",
+      "Winter::Where_Saloon::Rainy::Where_Any": "pack.Sam.A",
+      "Any::Casual::Weather_Windy": "pack.Sam.B",
+      "Weather_Windy::Casual::Any": "pack.Sam.A",
+      "beach::Weather_Snowing::Rainy": "pack.Sam.D"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

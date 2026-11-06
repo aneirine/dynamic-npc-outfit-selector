@@ -1,0 +1,28 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Island": "pack.Emily.A",
+      "Winter": "pack.Emily.C",
+      "Spirit's Eve": "pack.Emily.D"
+    },
+    "Sam": {
+      "Summer": "pack.Sam.C",
+      "Island": "pack.Sam.D"
+    },
+    "Nobody": {
+      "Spring": "pack.Nobody.C",
+      "Island": "pack.Nobody.C"
+    },
+    "Haley": {
+      "Spring": "pack.Haley.C",
+      "Summer": "LocalAsset::Haley::Spring::NoSuchFile"
+    },
+    "Abigail": {
+      "Island": "pack.Abigail.Missing",
+      "Casual": "Default",
+      "Stardew Valley Fair": "Default",
+      "Spirit's Eve": "pack.Abigail.C"
+    }
+  },
+  "MenuHotkey": "F9"
+}

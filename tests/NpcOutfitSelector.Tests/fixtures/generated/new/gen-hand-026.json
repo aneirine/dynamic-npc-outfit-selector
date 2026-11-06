@@ -1,0 +1,23 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {},
+    "Alex": {
+      "Wedding::Weather_Foggy::Where_MyModPlace::Weather_Raining": "pack.Alex.D"
+    },
+    "Abigail": {},
+    "Emily": {
+      "Where_Town": "pack.Emily.B",
+      "Rainy::Weather_Raining": "pack.Emily.Missing"
+    },
+    "Sam": {
+      "Weather_Windy::Winter": "pack.Sam.A"
+    },
+    "Haley": {
+      "festival of ice::Weather_Foggy::Where_Beach": "pack.Haley.B",
+      "Weather_GreenRain": "pack.Haley.A",
+      "Where_IslandSouth::Weather_Snowing::Island": "LocalAsset::Haley::Beach::Beach",
+      "WHERE_ISLANDSOUTH::WEATHER_SNOWING::ISLAND": "pack.Haley.B"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

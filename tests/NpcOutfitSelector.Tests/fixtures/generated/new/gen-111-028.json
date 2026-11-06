@@ -1,0 +1,13 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Spirit's Eve::Weather_Windy::Where_IslandSouth": "pack.Nobody.A",
+      "Island::Weather_Sunny::Where_MyModPlace": "Default",
+      "Where_Saloon": "pack.Nobody.C",
+      "Spring::Where_Town": "Default",
+      "Weather_Sunny::Where_Outdoor": "pack.Nobody.C",
+      "Wedding::Weather_Raining::Where_Outdoor": "pack.Nobody.Missing"
+    }
+  },
+  "MenuHotkey": "F9"
+}

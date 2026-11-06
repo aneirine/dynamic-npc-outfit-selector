@@ -1,0 +1,28 @@
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Where_Outdoor": "Default",
+      "Any::Stardew Valley Fair": "pack.Alex.A",
+      "Any::Stardew Valley Fair::Where_Any": "pack.Alex.B",
+      "casual::Weather_Raining::where_saloon": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "CASUAL::WEATHER_RAINING::WHERE_SALOON": "pack.Alex.B",
+      "Summer::Rainy": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Fall::weather_any::Weather_Windy::where_saloon": "pack.Alex.Missing",
+      "Fall": "pack.Alex.Missing"
+    },
+    "Sam": {
+      "Fall::Where_Beach": "Default",
+      "wedding::where_outdoor::Rainy": "pack.Sam.C",
+      "Rainy::where_outdoor::wedding": "pack.Sam.Missing",
+      "Spring::Where_IslandSouth::rainy": "pack.Sam.C",
+      "SPRING::WHERE_ISLANDSOUTH::RAINY": "pack.Sam.B",
+      "where_mymodplace::rainy": "Default",
+      "Weather_Foggy::Where_Beach::Rainy": "pack.Sam.C",
+      "Luau::Weather_Sunny::Where_IslandSouth": "pack.Sam.B"
+    }
+  },
+  "MenuHotkey": "None",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

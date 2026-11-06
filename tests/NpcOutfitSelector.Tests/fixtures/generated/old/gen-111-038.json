@@ -1,0 +1,36 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Island::Where_IslandSouth": "pack.Nobody.D",
+      "Island::Weather_Raining": "pack.Nobody.Missing",
+      "Fall::Weather_GreenRain": "pack.Nobody.A",
+      "Summer::Weather_Snowing": "pack.Nobody.B",
+      "Island::Weather_GreenRain::Where_Town": "pack.Nobody.A"
+    },
+    "Alex": {
+      "Winter::Weather_Raining": "pack.Alex.B",
+      "Winter::Weather_GreenRain": "pack.Alex.A",
+      "Island::Weather_Windy": "pack.Alex.D",
+      "Luau::Weather_Sunny::Where_Town": "LocalAsset::Alex::Fall::NoSuchFile"
+    },
+    "Haley": {
+      "Summer": "pack.Haley.A",
+      "Spring::Weather_Snowing": "LocalAsset::Haley::Casual::Casual",
+      "Weather_GreenRain::Where_IslandSouth": "pack.Haley.A"
+    },
+    "Emily": {
+      "Wedding::Weather_Sunny": "pack.Emily.Missing",
+      "Summer::Weather_Sunny": "pack.Emily.Missing",
+      "Fall::Weather_GreenRain": "Default",
+      "Winter::Weather_GreenRain::Where_IslandSouth": "pack.Emily.A",
+      "Casual::Where_Beach": "Default"
+    },
+    "Abigail": {
+      "Weather_GreenRain::Where_Outdoor": "pack.Abigail.B",
+      "Island::Weather_GreenRain": "pack.Abigail.A"
+    },
+    "Sam": {}
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,9 @@
+// 1.0.1 Id for Haley_Winter_Snowing_Outdoor.png (fixed in 1.1.2).
+{
+  "SelectedOutfits": {
+    "Haley": {
+      "Summer": "pack.Haley.A",
+      "Winter": "LocalAsset::Haley::Winter::Winter_Snowing_Outdoor"
+    }
+  }
+}

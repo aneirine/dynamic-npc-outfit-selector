@@ -1,0 +1,27 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Winter": "pack.Abigail.Missing",
+      "Wedding": "LocalAsset::Abigail::Casual::Casual",
+      "Spring": "Default"
+    },
+    "Nobody": {
+      "Winter": "pack.Nobody.A"
+    },
+    "Sam": {
+      "Summer": "pack.Sam.A",
+      "Winter": "pack.Sam.C",
+      "Casual": "Default",
+      "Spring": "Default",
+      "Wedding": "Default"
+    },
+    "Emily": {
+      "Island": "pack.Emily.D",
+      "Casual": "Default"
+    },
+    "Alex": {
+      "Winter": "pack.Alex.B"
+    }
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,25 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Winter::where_outdoor::Weather_Any": "LocalAsset::Abigail::Casual::Casual",
+      "Fall::Weather_Snowing::Where_Indoor::Weather_Any": "pack.Abigail.Missing",
+      "FALL::WEATHER_SNOWING::WHERE_INDOOR::WEATHER_ANY": "pack.Abigail.A",
+      "spring": "pack.Abigail.C",
+      "Where_IslandSouth::Weather_Windy": "pack.Abigail.C"
+    },
+    "Alex": {
+      "Weather_Windy::Casual": "pack.Alex.A",
+      "Any::Wedding::Weather_Raining": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Any::Wedding::Weather_Raining::Where_Any": "LocalAsset::Alex::Fall::NoSuchFile",
+      "island::where_town::weather_lightning::Weather_Any": "pack.Alex.C",
+      "Weather_Any::Festival of Ice": "pack.Alex.D",
+      "Festival of Ice::Weather_Any": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Weather_Raining::Weather_Raining": "LocalAsset::Alex::Fall::NoSuchFile"
+    }
+  },
+  "MenuHotkey": "F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

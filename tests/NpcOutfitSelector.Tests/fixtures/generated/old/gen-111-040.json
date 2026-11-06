@@ -1,0 +1,29 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Weather_Sunny::Where_MyModPlace": "pack.Sam.Missing",
+      "Stardew Valley Fair": "pack.Sam.D",
+      "Feast of the Winter Star": "pack.Sam.A",
+      "Summer::Weather_Lightning": "pack.Sam.C",
+      "Wedding::Weather_GreenRain::Where_Saloon": "pack.Sam.D"
+    },
+    "Nobody": {
+      "Island::Weather_Windy::Where_Indoor": "pack.Nobody.C",
+      "Casual": "pack.Nobody.C",
+      "Casual::Where_Town": "pack.Nobody.A",
+      "Where_Beach": "pack.Nobody.D",
+      "Winter::Weather_GreenRain": "pack.Nobody.B"
+    },
+    "Alex": {
+      "Summer": "pack.Alex.A",
+      "Island::Where_Outdoor": "LocalAsset::Alex::Beach::BeachFull_remake",
+      "Feast of the Winter Star::Where_Indoor": "pack.Alex.Missing",
+      "Fall::Weather_Windy::Where_Indoor": "pack.Alex.A"
+    },
+    "Abigail": {
+      "Winter::Weather_GreenRain": "pack.Abigail.B"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

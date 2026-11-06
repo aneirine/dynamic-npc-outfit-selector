@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The released 1.1.1 as a reference for tests/NpcOutfitSelector.Tests/CompatTests.cs.
+       Build it against the 1.1.1 sources, e.g. from the repo root:
+         git archive 6ba64a2 | tar -x -C <empty folder>
+         dotnet build tests/Oracle-1.1.1 -c Release -p:ReleasedSource=<that folder>
+       Never `dotnet run` it (ModBuildConfig points that at the game). -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>NpcOutfitSelector.Oracle111</AssemblyName>
+    <RootNamespace>NpcOutfitSelector.Oracle</RootNamespace>
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <Target Name="RequireReleasedSource" BeforeTargets="CoreCompile">
+    <Error Condition="'$(ReleasedSource)' == '' Or !Exists('$(ReleasedSource)\ModConfig.cs')"
+           Text="Set -p:ReleasedSource to a folder holding the 1.1.1 sources (git archive 6ba64a2)." />
+  </Target>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\Shared\CompatScenario.cs" />
+    <Compile Include="$(ReleasedSource)\ModConfig.cs" />
+    <Compile Include="$(ReleasedSource)\AppearanceCategory.cs" />
+    <Compile Include="$(ReleasedSource)\AppearanceConstants.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)\smapi-internal\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="SMAPI.Toolkit" HintPath="$(GamePath)\smapi-internal\SMAPI.Toolkit.dll" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>GamePath</_Parameter1>
+      <_Parameter2>$(GamePath)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

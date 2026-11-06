@@ -1,0 +1,29 @@
+{
+  "SelectedOutfits": {
+    "Elliott": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.ElliottEggFest"
+    },
+    "Abigail": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.AbigailJellies"
+    },
+    "Alex": {
+      "Summer": "Poltergeister.SeasonalCuteCharacters.AlexEggFest"
+    },
+    "Emily": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.EmilyEggFest",
+      "Winter": "Poltergeister.SeasonalCuteCharacters.EmilyWinterIndoor"
+    },
+    "Evelyn": {
+      "Spring": "Poltergeister.SeasonalCuteCharacters.EvelynSummer"
+    },
+    "Haley": {
+      "Beach": "LocalAsset::Haley::Beach::Beach"
+    },
+    "Sam": {
+      "Fall": "Default"
+    },
+    "Maru": {
+      "Egg Festival": "Poltergeister.SeasonalCuteCharacters.MaruEggFest"
+    }
+  }
+}

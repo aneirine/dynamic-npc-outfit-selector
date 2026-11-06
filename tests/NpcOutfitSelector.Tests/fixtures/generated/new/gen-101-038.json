@@ -1,0 +1,12 @@
+{
+  "SelectedOutfits": {
+    "Sam": {
+      "Winter": "pack.Sam.C",
+      "Casual": "pack.Sam.C"
+    },
+    "Nobody": {
+      "Festival of Ice": "pack.Nobody.D"
+    }
+  },
+  "MenuHotkey": "F9"
+}

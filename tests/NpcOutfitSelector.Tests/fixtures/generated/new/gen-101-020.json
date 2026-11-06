@@ -1,0 +1,16 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Island": "pack.Abigail.A",
+      "Dance of the Moonlight Jellies": "pack.Abigail.A",
+      "Casual": "pack.Abigail.A"
+    },
+    "Haley": {
+      "Casual": "LocalAsset::Haley::Beach::Beach",
+      "Spring": "pack.Haley.C",
+      "Wedding": "LocalAsset::Haley::Casual::Casual",
+      "Fall": "Default"
+    }
+  },
+  "MenuHotkey": "F9"
+}

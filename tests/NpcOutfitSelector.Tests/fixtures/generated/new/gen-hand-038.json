@@ -1,0 +1,19 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Summer::Weather_Foggy::Where_Beach::Weather_GreenRain": "pack.Abigail.D",
+      "island::Where_Indoor::weather_any": "pack.Abigail.Missing",
+      "weather_any::Where_Indoor::island": "LocalAsset::Abigail::Casual::Casual",
+      "Weather_Any::Weather_Foggy": "pack.Abigail.D",
+      "Wedding": "pack.Abigail.Missing"
+    },
+    "Haley": {},
+    "Alex": {
+      "Any::Wedding::Where_Saloon": "pack.Alex.Missing"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

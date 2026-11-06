@@ -1,0 +1,25 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Island::Weather_Windy::Where_Beach": "pack.Nobody.A",
+      "Wedding::Weather_Sunny::Where_Outdoor": "pack.Nobody.B",
+      "Island::Weather_Raining::Where_Indoor": "pack.Nobody.B",
+      "Summer::Where_IslandSouth": "pack.Nobody.D",
+      "Island::Weather_Lightning": "pack.Nobody.B",
+      "Where_Saloon": "Default"
+    },
+    "Emily": {
+      "Island::Where_Town": "Default",
+      "Luau": "pack.Emily.D",
+      "Flower Dance": "Default"
+    },
+    "Sam": {},
+    "Abigail": {
+      "Casual::Where_MyModPlace": "LocalAsset::Abigail::Casual::Casual",
+      "Fall::Weather_Foggy::Where_Outdoor": "pack.Abigail.B",
+      "Where_Beach": "LocalAsset::Abigail::Casual::Casual"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9"
+}

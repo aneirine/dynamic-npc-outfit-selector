@@ -1,0 +1,9 @@
+// Generated (seed 112), hand-edited: case, segment order, Any, repeated axes, Beach and Island, twins.
+{
+  "SelectedOutfits": {
+    "Alex": {},
+    "Nobody": {
+      "Summer::Weather_GreenRain::Where_Indoor::Weather_Sunny": "pack.Nobody.A"
+    }
+  }
+}

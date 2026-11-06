@@ -1,0 +1,41 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Island::Where_Beach": "Default",
+      "Weather_Snowing": "pack.Nobody.A",
+      "Winter::Weather_Sunny::Where_Town": "Default",
+      "Winter::Weather_Lightning": "Default"
+    },
+    "Abigail": {
+      "Where_Outdoor": "pack.Abigail.C",
+      "Where_Indoor": "pack.Abigail.B",
+      "Summer::Weather_Snowing": "pack.Abigail.B",
+      "Weather_Foggy": "LocalAsset::Abigail::Casual::Casual",
+      "Winter::Where_Town": "pack.Abigail.D",
+      "Island::Where_Town": "pack.Abigail.A"
+    },
+    "Haley": {
+      "Fall::Weather_GreenRain::Where_Indoor": "LocalAsset::Haley::Casual::Casual",
+      "Festival of Ice::Where_MyModPlace": "pack.Haley.B",
+      "Fall::Weather_Windy::Where_MyModPlace": "LocalAsset::Haley::Beach::Beach",
+      "Egg Festival": "pack.Haley.D"
+    },
+    "Emily": {},
+    "Sam": {
+      "Feast of the Winter Star": "Default",
+      "Fall::Weather_Windy": "pack.Sam.D",
+      "Weather_Lightning::Where_MyModPlace": "pack.Sam.B",
+      "Island::Weather_Sunny::Where_Indoor": "pack.Sam.B",
+      "Casual::Weather_Snowing::Where_Indoor": "pack.Sam.Missing",
+      "Summer::Weather_Sunny::Where_Saloon": "pack.Sam.Missing"
+    },
+    "Alex": {
+      "Festival of Ice::Weather_Raining": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Spring::Where_Town": "pack.Alex.A",
+      "Island::Weather_Raining::Where_IslandSouth": "pack.Alex.C",
+      "Island::Weather_Foggy::Where_Beach": "pack.Alex.Missing",
+      "Where_Outdoor": "LocalAsset::Alex::Fall::NoSuchFile"
+    }
+  },
+  "MenuHotkey": "F9"
+}

@@ -1,0 +1,26 @@
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Winter": "pack.Abigail.Missing"
+    },
+    "Emily": {
+      "Fall::Where_IslandSouth": "pack.Emily.B"
+    },
+    "Sam": {},
+    "Haley": {
+      "Island::Weather_Foggy::Where_Beach": "pack.Haley.D",
+      "Spirit's Eve::Weather_Sunny::Where_Saloon": "LocalAsset::Haley::Winter::Weather_Snowing::Where_Outdoor::Winter_Snowing_Outdoor"
+    },
+    "Nobody": {
+      "Feast of the Winter Star": "Default",
+      "Fall::Weather_Windy": "pack.Nobody.D",
+      "Fall::Weather_Foggy::Where_Indoor": "pack.Nobody.Missing",
+      "Fall": "pack.Nobody.B"
+    },
+    "Alex": {
+      "Island": "pack.Alex.B",
+      "Luau::Weather_GreenRain::Where_Outdoor": "pack.Alex.B"
+    }
+  },
+  "MenuHotkey": "None"
+}

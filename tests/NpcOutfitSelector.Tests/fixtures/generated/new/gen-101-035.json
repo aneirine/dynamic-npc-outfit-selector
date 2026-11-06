@@ -1,0 +1,16 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Winter": "pack.Emily.A",
+      "Wedding": "pack.Emily.C",
+      "Egg Festival": "pack.Emily.A",
+      "Dance of the Moonlight Jellies": "pack.Emily.C",
+      "Summer": "pack.Emily.A"
+    },
+    "Abigail": {
+      "Spring": "Default",
+      "Spirit's Eve": "pack.Abigail.A"
+    }
+  },
+  "MenuHotkey": "F9"
+}

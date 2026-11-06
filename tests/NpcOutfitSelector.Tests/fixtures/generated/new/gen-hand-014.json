@@ -1,0 +1,22 @@
+{
+  "SelectedOutfits": {
+    "Nobody": {
+      "Weather_GreenRain::Where_Beach": "pack.Nobody.A"
+    },
+    "Alex": {},
+    "Emily": {},
+    "Haley": {
+      "Any::Summer::Weather_Raining::Where_Outdoor": "LocalAsset::Haley::Spring::NoSuchFile",
+      "Weather_Sunny::Beach::Any": "Default",
+      "Weather_Sunny::Beach::Any::Where_Any": "LocalAsset::Haley::Casual::Casual",
+      "Weather_Sunny": "LocalAsset::Haley::Beach::Beach",
+      "Weather_Sunny::Where_Any": "LocalAsset::Haley::Casual::Casual",
+      "Island::Weather_GreenRain": "LocalAsset::Haley::Spring::NoSuchFile",
+      "casual::Where_Indoor::rainy": "pack.Haley.D"
+    }
+  },
+  "MenuHotkey": "LeftShift + F9",
+  "SomeFutureSetting": {
+    "Enabled": true
+  }
+}

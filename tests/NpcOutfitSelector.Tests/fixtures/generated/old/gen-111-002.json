@@ -1,0 +1,29 @@
+// Generated (seed 112), 1.1.0/1.1.1 shape: base, weather and place as the menu writes them.
+{
+  "SelectedOutfits": {
+    "Abigail": {
+      "Island::Weather_GreenRain::Where_Town": "pack.Abigail.D",
+      "Luau": "LocalAsset::Abigail::Casual::Casual",
+      "Weather_Foggy": "pack.Abigail.C"
+    },
+    "Emily": {
+      "Island::Weather_Raining::Where_Town": "pack.Emily.D",
+      "Island::Weather_GreenRain": "pack.Emily.B",
+      "Where_MyModPlace": "pack.Emily.A"
+    },
+    "Alex": {
+      "Fall": "pack.Alex.D",
+      "Weather_Raining": "pack.Alex.C",
+      "Island::Weather_Snowing": "LocalAsset::Alex::Fall::NoSuchFile",
+      "Weather_Lightning": "pack.Alex.A"
+    },
+    "Nobody": {
+      "Fall::Weather_Foggy": "pack.Nobody.Missing",
+      "Summer::Weather_Raining": "Default"
+    },
+    "Haley": {
+      "Island::Weather_Snowing": "pack.Haley.B",
+      "Winter::Weather_Snowing::Where_MyModPlace": "Default"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "SelectedOutfits": {
+    "Emily": {
+      "Fall": "pack.Emily.B"
+    },
+    "Haley": {
+      "Spring": "pack.Haley.D",
+      "Fall": "pack.Haley.C",
+      "Luau": "pack.Haley.B"
+    },
+    "Sam": {
+      "Island": "pack.Sam.B",
+      "Fall": "pack.Sam.Missing",
+      "Wedding": "pack.Sam.C"
+    },
+    "Nobody": {
+      "Festival of Ice": "Default",
+      "Casual": "pack.Nobody.B",
+      "Island": "pack.Nobody.Missing",
+      "Fall": "pack.Nobody.D",
+      "Winter": "Default"
+    },
+    "Abigail": {
+      "Wedding": "pack.Abigail.D",
+      "Island": "pack.Abigail.C",
+      "Luau": "pack.Abigail.C"
+    }
+  },
+  "MenuHotkey": "F9"
+}

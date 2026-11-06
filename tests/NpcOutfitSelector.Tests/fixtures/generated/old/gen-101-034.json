@@ -1,0 +1,11 @@
+// Generated (seed 112), 1.0.1 shape: a bare base per key, Beach for island attire.
+{
+  "SelectedOutfits": {
+    "Alex": {
+      "Beach": "pack.Alex.Missing",
+      "Fall": "pack.Alex.B",
+      "Summer": "pack.Alex.Missing",
+      "Winter": "LocalAsset::Alex::Beach::BeachFull_remake"
+    }
+  }
+}
