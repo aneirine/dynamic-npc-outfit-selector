@@ -281,7 +281,7 @@ namespace NpcOutfitSelector
             if (fieldId == SearchQueryFieldId && value is string query)
             {
                 // Tracked live so the box's own text persists across a rebuild, but this alone
-                // doesn't touch the visible NPC list — see ApplySearchFilter.
+                // doesn't touch the visible NPC list — see ScheduleSearchApply.
                 this.searchQuery = query;
                 return;
             }
@@ -666,7 +666,7 @@ namespace NpcOutfitSelector
             this.localAssetsByNpc = LocalAssetScanner.BuildOptions(this.Helper.DirectoryPath, characters.Keys.ToList(), this.Monitor);
 
             // First on the page: GMCM runs beforeMenuOpened in page order, so the file is read
-            // here, once, before any other option asks for a value.
+            // here before any other option asks for a value.
             gmcm.AddComplexOption(
                 mod: this.ModManifest,
                 name: () => "",

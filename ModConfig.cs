@@ -85,8 +85,8 @@ namespace NpcOutfitSelector
             }
         }
 
-        // Renames a 1.0.1 "Beach" base to "Island", so the menu, which only writes Island, finds
-        // it. Skipped when another key already fills that slot: both stay and 1.1.1's winner
+        // Renames a 1.0.1 "Beach" base to "Island", the spelling the menu writes, as 1.1.1 did
+        // on load. Skipped when another key already fills that slot: both stay and 1.1.1's winner
         // keeps applying. Returns a warning for every key left doing nothing.
         public List<string> MigrateLegacyKeys()
         {
