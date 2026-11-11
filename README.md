@@ -60,8 +60,10 @@ Weather_Sunny                           any season, as long as it's sunny
 
 The first part is the category. Every part after it says which setting it belongs to, written
 `Setting_Value`, and narrows when the category applies. Order doesn't matter when you read them.
-Keys the menu creates are saved as category, weather, place; a key you typed by hand is kept
-exactly as you wrote it.
+Keys the menu creates are saved as category, weather, place; a key you typed by hand is kept as
+you wrote it. The one exception is the 1.0.1 `Beach` category, which becomes `Island` (see below).
+Picking an outfit in the menu for a slot that a hand-typed key already fills updates that key,
+spelling and all, rather than adding a second one.
 
 Naming the setting is what lets a value the mod has never seen still work. Other mods can add both
 new locations *and* new weather types; because the part already says which it is, an unfamiliar
@@ -132,7 +134,40 @@ A few notes:
 - The `Island` **category** and the `Where_Beach` **place** are different things: the category is
   Ginger Island's resort attire, which the game picks by its own mechanism, while `Where_Beach` is
   Pelican Town's beach map. (Version 1.0.1 called the category `Beach`, which made that easy to
-  mix up. Old configs are read and updated automatically — nothing to do.)
+  mix up. Old configs are read and updated automatically — nothing to do. If one character has
+  both a `Beach` and an `Island` key for the same slot, both stay in the file, the one 1.1.1 used
+  keeps applying, and the SMAPI log names the other so you can delete it.)
+
+## Your settings file and its backups
+
+Your picks live in `Mods/Dynamic NPC Outfit Selector/config.json`. The mod creates it with the
+default settings the first time it runs, and after that writes to it only when you press **Save**
+or **Default** on its page. Launching the game, opening the menu or starting a new day never
+rewrites it, so anything you add by hand stays. (Comments in the file are dropped when the mod
+saves it.)
+
+Two backups sit next to it:
+
+| File | What it holds |
+|---|---|
+| `config.backup.json` | Your file as it was before the mod first saved it in this game session. |
+| `config.before-reset.json` | Your file as it was right before you last pressed **Default**. |
+
+A backup is only ever replaced by a file that has something in it (a picked outfit, or a hotkey of
+your own), so pressing **Default** twice, or a save cut off by a crash that left `config.json`
+empty, can't wipe the last good copy.
+
+To go back to a backup, close the game and replace `config.json` with it: copy it over
+`config.json`, or delete `config.json` and rename the backup to `config.json`.
+
+If `config.json` can't be read (a typo, a missing quote, or another program holding the file open),
+the mod leaves it exactly as it is. A red notice at the top of its page says so, **Save** and
+**Default** do nothing until you fix the file (or move it away) and reopen the menu, and the SMAPI
+log has the exact error. If `config.json` turns up empty while `config.backup.json` still has your
+picks, the page tells you that as well. Both notices name the backup when there is one.
+
+A read-only `config.json` is read and applied as usual, but saving to it fails; the SMAPI log
+says so.
 
 ## Requirements
 
@@ -185,6 +220,14 @@ dotnet build -c Release
 
 ModBuildConfig locates your game automatically, compiles the mod, copies it into your `Mods`
 folder, and produces an upload-ready zip in `bin/Release`. That zip is what you upload to Nexus.
+
+To build without touching the installed copy or making a zip (for example while testing):
+
+```
+dotnet build NpcOutfitSelector.csproj -c Release -p:EnableModDeploy=false -p:EnableModZip=false
+```
+
+Tests are described in `tests/README.md`. Changes per version are in `CHANGELOG.md`.
 
 If the game isn't auto-detected, create a `stardewvalley.targets` or set the `GamePath`
 property — see the [ModBuildConfig docs](https://github.com/Pathoschild/SMAPI/blob/develop/docs/technical/mod-package.md).
