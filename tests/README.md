@@ -31,7 +31,7 @@ them at startup from the path baked in at build time — see `Program.cs`.
 |---|---|
 | `Program.cs` | Entry point and the assembly resolver, kept separate so it is registered before any game type is touched. |
 | `CategoryKeyTests.cs` | Key format, scores, compiled conditions, and the ties that exist today. |
-| `ConfigFileTests.cs` | Each fixture through the real load path: SMAPI's JSON reader, migration, save, and back. |
+| `ConfigFileTests.cs` | Each fixture through the real load path: SMAPI's JSON reader, migration, save, and back. Also the backups, and files that are unreadable, empty, read-only or missing. |
 | `LocalAssetIdTests.cs` | The Ids of custom PNGs, exactly as each release produced them. |
 | `ForcedEntryTests.cs` | A saved pick turned into the entry injected into `Data/Characters`. |
 | `CompatTests.cs` | Every config in `fixtures/generated` must hand the game exactly what the released 1.1.1 did, before and after a save. |

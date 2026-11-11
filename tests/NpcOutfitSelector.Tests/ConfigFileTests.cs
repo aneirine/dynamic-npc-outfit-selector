@@ -34,6 +34,220 @@ namespace NpcOutfitSelector.Tests
             UnknownFieldsSurvive();
             UnreadableFilesAreNeverReplaced();
             Backups();
+            SettingsToKeep();
+            EmptyFilesKeepTheBackup();
+            RepeatedResetKeepsTheBackup();
+            ReadOnlyFiles();
+        }
+
+        // Every shape a released version wrote or a player hand-edited, old and new.
+        private static readonly string[] ReleasedFixtures =
+        {
+            "config-1.0.1.json", "config-1.1.0.json", "config-1.1.1.json", "config-hand-edited.json",
+        };
+
+        private static readonly (string Name, byte[] Bytes)[] EmptyContents =
+        {
+            ("0 bytes", Array.Empty<byte>()),
+            ("blanks", System.Text.Encoding.UTF8.GetBytes("  \r\n\t ")),
+            ("NUL bytes", new byte[64]),
+            ("null", System.Text.Encoding.UTF8.GetBytes("null")),
+        };
+
+        // What a save cut off by a crash or a full disk can leave behind. SMAPI reads each of
+        // these as "no file", so they load as a fresh config; the backup must outlive them.
+        private static void EmptyFilesKeepTheBackup()
+        {
+            Assert.Section("An emptied config.json never takes the backup with it");
+            foreach (string fixture in ReleasedFixtures)
+            {
+                byte[] goodBackup = File.ReadAllBytes(FixturePath(fixture));
+                foreach ((string contentName, byte[] bytes) in EmptyContents)
+                {
+                    string name = $"{contentName}, backup {fixture}";
+                    using var folder = new TempFolder();
+                    var data = new FakeDataHelper(folder.Path);
+                    string path = data.FullPath(ConfigStore.FileName);
+                    string backup = Path.Combine(folder.Path, ConfigStore.BackupFileName);
+                    File.WriteAllBytes(path, bytes);
+                    File.WriteAllBytes(backup, goodBackup);
+
+                    var monitor = new FakeMonitor();
+                    var store = new ConfigStore(data, folder.Path, monitor);
+                    store.Reload();
+                    Assert.Equal($"{name}: loads with nothing picked", $"{store.LoadError ?? "ok"} {store.Config.SelectedOutfits.Count}", "ok 0");
+                    Assert.Equal($"{name}: left as it is", File.ReadAllBytes(path).SequenceEqual(bytes), true);
+                    Assert.Equal($"{name}: the menu names the backup", store.EmptyFileWarning?.Contains(ConfigStore.BackupFileName), true);
+                    Assert.Equal($"{name}: so does the log", monitor.Messages.Any(m => m.Level == StardewModdingAPI.LogLevel.Warn && m.Message.Contains(ConfigStore.BackupFileName)), true);
+
+                    Assert.Equal($"{name}: Reset doesn't copy it anywhere", store.Save(new ModConfig(), isReset: true)
+                        && !File.Exists(Path.Combine(folder.Path, ConfigStore.ResetBackupFileName)), true);
+                    store.Reload();
+                    store.Config.SetSelectedOutfitId("Haley", "Fall", "pack.New");
+                    Assert.Equal($"{name}: a save still works", store.Save(store.Config), true);
+                    Assert.Equal($"{name}: and leaves the backup as it was", File.ReadAllBytes(backup).SequenceEqual(goodBackup), true);
+                    Assert.Equal($"{name}: the warning goes once saved", store.EmptyFileWarning, null);
+                    Assert.Equal($"{name}: the save reads back", Load(data, new FakeMonitor()).GetSelectedOutfitId("Haley", "Fall", null), "pack.New");
+                }
+            }
+
+            foreach ((string name, byte[] bytes) in EmptyContents)
+            {
+                using var folder = new TempFolder();
+                var data = new FakeDataHelper(folder.Path);
+                File.WriteAllBytes(data.FullPath(ConfigStore.FileName), bytes);
+                var store = new ConfigStore(data, folder.Path, new FakeMonitor());
+                store.Reload();
+                Assert.Equal($"{name}, no backup: nothing to warn about", store.EmptyFileWarning, null);
+                store.Config.SetSelectedOutfitId("Haley", "Fall", "pack.New");
+                Assert.Equal($"{name}, no backup: a save makes no empty backup",
+                    store.Save(store.Config) && !File.Exists(Path.Combine(folder.Path, ConfigStore.BackupFileName)), true);
+            }
+
+            // A backup with nothing in it is nothing to go back to.
+            using (var folder = new TempFolder())
+            {
+                var data = new FakeDataHelper(folder.Path);
+                File.WriteAllBytes(data.FullPath(ConfigStore.FileName), Array.Empty<byte>());
+                data.WriteJsonFile(ConfigStore.BackupFileName, new ModConfig());
+                var store = new ConfigStore(data, folder.Path, new FakeMonitor());
+                store.Reload();
+                Assert.Equal("empty, backup of the defaults: no warning", $"{store.EmptyFileWarning ?? "none"} '{store.RestoreHint}'", "none ''");
+            }
+        }
+
+        // What a Reset or an emptied file would lose, so what earns a backup.
+        private static void SettingsToKeep()
+        {
+            Assert.Section("What counts as settings worth a backup");
+            var cases = new (string Json, bool Expected)[]
+            {
+                ("{}", false),
+                ("{ \"SelectedOutfits\": {}, \"MenuHotkey\": \"F9\" }", false),
+                ("{ \"SelectedOutfits\": null }", false),
+                ("{ \"SelectedOutfits\": { \"Haley\": null, \"Sam\": {} } }", false),
+                ("{ \"SelectedOutfits\": { \"Haley\": { \"Spring\": null } } }", false),
+                ("{ \"selectedoutfits\": {}, \"menuhotkey\": \"f9\" }", false),
+                ("{ \"SomeFutureSetting\": true }", false),
+                ("{ \"SelectedOutfits\": { \"Haley\": { \"Spring\": \"pack.A\" } } }", true),
+                ("{ \"selectedoutfits\": { \"Haley\": { \"Beach\": \"pack.A\" } } }", true),
+                ("{ \"SelectedOutfits\": { \"Haley\": { \"Spring\": [ \"pack.A\" ] } } }", true),
+                ("{ \"SelectedOutfits\": { \"Haley\": \"pack.A\" } }", true),
+                ("{ \"SelectedOutfits\": [ \"pack.A\" ] }", true),
+                ("{ \"MenuHotkey\": \"F10\" }", true),
+                ("{ \"MenuHotkey\": \"LeftShift + F9\" }", true),
+                ("{ \"MenuHotkey\": \"\" }", true),
+                ("{ \"MenuHotkey\": null }", true),
+            };
+            foreach ((string json, bool expected) in cases)
+            {
+                Assert.Equal(json, ConfigStore.HasSettingsToKeep(JObject.Parse(json)), expected);
+            }
+            Assert.Equal("no file at all", ConfigStore.HasSettingsToKeep(null), false);
+            foreach (string fixture in ReleasedFixtures)
+            {
+                (FakeDataHelper data, TempFolder folder) = Open(fixture);
+                using (folder)
+                {
+                    Assert.Equal(fixture, ConfigStore.HasSettingsToKeep(data.ReadJsonFile<JObject>(ConfigStore.FileName)), true);
+                }
+            }
+        }
+
+        // GMCM's Default button resets, saves and reopens the page with no confirmation, in the
+        // same spot, so a double click is two resets.
+        private static void RepeatedResetKeepsTheBackup()
+        {
+            Assert.Section("Reset twice still leaves the picks in config.before-reset.json");
+            foreach (string fixture in ReleasedFixtures)
+            {
+                (FakeDataHelper data, TempFolder folder) = Open(fixture);
+                using (folder)
+                {
+                    string path = data.FullPath(ConfigStore.FileName);
+                    string beforeReset = Path.Combine(folder.Path, ConfigStore.ResetBackupFileName);
+                    var monitor = new FakeMonitor();
+                    var store = new ConfigStore(data, folder.Path, monitor);
+                    store.Reload();
+                    store.Config.SetSelectedOutfitId("Haley", "Fall", "pack.ThisSession");
+                    store.Save(store.Config);
+                    byte[] withPicks = File.ReadAllBytes(path);
+
+                    store.Save(new ModConfig(), isReset: true);
+                    Assert.Equal($"{fixture}: the log says how to undo it", monitor.Messages.Any(m => m.Message.Contains(beforeReset)
+                        && m.Message.Contains($"replace {ConfigStore.FileName}")), true);
+                    store.Reload();
+                    store.Save(new ModConfig(), isReset: true);
+                    Assert.Equal($"{fixture}: the second Reset leaves it alone", File.ReadAllBytes(beforeReset).SequenceEqual(withPicks), true);
+                    Assert.Equal($"{fixture}: and says so instead of pointing at an empty copy",
+                        monitor.Messages.Count(m => m.Message.Contains("was left as it was")), 1);
+
+                    var nextSession = new ConfigStore(data, folder.Path, new FakeMonitor());
+                    nextSession.Reload();
+                    byte[] backupBefore = File.ReadAllBytes(Path.Combine(folder.Path, ConfigStore.BackupFileName));
+                    nextSession.Save(nextSession.Config, isReset: true);
+                    Assert.Equal($"{fixture}: a later session's Reset of an empty file keeps both backups",
+                        File.ReadAllBytes(beforeReset).SequenceEqual(withPicks)
+                        && File.ReadAllBytes(Path.Combine(folder.Path, ConfigStore.BackupFileName)).SequenceEqual(backupBefore), true);
+
+                    File.Copy(beforeReset, path, overwrite: true);
+                    Assert.Equal($"{fixture}: and putting it back restores this session's pick",
+                        Load(data, new FakeMonitor()).GetSelectedOutfitId("Haley", "Fall", null), "pack.ThisSession");
+                }
+            }
+
+            // Nothing picked, but a hotkey of the player's own: a Reset would lose it.
+            using (var folder = new TempFolder())
+            {
+                var data = new FakeDataHelper(folder.Path);
+                string path = data.FullPath(ConfigStore.FileName);
+                File.WriteAllText(path, "{ \"SelectedOutfits\": {}, \"MenuHotkey\": \"F10\" }");
+                byte[] before = File.ReadAllBytes(path);
+                var store = new ConfigStore(data, folder.Path, new FakeMonitor());
+                store.Reload();
+                store.Save(new ModConfig(), isReset: true);
+                store.Reload();
+                store.Save(new ModConfig(), isReset: true);
+                Assert.Equal("only a hotkey set: Reset still backs it up, and a second one keeps it",
+                    File.ReadAllBytes(Path.Combine(folder.Path, ConfigStore.ResetBackupFileName)).SequenceEqual(before), true);
+            }
+        }
+
+        // Players set config.json read-only to stop SMAPI rewriting it. File.Copy would carry the
+        // flag over to the backup, and a read-only backup refuses every later copy.
+        private static void ReadOnlyFiles()
+        {
+            Assert.Section("A read-only config.json doesn't leave a read-only backup behind");
+            foreach (string fixture in new[] { "config-1.0.1.json", "config-1.1.1.json" })
+            {
+                (FakeDataHelper data, TempFolder folder) = Open(fixture);
+                using (folder)
+                {
+                    string path = data.FullPath(ConfigStore.FileName);
+                    string backup = Path.Combine(folder.Path, ConfigStore.BackupFileName);
+                    string beforeReset = Path.Combine(folder.Path, ConfigStore.ResetBackupFileName);
+                    int picks = Load(data, new FakeMonitor()).SelectedOutfits.Count;
+                    File.SetAttributes(path, FileAttributes.ReadOnly);
+
+                    var store = new ConfigStore(data, folder.Path, new FakeMonitor());
+                    store.Reload();
+                    Assert.Equal($"{fixture}: a read-only file still loads", $"{store.LoadError ?? "ok"} {store.Config.SelectedOutfits.Count}", $"ok {picks}");
+                    store.Config.SetSelectedOutfitId("Haley", "Fall", "pack.New");
+                    Assert.Equal($"{fixture}: saving over it fails", store.Save(store.Config), false);
+                    Assert.Equal($"{fixture}: the backup it made is writable", File.GetAttributes(backup).HasFlag(FileAttributes.ReadOnly), false);
+                    Assert.Equal($"{fixture}: Reset fails too", store.Save(new ModConfig(), isReset: true), false);
+                    Assert.Equal($"{fixture}: and its backup is writable", File.GetAttributes(beforeReset).HasFlag(FileAttributes.ReadOnly), false);
+
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.SetAttributes(backup, FileAttributes.ReadOnly);
+                    File.SetAttributes(beforeReset, FileAttributes.ReadOnly);
+                    var nextSession = new ConfigStore(data, folder.Path, new FakeMonitor());
+                    nextSession.Reload();
+                    nextSession.Config.SetSelectedOutfitId("Haley", "Fall", "pack.New");
+                    Assert.Equal($"{fixture}: once config.json is writable again, read-only backups don't block saving",
+                        nextSession.Save(nextSession.Config) && nextSession.Save(new ModConfig(), isReset: true), true);
+                }
+            }
         }
 
         private static readonly string[] AllFixtures =
@@ -119,9 +333,26 @@ namespace NpcOutfitSelector.Tests
                 missingData = new FakeDataHelper(missingFolder.Path);
                 var store = new ConfigStore(missingData, missingFolder.Path, new FakeMonitor());
                 store.Reload();
-                Assert.Equal("no file: defaults, and nothing created", $"{store.LoadError ?? "ok"} {Directory.GetFiles(missingFolder.Path).Length}", "ok 0");
-                Assert.Equal("no file: the first save creates it", store.Save(store.Config) && File.Exists(missingData.FullPath(ConfigStore.FileName)), true);
-                Assert.Equal("no file: so there's nothing to back up", File.Exists(Path.Combine(missingFolder.Path, ConfigStore.BackupFileName)), false);
+                Assert.Equal("no file: defaults, and only config.json created", $"{store.LoadError ?? "ok"} {string.Join(",", Directory.GetFiles(missingFolder.Path).Select(Path.GetFileName))}", "ok config.json");
+                Assert.Equal("no file: created exactly as 1.1.1 created it",
+                    File.ReadAllText(missingData.FullPath(ConfigStore.FileName)) == FakeDataHelper.CreateJsonHelper().Serialize(new ModConfig()), true);
+                byte[] created = File.ReadAllBytes(missingData.FullPath(ConfigStore.FileName));
+                store.Reload();
+                Assert.Equal("no file: created once, then only read", File.ReadAllBytes(missingData.FullPath(ConfigStore.FileName)).SequenceEqual(created), true);
+                Assert.Equal("no file: no warning", store.EmptyFileWarning, null);
+                store.Config.SetSelectedOutfitId("Haley", "Fall", "pack.New");
+                Assert.Equal("no file: the first save works", store.Save(store.Config), true);
+                Assert.Equal("no file: and doesn't back up the defaults", File.Exists(Path.Combine(missingFolder.Path, ConfigStore.BackupFileName)), false);
+            }
+
+            // Reading a file that's there, however it looks, never creates one.
+            foreach ((string name, byte[] bytes) in EmptyContents)
+            {
+                using var folder = new TempFolder();
+                var data = new FakeDataHelper(folder.Path);
+                File.WriteAllBytes(data.FullPath(ConfigStore.FileName), bytes);
+                new ConfigStore(data, folder.Path, new FakeMonitor()).Reload();
+                Assert.Equal($"{name}: not replaced by the defaults", File.ReadAllBytes(data.FullPath(ConfigStore.FileName)).SequenceEqual(bytes), true);
             }
 
             // Saving a file that holds only the known fields writes exactly what 1.1.1's
@@ -178,6 +409,23 @@ namespace NpcOutfitSelector.Tests
                     Assert.Equal($"{fixture}: Reset refused too", store.Save(new ModConfig(), isReset: true), false);
                     Assert.Equal($"{fixture}: file untouched", File.ReadAllBytes(data.FullPath(ConfigStore.FileName)).SequenceEqual(before), true);
                     Assert.Equal($"{fixture}: no backup either", Directory.GetFiles(folder.Path).Length, 1);
+                    Assert.Equal($"{fixture}: no backup to point at", store.RestoreHint, "");
+                }
+
+                // With a backup beside it, the log and the menu notice say how to go back to it.
+                foreach (string backupFixture in new[] { "config-1.0.1.json", "config-1.1.1.json" })
+                {
+                    (FakeDataHelper withBackup, TempFolder withBackupFolder) = Open(fixture);
+                    using (withBackupFolder)
+                    {
+                        File.Copy(FixturePath(backupFixture), Path.Combine(withBackupFolder.Path, ConfigStore.BackupFileName));
+                        var monitor = new FakeMonitor();
+                        var store = new ConfigStore(withBackup, withBackupFolder.Path, monitor);
+                        store.Reload();
+                        Assert.Equal($"{fixture}, backup {backupFixture}: the log names the backup", monitor.Messages.Any(m => m.Level == StardewModdingAPI.LogLevel.Error
+                            && m.Message.Contains(ConfigStore.BackupFileName)), true);
+                        Assert.Equal($"{fixture}, backup {backupFixture}: so does the notice", store.RestoreHint.Contains(ConfigStore.BackupFileName), true);
+                    }
                 }
             }
 

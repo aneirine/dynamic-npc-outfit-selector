@@ -458,11 +458,11 @@ namespace NpcOutfitSelector
         }
 
         private string ConfigNoticeText() =>
-            this.configStore.LoadError is null
-                ? null
-                : "config.json could not be read, so this page can't save. Your file hasn't been changed. "
-                + "Fix the mistake in it (or move it away to start over), then reopen this menu. "
-                + "The SMAPI log has the details.";
+            this.configStore.LoadError is not null
+                ? "config.json could not be read, so this page can't save. Your file hasn't been changed. "
+                    + "Fix the mistake in it (or move it away to start over), then reopen this menu."
+                    + this.configStore.RestoreHint + " The SMAPI log has the details."
+                : this.configStore.EmptyFileWarning;
 
         private int ConfigNoticeHeight()
         {
